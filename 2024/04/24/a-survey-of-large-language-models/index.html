@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,7 +592,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-04-24
+                    2024-04-25
                 </div>
                 
 
@@ -681,12 +681,12 @@
 <p>扩展可以大幅提高 LLM 的模型能力<strong>，因此，建立一个定量的方法来描述扩展效应是有意义的</strong>。</p>
 <p>两个代表性工作：</p>
 <p>（1）KM scaling law：2020年，Kaplan等人（OpenAI团队）首次提出建模模型参数和三个主要因素（即模型大小N、数据集大小D、训练计算量C）之间的幂律关系。</p>
-<img src="E:\A.东南\论文\imgs\image-20231023174256702.png" alt="image-20231023174256702">
+<img src="/2024/04/24/a-survey-of-large-language-models/image-20231023174256702.png" alt="image-20231023174256702">
 
 <p>其中L(·)表示使用纳特（nats：在信息论中，nats是自然对数的单位，用于度量信息量或信息熵。它是以自然对数的底数e为基础，表示信息的相对量——from ChatGPT）<strong>表示的交叉熵损失</strong>。这三个定律是在一些假设(例如，一个因素的分析不应该受到其他两个因素的瓶颈)下，通过拟合不同数据大小(22M到23B个tokens)、模型大小(768M到1.5B个非嵌入参数)和训练计算的模型性能得出的。<br>这里，Nc、Dc和Cc分别以非嵌入参数的数量、训练tokens的数量和FP天数来衡量。<br>（2）Chinchilla Scaling law：作为另一项具有代表性的研究，Hoffmann等人（谷歌DeepMind团队）提出了一种缩放定律的替代形式，以指导LLM的计算优化训练。</p>
-<p><img src="E:\A.东南\论文\imgs\image-20231023174356210.png" alt="image-20231023174356210"></p>
+<p><img src="/2024/04/24/a-survey-of-large-language-models/image-20231023174356210.png" alt="image-20231023174356210"></p>
 <p>其中 <em>E</em> = 1*.<em>69</em>, A* = 406*.<em>4</em>, B* = 410*.<em>7，</em>α* = 0*.<em>34 和 <em>β</em> = 0</em>.<em>28。通过在约束条件 <em>C</em> <em>≈</em> 6</em>ND* 下优化损失 <em>L</em>(<em>N, D</em>)，他们展示了将计算预算最优地分配给模型大小和数据大小的方法（如下）：</p>
-<p><img src="E:\A.东南\论文\imgs\image-20231023174428643.png" alt="image-20231023174428643"></p>
+<p><img src="/2024/04/24/a-survey-of-large-language-models/image-20231023174428643.png" alt="image-20231023174428643"></p>
 <p>随着给定计算预算的增加，<strong>KM 扩展法则更偏向于将更大的预算分配给模型大小，而 Chinchilla 扩展法则则认为模型大小和数据大小应该以相同的比例增加</strong>，即在公式 (3)中的 <em>a</em> 和 <em>b</em> 取相近的值。</p>
 <h4 id="涌现能力-emergent-abilities"><a href="#涌现能力-emergent-abilities" class="headerlink" title="涌现能力 emergent abilities"></a>涌现能力 emergent abilities</h4><p>涌现：在小型模型中不存在但在大型模型中产生的能力。这是区别 LLM 与先前 PLM 的最显著特征之一</p>
 <p>LLM 的三种典型涌现能力和具备这种能力的代表性模型：</p>
@@ -701,7 +701,7 @@
 <h5 id="Alignment-Tuning-对齐微调"><a href="#Alignment-Tuning-对齐微调" class="headerlink" title="Alignment Tuning 对齐微调"></a>Alignment Tuning 对齐微调</h5><p>有必要使 LLM 与人类价值观保持一致，例如有用性、诚实性和无害性。</p>
 <p>为此，InstructGPT设计了一种有效的调优方法，使llm能够遵循预期的指令，该方法利用了带有人类反馈的强化学习技术（RLHF）。<br>ChatGPT确实是在与InstructGPT类似的技术基础上开发的，其在产生高质量、无害的回复方面显示出强大的对齐能力，例如，拒绝回答侮辱性的问题。</p>
 <h5 id="Tool-Manipulation-工具操作"><a href="#Tool-Manipulation-工具操作" class="headerlink" title="Tool Manipulation 工具操作"></a>Tool Manipulation 工具操作</h5><p>从本质上讲，LLMs在大量纯文本语料库上被训练为文本生成器，因此在不能最好地以文本形式表达的任务(例如，数值计算)上表现不佳。此外，它们的能力也局限于预训练数据，例如，无法获取最新信息。为了解决这些问题，最近提出的一种技术是使用外部工具来弥补LLMs的不足。<br>例如，LLMs可以利用计算器进行精确计算，利用搜索引擎检索未知信息。最近，ChatGPT启用了使用外部插件(现有或新创建的应用程序)的机制，这被类比为LLMs的“眼睛和耳朵”。这种机制可以广泛扩展 LLM 的能力范围。</p>
-<h3 id="2-2技术演进"><a href="#2-2技术演进" class="headerlink" title="2.2技术演进"></a>2.2技术演进</h3><img src="E:\A.东南\论文\imgs\image-20231106143336059.png" alt="image-20231106143336059" style="zoom:80%;">
+<h3 id="2-2技术演进"><a href="#2-2技术演进" class="headerlink" title="2.2技术演进"></a>2.2技术演进</h3><img src="/2024/04/24/a-survey-of-large-language-models/image-20231106143336059.png" alt="image-20231106143336059" style="zoom:80%;">
 
 <p>GPT模型的基本原理是通过语言建模将世界知识压缩为仅含解码器的Transformer模型，从而恢复（或记忆）世界知识的语义，并充当通用任务求解器。成功的两个关键点是 (1)只训练解码器的Transformer语言模型，可以准确地预测下一个词  (2) 扩大语言模型的规模</p>
 <h5 id="早期探索阶段"><a href="#早期探索阶段" class="headerlink" title="早期探索阶段"></a>早期探索阶段</h5><p>随着 Transformer 的出现，OpenAI开发了两个初始的 GPT 模型，即GPT-1和GPT-2</p>
@@ -732,7 +732,7 @@
 <p>在跨语言泛化研究中，BLOOM (176B版本)和BLOOMZ (176B版本)可以作为基础模型，因为它们在多语言语言建模任务中的能力。<br>在这些模型中，OPT-IML已经使用指令进行了调优，这可能是研究指令调优效果的良好候选者。<br>这种规模的模型通常需要数千个gpu或tpu来训练。例如，OPT (175B版本)使用992个A100-80GB GPU，而GLM (130B版本)使用96个NVIDIA DGX-A100 (8x40G) GPU节点的集群。</p>
 <p><strong>公共API</strong></p>
 <p>OpenAI为GPT-3系列模型提供了七个主要接口：ada、babbage、curie、davinci (GPT-3系列中最强大的版本)、text-ada-001、text-babbage-001和text-curie-001。其中，前四个接口可以在OpenAI的主机服务器上进一步微调。babbage、curie和davinci分别对应于GPT-3 (1B)、GPT-3 (6.7B)和GPT-3 (175B)模型。<br>此外，还有两个与Codex相关的api，称为code-cushman-001 (Codex (12B)的强大多语言版本)和code-davinci-002。<br>此外，GPT-3.5系列包括一个基础模型code-davinci-002和三个增强版本，即text-davinci-002, text-davinci-003和GPT-3.5-turbo-0301。值得注意的是，gpt-3.5-turbo-0301是调用ChatGPT的接口。<br>最近，OpenAI也为GPT-4发布了相应的api，包括gpt-4、gpt-4-0314、gpt-4-32k和gpt-4-32k-0314。<br>api详细用法见：<a href="https://link.zhihu.com/?target=https://platform.openai.com/docs/models/overview">https://platform.openai.com/doc</a></p>
-<h3 id="3-2常用语料库"><a href="#3-2常用语料库" class="headerlink" title="3.2常用语料库"></a>3.2常用语料库</h3><p><img src="E:\A.东南\论文\imgs\image-20231106164749415.png" alt="image-20231106164749415"></p>
+<h3 id="3-2常用语料库"><a href="#3-2常用语料库" class="headerlink" title="3.2常用语料库"></a>3.2常用语料库</h3><p><img src="/2024/04/24/a-survey-of-large-language-models/image-20231106164749415.png" alt="image-20231106164749415"></p>
 <h4 id="books"><a href="#books" class="headerlink" title="books"></a>books</h4><p>BookCorpus–小规模模型（如 GPT和 GPT-2）中常用的数据集，包括超过 11,000 本电子书，涵盖广泛的主题和类型（如小说和传记）。另一个大规模的书</p>
 <p>籍语料库是 Gutenberg，它有超过 70,000 本文学作品，包括小说、散文、诗歌、戏剧、历史、科学、哲学和其他公共领域的作品。它是目前最大的开源书籍集合之一，被用于训练 MT-NLG 和 LLaMA。</p>
 <h4 id="CommonCrawl"><a href="#CommonCrawl" class="headerlink" title="CommonCrawl"></a><strong>CommonCrawl</strong></h4><p> <strong>CommonCraw 是最大的开源网络爬虫数据库之一</strong>，包含百万亿字节级的数据量，已被广泛用作LLMs训练。</p>
@@ -746,7 +746,7 @@
 <p><strong>给出了三个代表性LLMs的预训练语料库：</strong><br>（1）GPT-3 (175B)：在一个包含300B个tokens的混合数据集上进行训练，包括CommonCrawl、WebText2、Books1、Books2和Wikipedia。<br>（2）PaLM (540B)：使用780B tokens的预训练数据集，这些数据来自社交媒体对话、过滤的网页、书籍、Github、多语言维基百科和新闻。<br>（3）LLaMA：从各种来源提取训练数据，包括CommonCrawl, C4 , Github, Wikipedia, books, ArXiv和StackExchange。LLaMA (6B)和LLaMA (13B)的训练数据大小为1.0T tokens，LLaMA (32B)和LLaMA (65B)的训练数据大小为1.4T tokens。</p>
 <h3 id="3-3代码库资源"><a href="#3-3代码库资源" class="headerlink" title="3.3代码库资源"></a>3.3代码库资源</h3><p>（1）Transformers是一个开源Python库，用于使用Transformer架构构建模型，由Hugging Face开发和维护。方便使用和定制各种预训练模型。<br>（2）DeepSpeed是微软开发的深度学习优化库(与PyTorch兼容)，已被用于训练多个LLMs，如MT-NLG和BLOOM。它为分布式训练提供了各种优化技术的支持，例如内存优化(ZeRO技术、梯度检查点)和流水线并行。<br>（3）Megatron-LM是NVIDIA开发的用于训练大规模语言模型的深度学习库。它还为分布式训练提供了丰富的优化技术，包括模型和数据并行、混合精度训练和FlashAttention。这些优化技术可以大大提高训练效率和速度，实现高效的跨GPU分布式训练。<br>（4）JAX是谷歌开发的用于高性能机器学习算法的Python库，允许用户轻松地在硬件加速(例如GPU或TPU)下对数组执行计算。它可以在各种设备上进行有效的计算，并且还支持一些功能，例如自动微分和即时编译。<br>（5）colossal-AI是由HPC-AI Tech开发的用于训练大规模AI模型的深度学习库。它是基于PyTorch实现，并支持丰富的并行训练策略集合。此外，它还可以使用PatrickStar提出的方法优化异构内存管理。最近，一个名为ColossalChat的类chatgpt的模型已经公开发布了两个版本(7B和13B)，它是基于LLaMA使用colossal-ai开发的。<br>（6）BMTrain是OpenBMB开发的用于分布式训练大规模参数模型的高效库，强调代码简洁、低资源、高可用性。BMTrain已经将几个常见的LLM(例如，Flan-T5和GLM)合并到其ModelCenter中，开发人员可以直接使用这些模型。<br>（7）FastMoE是MoE(即混合专家)模型的专门训练库。它是基于PyTorch开发的，在设计中优先考虑效率和用户友好性。FastMoE简化了将Transformer模型转换为MoE模型的过程，并在训练期间支持数据并行和模型并行。<br>除了上述库资源外，现有的深度学习框架(如PyTorch、TensorFlow、MXNet、PaddlePaddle、MindSpore和OneFlow)也提供了对并行算法的支持，并行算法通常用于训练大规模模型。</p>
 <h2 id="4-预训练"><a href="#4-预训练" class="headerlink" title="4.预训练"></a>4.预训练</h2><p>预训练为 LLM 的能力奠定了基础。通过在大规模语料库上进行预训练，LLM 可以获得基本的语言理解和生成能力。</p>
-<h3 id="4-1数据收集"><a href="#4-1数据收集" class="headerlink" title="4.1数据收集"></a>4.1数据收集</h3><img src="E:\A.东南\论文\imgs\image-20231120151109467.png" alt="image-20231120151109467" style="zoom:80%;">
+<h3 id="4-1数据收集"><a href="#4-1数据收集" class="headerlink" title="4.1数据收集"></a>4.1数据收集</h3><img src="/2024/04/24/a-survey-of-large-language-models/image-20231120151109467.png" alt="image-20231120151109467" style="zoom:80%;">
 
 <h4 id="数据来源"><a href="#数据来源" class="headerlink" title="数据来源"></a>数据来源</h4><p>预训练语料库的来源可以广义地分为两种类型：通用文本数据和专用文本数据。</p>
 <p>通用文本数据，如网页、书籍和对话文本等，其由于规模大、多样性强且易于获取的特点，被大多数 LLM 所利用，这可以增强 LLM 的语言建模和泛化能力。</p>
@@ -783,10 +783,10 @@
 <p>前缀解码器可以双向编码前缀序列并自回归地逐个预测输出 token，其中在编码和解码过程中共享相同的参数。</p>
 <p>基于前缀解码器架构的现有代表性 LLM 包括 GLM-130B和 U-PaLM。</p>
 <p>对于这三种类型的架构，我们还可以考虑通过混合专家(MoE)缩放来扩展它们，其中每个输入的神经网络权重子集被稀疏激活，例如Switch Transformer和GLaM。研究表明，通过增加专家数量或总参数大小，可以观察到实质性的性能改进。</p>
-<img src="E:\A.东南\论文\imgs\image-20231120183205440.png" alt="image-20231120183205440" style="zoom:80%;">
+<img src="/2024/04/24/a-survey-of-large-language-models/image-20231120183205440.png" alt="image-20231120183205440" style="zoom:80%;">
 
 <h4 id="详细配置"><a href="#详细配置" class="headerlink" title="详细配置"></a>详细配置</h4><p>自 Transformer推出以来，已经提出了各种改进方法来提高其训练稳定性、性能和计算效率。在这部分中，我们将讨论Transformer 的四个主要部分的相应配置，包括标准化、位置编码、激活函数、注意力和偏置。</p>
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231121162112958.png" alt="image-20231121162112958" style="zoom:80%;">
+<img src="/2024/04/24/a-survey-of-large-language-models/image-20231121162112958.png" alt="image-20231121162112958" style="zoom:80%;">
 
 <h5 id="标准化（归一化）"><a href="#标准化（归一化）" class="headerlink" title="标准化（归一化）"></a>标准化（归一化）</h5><p>训练不稳定是预训练 LLM 的一个难题。为了缓解这个问题，<strong>层标准化 (Layer Norm, LN) 被广泛应用于Transformer 架构中</strong>。</p>
 <p>Sandwich-LN在pre-LN的基础上，在剩余连接之前增加了额外的LN，以避免值爆炸。然而，研究发现，<strong>Sandwich-LN有时不能稳定训练LLMs，可能导致训练的崩溃。</strong><br>最近，人们提出了几种先进的规范化技术来替代LN。在Gopher和Chinchilla中，由于RMS Norm在训练速度和性能上的优势，采用了RMS Norm。与LN相比，DeepNorm在训练稳定性方面表现出了更好的能力，和后标准化一起被 GLM-130B 采用。</p>
@@ -799,11 +799,11 @@
 <p>此外，与原始 Transformer一样，大多数 LLM 在每个线性层和层标准化中保留了偏置</p>
 <h4 id="预训练任务"><a href="#预训练任务" class="headerlink" title="预训练任务"></a>预训练任务</h4><p>对于训练 LLM，有两个常用的预训练任务，即语言建模和去噪自编码。</p>
 <h6 id="语言建模"><a href="#语言建模" class="headerlink" title="语言建模"></a><strong>语言建模</strong></h6><p>Language Modeling(LM) 语言建模任务(LM)是预训练Decoder-only的LLMs最常用的目标，例如GPT3和PaLM。给定一个token 序列 x = *{x1, . . . , xn}*，LM 任务旨在基于序列中前面的 token x&lt;i，自回归地预测目标 token <em>xi</em>。通常的训练目标是最大化以下似然函数：</p>
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231121180748353.png" alt="image-20231121180748353" style="zoom:80%;">
+<img src="/2024/04/24/a-survey-of-large-language-models/image-20231121180748353.png" alt="image-20231121180748353" style="zoom:80%;">
 
 <p>由于大多数语言任务可以转换为基于输入的预测问题来解决，因此这些仅包含解码器的 LLM 可能具有优势，可以隐式地学习如何以统一的 LM 方式完成这些任务。一些研究还表明，仅包含解码器的 LLM 可以通过自回归地预测下一个token 而自然地迁移到某些任务中，而无需微调。</p>
 <p>LM的一个重要变体是前缀语言建模任务，它是为预训练具有前缀解码器架构的模型设计的。在计算前缀语言模型的损失时，将不使用随机选择的前缀内的 token。由于模型预训练涉及的序列中 token 较少，因此在使用相同数量的预训练 token 时，前缀语言模型的性能往往略低于传统语言模型任务 </p>
-<h6 id="去噪自编码"><a href="#去噪自编码" class="headerlink" title="去噪自编码"></a><strong>去噪自编码</strong></h6><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231121180955197.png" alt="image-20231121180955197" style="zoom:80%;">
+<h6 id="去噪自编码"><a href="#去噪自编码" class="headerlink" title="去噪自编码"></a><strong>去噪自编码</strong></h6><img src="/2024/04/24/a-survey-of-large-language-models/image-20231121180955197.png" alt="image-20231121180955197" style="zoom:80%;">
 
 <p>通过使用语言模型目标进行预训练，因果解码器架构似乎可以实现更优越的零样本和小样本泛化能力。在没有进行多任务微调的情况下，因果解码器比其他架构具有更好的零样本性能。通过扩展模型大小、数据集大小和总计算量，可以大幅提高因果解码器的性能 </p>
 <h3 id="4-3模型训练"><a href="#4-3模型训练" class="headerlink" title="4.3模型训练"></a>4.3模型训练</h3><h4 id="优化设置"><a href="#优化设置" class="headerlink" title="优化设置"></a>优化设置</h4><h5 id="批量训练Batch-Training"><a href="#批量训练Batch-Training" class="headerlink" title="批量训练Batch Training"></a>批量训练Batch Training</h5><p>对于语言模型的预训练，现有的研究通常将<strong>批量大小（batch size）</strong>设置为较大的数字（如 2,048 个例子或 400 万个 token），以提高训练的稳定性和吞吐量。像 GPT-3 和 PaLM 这样的LLM 引入了一种新的策略，即<strong>在训练过程中动态增加批量大小，最终达到百万级别</strong>。具体而言，GPT-3 的批量大小从 3.2万逐渐增加到 320 万个 token。实证结果表明，动态调整批量大小的策略可以有效地稳定 LLM 的训练过程。</p>
@@ -826,7 +826,7 @@
 <p>关键因素：</p>
 <p>增加指令：大量研究已经证明扩大任务数量可以极大地提高 LLM 的泛化能力。但任务数量达到一定水平时，模型性能的提升变得微不足道。将某些任务的实例数量进一步增加（例如数百个）可能会潜在地导致过拟合并影响模型性能</p>
 <p>设计格式：指令的格式设计也是影响 LLM 泛化性能的一个重要因素。通常来说，我们可以向现有数据集的输入-输出对添加任务描述和可选的示例，其中任务描述是 LLM理解任务的最关键部分。<strong>将其他部分（例如避免事项、原因和建议）添加到指令中对 LLM 的性能提升十分轻微，甚至会产生不利的影响</strong></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231204162206898.png" alt="image-20231204162206898"></p>
+<p><img src="/2024/04/24/a-survey-of-large-language-models/image-20231204162206898.png" alt="image-20231204162206898"></p>
 <h5 id="格式化任务数据集"><a href="#格式化任务数据集" class="headerlink" title="格式化任务数据集"></a>格式化任务数据集</h5><p>格式化任务数据集。在提出指令调优之前，一些早期的研究[266,273,274]从不同的任务范围（如文本摘要、文本分类和翻译）中收集实例，以创建有监督的多任务训练数据集。作为指令调优实例的主要来源，使用自然语言任务描述将这些多任务训练数据集格式化非常方便。具体来说，最近的工作[28,61,62,79]用<strong>人工编写的任务描述来增强已标记的数据集，它通过解释任务目标来指示llm来理解任务</strong>。例如，在图9(a)中，为问答任务中的每个示例添加了一个任务描述“请回答这个问题”。在指令调优之后，llm可以通过遵循其任务描述[28,62,64]来很好地推广到其他不可见的任务。特别是，已经证明了指令是LLMs [62]任务泛化能力的关键因素：通过在标记的数据集上对模型进行微调，去掉任务描述，它会导致模型性能的急剧下降。为了更好地为inst生成带有标记的实例</p>
 <h5 id="格式化人类需求"><a href="#格式化人类需求" class="headerlink" title="格式化人类需求"></a>格式化人类需求</h5><p>尽管大量的训练实例已经通过添加指令进行格式化，但它们<strong>主要来自公共的 NLP 数据集</strong>，任务描述缺乏多样性或与人类真实需求不匹配。为了解决这个问题， InstructGPT建议<strong>采用真实用户提交给 OpenAI API 的 查询作为任务描述</strong>。用户查询以自然语言表示，很适合引导出 LLM 遵循指令的能力。此外，为了丰富任务的多样性，<strong>标注者还要为真实生活中的任务编写指令，包括开放式生成、开放式问答、头脑风暴和聊天等。然后让另一组标注人员直接按照将这些指令作为输出进行回答</strong>。最后，<strong>将指令（即采集的用户查询）和期望的输出（即人工编写的答案）配对作为一 个训练实例。</strong></p>
 <p>InstructGPT 还将这些以自然语言格式化的真实世界任务用于对齐微调（在第 5.2 节中讨论）。</p>
@@ -852,16 +852,16 @@
 <p>请注意，在特定设置或场景中，第一步是可选的。</p>
 <p><strong>2）训练奖励模型：</strong>第二步是使用人类反馈的数据<strong>训练RM。</strong> 具体来说，我们向 LM 中输入采样的提示（来自监督数据集 或人类生成的提示），以生成一定数量的输出文本，然后邀请 人工标注员为这些输入-输出对标注偏好。标注过程可以以多种形式进行，常见的做法是对生成的候选文本进行排序标注， 这样可以减少因标注者不同带来的差异。最后，训练 RM 预测人类偏好的输出。<strong>在 InstructGPT 中，标注员将模型生成 的输出从最好到最差进行排名，然后训练 RM（即 60 亿参数 量的 GPT-3）来预测排名。</strong></p>
 <p><strong>3）强化学习微调：</strong>在这一步骤中，LM 的对齐微调可以被 形式化为 RL 问题。在这种情况中，RL 问题的策略（policy） 由 PLM 给出（将提示作为输入并返回输出文本），行动空间 （action space）是 LM 的词表，状态（state）是目前生成的 token 序列，奖励（reward）则由 RM 提供。为了避免 LM 显著偏离初始（微调前）的模型，通常在奖励函数中纳入一项 惩罚项。例如，InstructGPT 在使用 PPO 算法对抗 RM 来 优化 LM 时，<strong>对于每个输入提示，InstructGPT 计算当前 LM 和初始 LM 生成的结果之间的 KL 散度作为惩罚项</strong>。值得注 意的是，可以通过多次迭代第二步和最后一步来更好地对齐LLM。</p>
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231204145938232.png" alt="image-20231204145938232" style="zoom:67%;">
+<img src="/2024/04/24/a-survey-of-large-language-models/image-20231204145938232.png" alt="image-20231204145938232" style="zoom:67%;">
 
-<h3 id="5-3参数高效微调方法"><a href="#5-3参数高效微调方法" class="headerlink" title="5.3参数高效微调方法"></a>5.3参数高效微调方法</h3><p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231204150735410.png" alt="image-20231204150735410"></p>
+<h3 id="5-3参数高效微调方法"><a href="#5-3参数高效微调方法" class="headerlink" title="5.3参数高效微调方法"></a>5.3参数高效微调方法</h3><p><img src="/2024/04/24/a-survey-of-large-language-models/image-20231204150735410.png" alt="image-20231204150735410"></p>
 <p>参数高效微调（parameter-efficient fine-tuning）是一个重要的课题，旨在减少可训练参数的数量，同时尽可能保持良好的性能</p>
 <h4 id="Adapter-Tuning"><a href="#Adapter-Tuning" class="headerlink" title="Adapter Tuning"></a>Adapter Tuning</h4><p>Adapter tuning将小型神经网络模块（称为适配器）融入Transformer模型。为了实现适配器模块，提出了一种bottleneck架构，该架构首先将原始特征向量压缩到较小的维度（然后进行非线性变换），然后将其恢复到原始维度。<br>Adapter模块将集成到每个Transformer层中，通常在Transformer层的两个核心部分（即注意力层和前馈层）中的每一个之后使用串行插入。作为替代方案，并行Adapter也可以用在Transformer层中，其中它相应地将两个Adapter模块与注意力层和前馈层并行放置。<br>在微调过程中，Adapter模块将根据特定的任务目标进行优化，而原始语言模型的参数在此过程中被冻结。</p>
 <h4 id="Prefix-Tuning"><a href="#Prefix-Tuning" class="headerlink" title="Prefix Tuning"></a>Prefix Tuning</h4><p>前缀调优为语言模型中的每个Transformer层预先排列一系列前缀，这些前缀是一组可训练的连续向量。这些前缀向量是特定于任务的，可以被视为虚拟token embedding。<br>为了优化前缀向量，已经提出了一种重参数化技巧，通过学习一个MLP函数将一个较小的矩阵映射到前缀的参数矩阵，而不是直接优化前缀。已经证明，这个技巧对稳定训练是有用的。优化后，映射函数将被丢弃，只保留导出的前缀向量，以提高特定任务的性能。<br>由于只训练前缀参数，因此可以实现参数高效的模型优化。与前缀调优类似，p-tuning v2将layer-wise的prompt向量融合到Transformer架构中，专门用于自然语言理解，该架构还利用多任务学习来联合优化共享prompt。</p>
 <h4 id="Prompt-Tuning"><a href="#Prompt-Tuning" class="headerlink" title="Prompt Tuning"></a>Prompt Tuning</h4><p>与prefix tuning不同，prompt tuning主要侧重于在输入层融入可训练的提示向量。<br>根据离散提示方法，它通过包含一组soft prompt tokens（以自由形式或前缀形式）来增强输入文本，然后采用提示增强输入来解决特定的下游任务。P-tuning提出了一种结合context、prompt和target tokens的自由形式，可以应用于自然语言理解和生成的架构。他们通过双向LSTM进一步学习soft prompt tokens的表示。另一种代表性的方法名为prompt tuning，直接在输入前加前缀提示。在训练过程中，根据特定任务的监督，只学习prompt embedding。<br>然而，由于该方法在输入层仅包括少量可训练参数，已经发现其性能在很大程度上取决于底层语言模型的模型能力。<br>这里的Prompt Tuning专门指的只在输入层包含prompt tokens的方法。</p>
 <p><strong>Low-Rank Adaptation（LoRA）</strong><br>LoRA对每个密集层的更新矩阵施加了低秩约束，以减少适配下游任务的可训练参数。<br>考虑优化参数矩阵W的情况。更新过程可以用一般形式写成：W← W+∆W。LoRA的基本思想是冻结原始矩阵W∈Rm×n，同时通过低秩分解矩阵逼近参数更新∆W，即∆W=A·B^T，其中A∈Rm×k和B∈Rn×k是任务适配的可训练参数，r &lt;&lt; min(m，n)是降低的秩。<br>LoRA的主要优点是它可以在很大程度上节省内存和存储使用（例如，VRAM）。此外，只能保留单个大模型副本，同时保留许多特定于任务的低秩分解矩阵，以适应不同的下游任务。<br>此外，一些研究还讨论了如何以更原则化的方法设置秩，例如，基于重要性分数的分配和无搜索的最优秩选择。</p>
 <h2 id="6-模型使用"><a href="#6-模型使用" class="headerlink" title="6.模型使用"></a>6.模型使用</h2><p>经过预训练或适配微调之后，使用 LLM 的主要方法是为解决各种任务设计适当的提示策略。一种典型的提示方法是将任务描述和（或）示范（demonstration）以自然语言文本的形式表达的上下文学习（<em>in-context learning, ICL</em>）。此外，采用思维链提示（<em>chain-of-thought prompting</em>）可以通过将一系列中间推理步骤加入提示中来增强 ICL。</p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231204151041209.png" alt="image-20231204151041209"></p>
+<p><img src="/2024/04/24/a-survey-of-large-language-models/image-20231204151041209.png" alt="image-20231204151041209"></p>
 <h3 id="上下文学习"><a href="#上下文学习" class="headerlink" title="上下文学习"></a>上下文学习</h3><p>此外，ICL 还与指令微调（在5.1中已讨论）有着密切的联系，因为它们都将任务或样例转化为自然语言的形式。然而，指令微调需要微调 LLM来增强适配，而 ICL 仅仅是以提示的方式来使用LLM。指令微调可以提高 LLM 执行目标任务的 ICL 能力，尤其是在零样本设置时（仅使用任务描述）。</p>
 <p>ICL使用格式化的自然语言提示，包括任务描述和/或一些任务示例作为演示。基于任务演示，LLM可以在没有显式梯度更新的情况下识别并执行新任务。<br>（当ICL在GPT-3的论文中被引入时，它最初被定义为任务描述和演示示例的组合，其中任何一个组件都是可有可无的。根据这个定义，当LLM需要只使用任务描述来解决没见过的任务时，它也可以被认为是执行ICL来解决任务，而ICL能力可以通过指令调优来增强。）<br>由于ICL的性能在很大程度上依赖于示范(demonstrations)，因此在提示中正确设计演示是一个重要问题。从三个方面介绍 ICL 的示范设计，即<strong>示范选择、格式和顺序。</strong></p>
 <p><strong>示范选择：</strong> 主要方法有两种，被称作启发式方法和基于 LLM 的方法。</p>
@@ -872,7 +872,7 @@
 <h4 id="底层机制"><a href="#底层机制" class="headerlink" title="底层机制"></a>底层机制</h4><p> ICL 的能力随着模型规模的增大而增强。然而，一些研究表明，<strong>小规模的 PLM 也可以通过特别设计的训练任务表现出强大的 ICL 能力。</strong>训练任务的设计是影响 LLM 的 ICL 能力的一个重要因素。</p>
 <p>除了训练任务之外，近期的一些研究还探索了 ICL 与预训练语料之间的关系 [260, 265, 266]；研究表明，ICL 的性能主要<strong>取决于预训练语料的来源而非规模</strong> [266]。另一项研究 [265]深入分析了训练数据分布的影响；他们发现，<strong>当训练数据可以被聚类成许多不常见的类别，而不是均匀分布时，模型会表现出 ICL 的能力。</strong></p>
 <p><strong>LLMs怎样执行ICL</strong><br>在推理阶段，研究人员专注于基于给定的演示来分析ICL能力是如何运行的，因为不涉及显式学习或更新。他们通常从梯度下降的角度进行分析，并将ICL视为隐式微调。<br>在这个框架下，ICL过程可以解释如下：<strong>通过前向计算，LLM生成关于演示的元梯度，并通过注意力机制隐式地执行梯度下降。实验也表明，LLM中的某些注意力头能够执行与任务无关的原子操作（例如，复制和前缀匹配），这与ICL能力密切相关。</strong><br>为了进一步探索ICL的工作机制，一些研究将ICL抽象为一个算法学习过程。具体而言，LLM在预训练期间基本上通过其参数对隐式模型进行编码。通过ICL中提供的例子，LLM可以实现诸如梯度下降之类的学习算法，或者直接计算闭式解，以在前向计算期间更新这些模型。在这个解释框架下，已经表明LLM<strong>可以有效地学习简单的线性函数，甚至可以使用ICL学习一些复杂的函数，如决策树</strong>。</p>
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231206143337223.png" alt="image-20231206143337223" style="zoom:80%;">
+<img src="/2024/04/24/a-survey-of-large-language-models/image-20231206143337223.png" alt="image-20231206143337223" style="zoom:80%;">
 
 <h3 id="思维链提示"><a href="#思维链提示" class="headerlink" title="思维链提示"></a>思维链提示</h3><p>思维链（Chain-of-Thought，CoT）是一种改进的提示策略，用于提高LLM在复杂推理任务中的性能，如算术推理、常识推理和符号推理。CoT没有像ICL那样简单地用输入输出对构建提示，而是结合了中间推理步骤，这些步骤可以将最终输出引入提示。</p>
 <p><strong>小样本思维链 Few-shot CoT</strong><br>Few-shot CoT是ICL的一种特殊情况，它通过融合CoT推理步骤，将每个演示〈input，output〉扩充为〈input，CoT，output〉。<br>【CoT prompt的设计】<br>作为一种直接的方法，<strong>研究表明，使用不同的CoT（即每个问题的多个推理路径）可以有效地提高它们的性能。</strong><br><strong>另一个直观的想法是，具有更复杂推理路径的提示更有可能引发LLM的推理能力，这可以导致生成正确答案的准确性更高。然而，这两种方法都依赖于带标注的CoT数据集。</strong><br>为了克服这一限制，Auto-CoT建议利用Zero-shot-CoT，通过专门提示LLM来生成CoT推理路径，从而消除了手动操作。为了提高性能，Auto-CoT进一步将训练集中的问题划分为不同的聚类，然后选择最接近每个聚类中心的问题，这应该很好地代表训练集中的提问。<br>尽管Few-shot CoT可以被视为ICL的一种特殊提示情况，但与ICL中的标准提示相比，演示的顺序似乎影响相对较小：在大多数任务中，重新排序演示只会导致小于2%的性能变化。<br>【增强的CoT策略】<br>除了丰富上下文信息外，CoT提示还提供了更多选项来推断给定问题的答案。现有的研究主要集中在生成多条推理路径，并试图在得出的答案中找到共识。例如，在生成CoT和最终答案时，提出了self-consistency作为一种新的解码策略。<strong>它首先生成几个推理路径，然后对所有答案进行综合</strong>（例如，通过在这些路径中投票来选择最一致的答案）。self-consistency在很大程度上提高了CoT推理的性能，甚至可以改进一些CoT提示通常比标准提示差的任务（例如，闭书问答和自然语言推理）。<br>此外，作者在[283]中将自一致性策略扩展到更通用的集成框架（扩展到提示上的集成），他们发现<strong>不同的推理路径是提高CoT推理性能的关键。</strong><br>相反，其他研究训练评分模型来测量生成的推理路径的可靠性，或者在自己生成的推理路径上继续训练LLM以提高性能。</p>
