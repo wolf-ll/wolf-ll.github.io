@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
-
+ </script><meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -644,7 +644,7 @@
 <li><strong>跨数据库兼容性</strong>：各数据库厂商使用相同的接口，Java代码不需要针对不同数据库分别开发。可随时替换底层数据库，访问数据库的Java代码基本不变。</li>
 <li><strong>安全性</strong>：JDBC提供了一种安全的数据库访问机制，可以防止SQL注入等安全问题。通过使用预编译语句和参数化查询等技术，可以有效地防止恶意用户对数据库进行攻击。</li>
 </ul>
-<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token operator">!</span><span class="token punctuation">[</span>registerDriver<span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token class-name">D</span><span class="token operator">:</span>\downloadd\my<span class="token operator">-</span>hexo<span class="token operator">-</span>blog\blogs\source\_posts\<span class="token constant">JDBC</span>\registerDriver<span class="token punctuation">.</span>png<span class="token punctuation">)</span><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JDBCDemo</span> <span class="token punctuation">{</span>
+<h2 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JDBCDemo</span> <span class="token punctuation">{</span>
 
     <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
         <span class="token comment">//1. 注册驱动</span>
