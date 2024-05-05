@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-04-26
+                    2024-05-05
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.1k
+                    2.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    4 分
+                    9 分
                 </div>
                 
 
@@ -645,7 +645,7 @@
 <li><p>NoSQL 数据库代表：HBase、Cassandra、MongoDB、Redis。</p>
 </li>
 </ul>
-<img src="https://oss.javaguide.cn/github/javaguide/database/mongodb/sql-nosql-tushi.png" alt="img">
+<img src="/2024/04/26/mysql/sql-nosql-tushi.png" alt="img">
 
 <p>NoSQL 数据库非常适合许多现代应用程序，例如移动、Web 和游戏等应用程序，它们需要灵活、可扩展、高性能和功能强大的数据库以提供卓越的用户体验。</p>
 <p><strong>灵活性：</strong> NoSQL 数据库通常提供灵活的架构，以实现更快速、更多的迭代开发。灵活的数据模型使 NoSQL 数据库成为半结构化和非结构化数据的理想之选。</p>
@@ -679,7 +679,164 @@
 <p>SQL语句，根据其功能，主要分为四类：DDL、DML、DQL、DCL</p>
 <img src="/2024/04/26/mysql/image-20240426170912537.png" alt="image-20240426170912537" style="zoom: 80%;">
 
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员MySQL：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c">https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c</a></p>
+<h3 id="DDL-数据定义语言"><a href="#DDL-数据定义语言" class="headerlink" title="DDL 数据定义语言"></a>DDL 数据定义语言</h3><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">--------------数据库操作---------------------</span>
+<span class="token keyword">show</span> <span class="token keyword">databases</span><span class="token punctuation">;</span>
+<span class="token keyword">select</span> <span class="token keyword">database</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>	<span class="token comment"># 当前数据库</span>
+<span class="token keyword">create</span> <span class="token keyword">database</span> <span class="token punctuation">[</span> <span class="token keyword">if</span> <span class="token operator">not</span> <span class="token keyword">exists</span> <span class="token punctuation">]</span> 数据库名 <span class="token punctuation">[</span> <span class="token keyword">default</span> <span class="token keyword">charset</span> 字符集 <span class="token punctuation">]</span> <span class="token punctuation">[</span> <span class="token keyword">collate</span> 排序规则 <span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">drop</span> <span class="token keyword">database</span> <span class="token punctuation">[</span> <span class="token keyword">if</span> <span class="token keyword">exists</span> <span class="token punctuation">]</span> 数据库名 <span class="token punctuation">;</span>
+<span class="token keyword">use</span> 数据库名 <span class="token punctuation">;</span>
+<span class="token comment">-----------------表操作---------------------</span>
+<span class="token keyword">show</span> <span class="token keyword">tables</span><span class="token punctuation">;</span>
+<span class="token keyword">desc</span> 表名 <span class="token punctuation">;</span> <span class="token comment">#查看表结构</span>
+<span class="token keyword">show</span> <span class="token keyword">create</span> <span class="token keyword">table</span> 表名 <span class="token punctuation">;</span>	<span class="token comment"># 查询指定表的建表语句</span>
+<span class="token keyword">create</span> <span class="token keyword">table</span> emp<span class="token punctuation">(</span>
+    id <span class="token keyword">int</span> <span class="token keyword">comment</span> <span class="token string">'编号'</span><span class="token punctuation">,</span>
+    workno <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span> <span class="token keyword">comment</span> <span class="token string">'工号'</span><span class="token punctuation">,</span>
+    name <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span> <span class="token keyword">comment</span> <span class="token string">'姓名'</span><span class="token punctuation">,</span>
+    gender <span class="token keyword">char</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">comment</span> <span class="token string">'性别'</span><span class="token punctuation">,</span>
+    age <span class="token keyword">tinyint</span> <span class="token keyword">unsigned</span> <span class="token keyword">comment</span> <span class="token string">'年龄'</span><span class="token punctuation">,</span>
+    idcard <span class="token keyword">char</span><span class="token punctuation">(</span><span class="token number">18</span><span class="token punctuation">)</span> <span class="token keyword">comment</span> <span class="token string">'身份证号'</span><span class="token punctuation">,</span>
+    entrydate <span class="token keyword">date</span> <span class="token keyword">comment</span> <span class="token string">'入职时间'</span>
+<span class="token punctuation">)</span> <span class="token keyword">comment</span> <span class="token string">'员工表'</span><span class="token punctuation">;</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> 表名 <span class="token keyword">ADD</span> 字段名 类型 <span class="token punctuation">(</span>长度<span class="token punctuation">)</span> <span class="token punctuation">[</span> <span class="token keyword">COMMENT</span> 注释 <span class="token punctuation">]</span> <span class="token punctuation">[</span> 约束 <span class="token punctuation">]</span><span class="token punctuation">;</span>	<span class="token comment"># 添加字段</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> emp <span class="token keyword">ADD</span> nickname <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">COMMENT</span> <span class="token string">'昵称'</span><span class="token punctuation">;</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> 表名 <span class="token keyword">MODIFY</span> 字段名 新数据类型 <span class="token punctuation">(</span>长度<span class="token punctuation">)</span><span class="token punctuation">;</span>	<span class="token comment"># 修改字段类型</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> 表名 CHANGE 旧字段名 新字段名 类型 <span class="token punctuation">(</span>长度<span class="token punctuation">)</span> <span class="token punctuation">[</span> <span class="token keyword">COMMENT</span> 注释 <span class="token punctuation">]</span> <span class="token punctuation">[</span> 约束 <span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> emp CHANGE nickname username <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">30</span><span class="token punctuation">)</span> <span class="token keyword">COMMENT</span> <span class="token string">'昵称'</span><span class="token punctuation">;</span> <span class="token number">1</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> 表名 <span class="token keyword">DROP</span> 字段名<span class="token punctuation">;</span> 	<span class="token comment"># 删除字段</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> 表名 <span class="token keyword">RENAME</span> <span class="token keyword">TO</span> 新表名<span class="token punctuation">;</span>	<span class="token comment"># 修改表名</span>
+<span class="token keyword">DROP</span> <span class="token keyword">TABLE</span> <span class="token punctuation">[</span> <span class="token keyword">IF</span> <span class="token keyword">EXISTS</span> <span class="token punctuation">]</span> 表名<span class="token punctuation">;</span>	<span class="token comment"># 删除表</span>
+<span class="token keyword">TRUNCATE</span> <span class="token keyword">TABLE</span> 表名<span class="token punctuation">;</span>	<span class="token comment"># 删除指定表, 并重新创建表</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="数值类型"><a href="#数值类型" class="headerlink" title="数值类型"></a>数值类型</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>大小</th>
+<th>有符号(SIGNED)范围</th>
+<th>无符号(UNSIGNED)范围</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TINYINT</td>
+<td>1byte</td>
+<td>(-128,127)</td>
+<td>(0,255)</td>
+<td>小整数值</td>
+</tr>
+<tr>
+<td>SMALLINT</td>
+<td>2bytes</td>
+<td>(-32768,32767)</td>
+<td>(0,65535)</td>
+<td>大整数值</td>
+</tr>
+<tr>
+<td>MEDIUMINT</td>
+<td>3bytes</td>
+<td>(-8388608,8388607)</td>
+<td>(0,16777215)</td>
+<td>大整数值</td>
+</tr>
+<tr>
+<td>INT/INTEGER</td>
+<td>4bytes</td>
+<td>(-2147483648  2147483647)</td>
+<td>(0,4294967295)</td>
+<td>大整数值</td>
+</tr>
+<tr>
+<td>BIGINT</td>
+<td>8bytes</td>
+<td>(-2^63,2^63-1)</td>
+<td>(0,2^64-1)</td>
+<td>极大整数值</td>
+</tr>
+<tr>
+<td>FLOAT</td>
+<td>4bytes</td>
+<td>(-3.402823466 E+38,  3.402823466351 E+38)</td>
+<td>0和(1.175494351 E-38,3.402823466 E+38)</td>
+<td>单精度浮点数值</td>
+</tr>
+<tr>
+<td>DOUBLE</td>
+<td>8bytes</td>
+<td>(-1.7976931348623157  E+308,  1.7976931348623157  E+308)</td>
+<td>0和  (2.2250738585072014  E-308,  1.7976931348623157  E+308)</td>
+<td>双精度浮点数值</td>
+</tr>
+<tr>
+<td>DECIMAL</td>
+<td></td>
+<td>依赖于M(精度)和D(标度）的值</td>
+<td>依赖于M(精度)和D(标度)的值</td>
+<td>小数值(精确定 点数)</td>
+</tr>
+</tbody></table>
+<h4 id="字符串类型"><a href="#字符串类型" class="headerlink" title="字符串类型"></a>字符串类型</h4><img src="/2024/04/26/mysql/image-20240505120222157.png" alt="image-20240505120222157">
+
+<p><strong>char是定长字符串</strong>，指定长度多长，就占用多少个字符，和字段值的长度无关 。而varchar是变长字符串，指定的长度为最大占用长度 。相对来说，char性能更好。</p>
+<h4 id="日期时间类型"><a href="#日期时间类型" class="headerlink" title="日期时间类型"></a>日期时间类型</h4><img src="/2024/04/26/mysql/image-20240505124939337.png">
+
+<h3 id="DML-数据操作语言"><a href="#DML-数据操作语言" class="headerlink" title="DML 数据操作语言"></a>DML 数据操作语言</h3><p>DML英文全称是Data Manipulation Language(数据操作语言)，用来对数据库中表的数据记录进行增、删、改操作。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">INSERT</span> <span class="token keyword">INTO</span> 表名 <span class="token punctuation">(</span>字段名<span class="token number">1</span><span class="token punctuation">,</span> 字段名<span class="token number">2</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span> <span class="token keyword">VALUES</span> <span class="token punctuation">(</span>值<span class="token number">1</span><span class="token punctuation">,</span> 值<span class="token number">2</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">INSERT</span> <span class="token keyword">INTO</span> 表名 <span class="token keyword">VALUES</span> <span class="token punctuation">(</span>值<span class="token number">1</span><span class="token punctuation">,</span> 值<span class="token number">2</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>值<span class="token number">1</span><span class="token punctuation">,</span> 值<span class="token number">2</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>值<span class="token number">1</span><span class="token punctuation">,</span> 值<span class="token number">2</span><span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span> <span class="token punctuation">;</span> 	<span class="token comment"># 批量添加</span>
+<span class="token keyword">insert</span> <span class="token keyword">into</span> employee<span class="token punctuation">(</span>id<span class="token punctuation">,</span>workno<span class="token punctuation">,</span>name<span class="token punctuation">,</span>gender<span class="token punctuation">,</span>age<span class="token punctuation">,</span>idcard<span class="token punctuation">,</span>entrydate<span class="token punctuation">)</span> <span class="token keyword">values</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token string">'1'</span><span class="token punctuation">,</span><span class="token string">'Itcast'</span><span class="token punctuation">,</span><span class="token string">'男'</span><span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token string">'123456789012345678'</span><span class="token punctuation">,</span><span class="token string">'2000-01-01'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">UPDATE</span> 表名 <span class="token keyword">SET</span> 字段名<span class="token number">1</span> <span class="token operator">=</span> 值<span class="token number">1</span> <span class="token punctuation">,</span> 字段名<span class="token number">2</span> <span class="token operator">=</span> 值<span class="token number">2</span> <span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">[</span> <span class="token keyword">WHERE</span> 条件 <span class="token punctuation">]</span> <span class="token punctuation">;</span>
+<span class="token keyword">update</span> employee <span class="token keyword">set</span> name <span class="token operator">=</span> <span class="token string">'小昭'</span> <span class="token punctuation">,</span> gender <span class="token operator">=</span> <span class="token string">'女'</span> <span class="token keyword">where</span> id <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> 
+<span class="token keyword">DELETE</span> <span class="token keyword">FROM</span> 表名 <span class="token punctuation">[</span> <span class="token keyword">WHERE</span> 条件 <span class="token punctuation">]</span> <span class="token punctuation">;</span>
+<span class="token keyword">delete</span> <span class="token keyword">from</span> employee <span class="token keyword">where</span> gender <span class="token operator">=</span> <span class="token string">'女'</span><span class="token punctuation">;</span>	<span class="token comment"># 删除一条数据</span>
+<span class="token keyword">delete</span> <span class="token keyword">from</span> employee<span class="token punctuation">;</span>	<span class="token comment"># 删除所有员工数据</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="DQL-数据查询语言"><a href="#DQL-数据查询语言" class="headerlink" title="DQL 数据查询语言"></a>DQL 数据查询语言</h3><p>DQL英文全称是Data Query Language(数据查询语言)，数据查询语言，用来查询数据库中表的记录。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span>	字段列表	<span class="token keyword">FROM</span>	表名列表
+<span class="token keyword">WHERE</span>	条件列表	<span class="token keyword">GROUP</span> <span class="token keyword">BY</span>	分组字段列表	<span class="token keyword">HAVING</span>	分组后条件列表	<span class="token keyword">ORDER</span> <span class="token keyword">BY</span>	排序字段列表	<span class="token keyword">LIMIT</span>	分页参数
+
+<span class="token keyword">SELECT</span> 字段<span class="token number">1</span> <span class="token punctuation">[</span> <span class="token punctuation">(</span><span class="token keyword">AS</span><span class="token punctuation">)</span> 别名<span class="token number">1</span> <span class="token punctuation">]</span> <span class="token punctuation">,</span> 字段<span class="token number">2</span> <span class="token punctuation">[</span> <span class="token punctuation">(</span><span class="token keyword">AS</span><span class="token punctuation">)</span> 别名<span class="token number">2</span> <span class="token punctuation">]</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token keyword">FROM</span> 表名<span class="token punctuation">;</span>		<span class="token comment"># 别名，as可以省略</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">DISTINCT</span> 字段列表 <span class="token keyword">FROM</span> 表名<span class="token punctuation">;</span>	<span class="token comment"># 去除重复记录</span>
+
+<span class="token comment"># 查询年龄小于45的员工 , 并根据工作地址分组 , 获取员工数量大于等于3的工作地址</span>
+<span class="token keyword">select</span> workaddress<span class="token punctuation">,</span> <span class="token function">count</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> address_count <span class="token keyword">from</span> emp <span class="token keyword">where</span> age <span class="token operator">&lt;</span> <span class="token number">45</span> <span class="token keyword">group</span> <span class="token keyword">by</span> workaddress <span class="token keyword">having</span> address_count <span class="token operator">&gt;=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+
+<span class="token keyword">SELECT</span> 字段列表 <span class="token keyword">FROM</span> 表名 <span class="token keyword">LIMIT</span> 起始索引<span class="token punctuation">,</span> 查询记录数 <span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>where与having区别</li>
+<li>执行时机不同：where是分组之前进行过滤，不满足where条件，不参与分组；而having是分组之后对结果进行过滤。</li>
+<li>判断条件不同：where不能对聚合函数进行判断，而having可以。</li>
+<li><strong>分组之后，查询的字段一般为聚合函数和分组字段，查询其他字段无任何意义。</strong></li>
+</ul>
+<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><img src="/2024/04/26/mysql/image-20240505180928668.png" alt="image-20240505180928668" style="zoom:80%;">
+
+<h3 id="DCL-数据控制语言"><a href="#DCL-数据控制语言" class="headerlink" title="DCL 数据控制语言"></a>DCL 数据控制语言</h3><p>DCL英文全称是<strong>Data Control Language</strong>(数据控制语言)，用来管理数据库用户、控制数据库的访问权限。</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> <span class="token operator">*</span> <span class="token keyword">from</span> mysql<span class="token punctuation">.</span><span class="token keyword">user</span><span class="token punctuation">;</span> 	<span class="token comment"># 查询用户</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>其中 Host代表当前用户访问的主机, 如果为localhost, 仅代表只能够在当前本机访问，是不可以远程访问的。 User代表的是访问该数据库的用户名。在MySQL中<strong>需要通过Host和User来唯一标识一个用户。</strong></p>
+<img src="/2024/04/26/mysql/image-20240505181311834.png">
+
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">USER</span> <span class="token string">'用户名'</span><span class="token variable">@'主机名'</span> IDENTIFIED <span class="token keyword">BY</span> <span class="token string">'密码'</span><span class="token punctuation">;</span>		<span class="token comment"># 创建用户</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">USER</span> <span class="token string">'用户名'</span><span class="token variable">@'主机名'</span> IDENTIFIED <span class="token keyword">WITH</span> mysql_native_password <span class="token keyword">BY</span> <span class="token string">'新密码'</span> <span class="token punctuation">;</span>	<span class="token comment"># 修改密码</span>
+<span class="token keyword">DROP</span> <span class="token keyword">USER</span> <span class="token string">'用户名'</span><span class="token variable">@'主机名'</span> <span class="token punctuation">;</span>		<span class="token comment"># 删除用户	主机名可以使用 % 通配。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="权限控制"><a href="#权限控制" class="headerlink" title="权限控制"></a>权限控制</h4><img src="/2024/04/26/mysql/image-20240505181611707.png" alt="image-20240505181611707" style="zoom: 67%;">
+
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SHOW</span> GRANTS <span class="token keyword">FOR</span> <span class="token string">'用户名'</span><span class="token variable">@'主机名'</span> <span class="token punctuation">;</span>	<span class="token comment"># 查询权限</span>
+<span class="token keyword">GRANT</span> 权限列表 <span class="token keyword">ON</span> 数据库名<span class="token punctuation">.</span>表名 <span class="token keyword">TO</span> <span class="token string">'用户名'</span><span class="token variable">@'主机名'</span><span class="token punctuation">;</span>	<span class="token comment"># 授予权限</span>
+<span class="token keyword">REVOKE</span> 权限列表 <span class="token keyword">ON</span> 数据库名<span class="token punctuation">.</span>表名 <span class="token keyword">FROM</span> <span class="token string">'用户名'</span><span class="token variable">@'主机名'</span><span class="token punctuation">;</span>	<span class="token comment"># 撤销权限</span>
+
+<span class="token keyword">show</span> grants <span class="token keyword">for</span> <span class="token string">'heima'</span><span class="token variable">@'%'</span><span class="token punctuation">;</span>
+<span class="token keyword">grant</span> <span class="token keyword">all</span> <span class="token keyword">on</span> itcast<span class="token punctuation">.</span><span class="token operator">*</span> <span class="token keyword">to</span> <span class="token string">'heima'</span><span class="token variable">@'%'</span><span class="token punctuation">;</span>	<span class="token comment"># 授予 'heima'@'%' 用户itcast数据库所有表的所有操作权限</span>
+<span class="token keyword">revoke</span> <span class="token keyword">all</span> <span class="token keyword">on</span> itcast<span class="token punctuation">.</span><span class="token operator">*</span> <span class="token keyword">from</span> <span class="token string">'heima'</span><span class="token variable">@'%'</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>多个权限之间，使用逗号分隔</p>
+</li>
+<li><p>授权时， 数据库名和表名可以使用 * 进行通配，代表所有。</p>
+</li>
+</ul>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员MySQL：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c">https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c</a></p>
 <p>JavaGuide：<a target="_blank" rel="noopener" href="https://javaguide.cn/database/sql/sql-syntax-summary.html#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">https://javaguide.cn/database/sql/sql-syntax-summary.html#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5</a></p>
 
                 
@@ -934,52 +1091,50 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/04/26/mysql/">
+                <a href="/2024/04/30/urbangpt-spatio-temporal-large-language-models/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="MySQL">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="UrbanGPT: Spatio-Temporal Large Language Models">
                         
-                        <span class="card-title">MySQL</span>
+                        <span class="card-title">UrbanGPT: Spatio-Temporal Large Language Models</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            MySQL数据库查漏补缺，持续更新
+                            一个用于城市任务时间序列预测的大模型，集成时空编码器（基于TCN）和指令微调（对齐时序和文本，修改输出）以融合时序数值数据和时空上下文特征。
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-04-26
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-04-30
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                    后端
+                            <a href="/categories/%E8%AE%BA%E6%96%87/" class="post-category">
+                                    论文
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">
-                        <span class="chip bg-color">数据库</span>
+                    <a href="/tags/LLM/">
+                        <span class="chip bg-color">LLM</span>
                     </a>
                     
-                    <a href="/tags/MySQL/">
-                        <span class="chip bg-color">MySQL</span>
+                    <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/">
+                        <span class="chip bg-color">时间序列</span>
                     </a>
                     
                 </div>
@@ -1235,7 +1390,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">28.5k</span>&nbsp;字
+                class="white-color">43.7k</span>&nbsp;字
             
             
             
