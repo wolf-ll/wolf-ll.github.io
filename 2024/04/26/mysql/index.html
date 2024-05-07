@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
-
+ </script><meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-05-07
+                    2024-05-08
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    7.5k
+                    9.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    28 分
+                    34 分
                 </div>
                 
 
@@ -1124,14 +1124,82 @@
 <h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>索引（index）是帮助MySQL高效获取数据的数据结构(有序)。在数据之外，数据库系统还维护着<strong>满足特定查找算法</strong>的数据结构，这些数据结构<strong>以某种方式引用（指向）数据</strong>， 这样就可以在这些数据结构上实现高级查找算法，这种数据结构就是索引。</p>
 <img src="/2024/04/26/mysql/image-20240507172545744.png" alt="image-20240507172545744" style="zoom:80%;">
 
+<p>大多数情况下，索引查询都是比全表扫描要快的。但是如果数据库的数据量不大，那么使用索引也不一定能够带来很大提升。</p>
 <h3 id="索引结构"><a href="#索引结构" class="headerlink" title="索引结构"></a>索引结构</h3><p>MySQL的索引是在存储引擎层实现的，不同的存储引擎有不同的索引结构，主要包含以下几种：</p>
 <img src="/2024/04/26/mysql/image-20240507172740796.png" style="zoom:80%;">
 
 <p>不同的存储引擎对于索引结构的支持情况：</p>
 <img src="/2024/04/26/mysql/image-20240507173002960.png" style="zoom:80%;">
 
+<p>我们平常所说的索引，如果没有特别指明，都是指B+树结构组织的索引。</p>
+<h4 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h4><p>如果选择二叉树作为索引结构，会存在以下缺点：</p>
+<ul>
+<li><p>顺序插入时，会形成一个链表，查询性能大大降低。</p>
+</li>
+<li><p>大数据量情况下，层级较深，检索速度慢。</p>
+</li>
+</ul>
+<p>此时大家可能会想到，我们可以选择红黑树，红黑树是一颗自平衡二叉树，那这样即使是顺序插入数据，最终形成的数据结构也是一颗平衡的二叉树。但是，即使如此，由于红黑树也是一颗二叉树，所以也会存在一个缺点：大数据量情况下，层级较深，检索速度慢。</p>
+<p>在MySQL的索引结构中，并没有选择二叉树或者红黑树，而选择的是B+Tree。在详解B+Tree之前，先来介绍一下B-Tree。</p>
+<h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>B-Tree，B树是一种<strong>多路平衡查找树</strong>，相对于二叉树，B树每个节点可以有多个分支，即多叉。以一颗最大度数（max-degree）为5(5阶)的b-tree为例，那这个B树每个节点最多存储4个key，5个指针：</p>
+<img src="/2024/04/26/mysql/image-20240507222040839.png">
+
+<p>插入一组数据： 100 65 169 368 900 556 780 35 215 1200 234 888 158 90 1000 88 120 268 250 。然后观察一些数据插入过程中，节点的变化情况。</p>
+<img src="/2024/04/26/mysql/image-20240507223005789.png" style="zoom:80%;">
+
+
+
+<p>特点：</p>
+<ul>
+<li><p>5阶的B树，每一个节点最多存储4个key，对应5个指针。</p>
+</li>
+<li><p>一旦节点存储的key数量到达5，就会裂变，中间元素向上分裂。</p>
+</li>
+<li><p>在B树中，非叶子节点和叶子节点都会存放数据。</p>
+</li>
+</ul>
+<p>一棵m阶B树(balanced tree of order m)是一棵平衡的m路搜索树。它或者是空树，或者是满足下列性质的树：</p>
+<ul>
+<li>根结点至少有两个子女；</li>
+<li>每个非根节点所包含的关键字个数 j 满足：┌m/2┐ - 1 &lt;= j &lt;= m - 1；</li>
+<li>除根结点以外的所有结点（不包括叶子结点）的度数正好是关键字总数加1，故内部子树个数 k 满足：┌m/2┐ &lt;= k &lt;= m ；</li>
+<li>所有的叶子结点都位于同一层。</li>
+</ul>
+<h4 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a>B+Tree</h4><p>B+Tree是B-Tree的变种，我们以一颗最大度数（max-degree）为4（4阶）的b+tree为例，来看一下其结构示意图：</p>
+<img src="/2024/04/26/mysql/image-20240507223154029.png" alt="image-20240507223154029" style="zoom:80%;">
+
+<p>与B树对比：</p>
+<ul>
+<li>B 树的所有节点既存放键(key) 也存放数据(data)，而 B+树只有叶子节点存放 key 和 data，其他内节点只存放 key。</li>
+<li>B 树的叶子节点都是独立的;<strong>B+树的叶子节点有一条引用链指向与它相邻的叶子节点。</strong></li>
+<li>B 树的检索的过程相当于对范围内的每个节点的关键字做二分查找，可能还没有到达叶子节点，检索就结束了。而 B+树的检索效率就很稳定了，任何查找都是从根节点到叶子节点的过程，叶子节点的顺序检索很明显。</li>
+<li>在 B 树中进行范围查询时，首先找到要查找的下限，然后对 B 树进行中序遍历，直到找到查找的上限；而 <strong>B+树的范围查询，只需要对链表进行遍历即可。</strong></li>
+</ul>
+<p>综上，B+树与 B 树相比，具备更少的 IO 次数、更稳定的查询效率和更适于范围查询这些优势。</p>
+<p>MySQL中优化之后的B+Tree：在原B+Tree的基础上，增加一个指向相邻叶子节点的链表指针，就形成了带有顺序指针的B+Tree，提高区间访问的性能，利于排序。</p>
+<p><img src="/2024/04/26/mysql/downloadd\my-hexo-blog\blogs\source_posts\MySQL\image-20240507235942534.png" alt="image-20240507235942534"></p>
+<p>在 MySQL 中，MyISAM 引擎和 InnoDB 引擎都是使用 B+Tree 作为索引结构，但是，两者的实现方式不太一样。（下面的内容整理自《Java 工程师修炼之道》）</p>
+<blockquote>
+<p>MyISAM 引擎中，B+Tree 叶节点的 data 域存放的是数据记录的地址。在索引检索的时候，首先按照 B+Tree 搜索算法搜索索引，如果指定的 Key 存在，则取出其 data 域的值，然后以 data 域的值为地址读取相应的数据记录。这被称为“<strong>非聚簇索引（非聚集索引）</strong>”。</p>
+<p>InnoDB 引擎中，其<strong>数据文件本身就是索引文件</strong>。相比 MyISAM，索引文件和数据文件是分离的，其表数据文件本身就是按 B+Tree 组织的一个索引结构，树的叶节点 data 域保存了完整的数据记录。这个索引的 key 是数据表的主键，因此 InnoDB 表数据文件本身就是主索引。这被称为“<strong>聚簇索引（聚集索引）</strong>”，而其余的索引都作为 <strong>辅助索引</strong> ，辅助索引的 data 域存储相应记录主键的值而不是地址，这也是和 MyISAM 不同的地方。在根据主索引搜索时，直接找到 key 所在的节点即可取出数据；在根据辅助索引查找时，则需要先取出主键的值，再走一遍主索引。 因此，在设计表的时候，不建议使用过长的字段作为主键，也不建议使用非单调的字段作为主键，这样会造成主索引频繁分裂。</p>
+</blockquote>
+<h4 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h4><p>哈希索引就是采用一定的hash算法，将键值换算成新的hash值，映射到对应的槽位上，然后存储在hash表中。</p>
+<img src="/2024/04/26/mysql/image-20240508002143227.png">
+
+<p>如果两个(或多个)键值，映射到一个相同的槽位上，他们就产生了hash冲突（也称为hash碰撞），可以通过链表来解决。</p>
+<p>A. Hash索引只能用于对等比较(=，in)，<strong>不支持范围查询（between，&gt;，&lt; ，…）</strong></p>
+<p>B. <strong>无法利用索引完成排序操作</strong></p>
+<p>C. 查询效率高，通常(不存在hash冲突的情况)只需要一次检索就可以了，效率通常要高于B+tree索引</p>
+<blockquote>
+<p>MySQL 的 InnoDB 存储引擎不直接支持常规的哈希索引，但是，InnoDB 存储引擎中存在一种特殊的“自适应哈希索引”（Adaptive Hash Index），自适应哈希索引并不是传统意义上的纯哈希索引，而是结合了 B+Tree 和哈希索引的特点，以便更好地适应实际应用中的数据访问模式和性能需求。自适应哈希索引的每个哈希桶实际上是一个小型的 B+Tree 结构。这个 B+Tree 结构可以存储多个键值对，而不仅仅是一个键。这有助于减少哈希冲突链的长度，提高了索引的效率。</p>
+</blockquote>
+<p><strong>为什么InnoDB存储引擎选择使用B+tree索引结构?</strong></p>
+<p>A. 相对于二叉树，层级更少，搜索效率高；</p>
+<p>B. 对于B-tree，无论是叶子节点还是非叶子节点，都会保存数据，这样导致<strong>一页中存储的键值减少，指针跟着减少，要同样保存大量数据，只能增加树的高度，导致性能降低；</strong></p>
+<p>C. 相对Hash索引，B+tree支持范围匹配及排序操作；</p>
+<h3 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h3><p>在MySQL数据库，将索引的具体类型主要分为以下几类：主键索引、唯一索引、常规索引、全文索引。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员MySQL：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c">https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c</a></p>
-<p>JavaGuide：<a target="_blank" rel="noopener" href="https://javaguide.cn/database/sql/sql-syntax-summary.html#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">https://javaguide.cn/database/sql/sql-syntax-summary.html#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5</a></p>
+<p>JavaGuide：<a target="_blank" rel="noopener" href="https://javaguide.cn/database/mysql/mysql-questions-01.html">https://javaguide.cn/database/mysql/mysql-questions-01.html</a></p>
 
                 
             </div>
@@ -1684,7 +1752,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">48.8k</span>&nbsp;字
+                class="white-color">50.7k</span>&nbsp;字
             
             
             
