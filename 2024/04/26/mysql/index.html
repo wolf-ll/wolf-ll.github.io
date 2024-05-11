@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-05-10
+                    2024-05-11
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    18.2k
+                    20.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    67 分
+                    76 分
                 </div>
                 
 
@@ -988,7 +988,7 @@
 <h3 id="并发事务问题"><a href="#并发事务问题" class="headerlink" title="并发事务问题"></a>并发事务问题</h3><p>在典型的应用程序中，多个事务并发运行，经常会操作相同的数据来完成各自的任务（多个用户对同一数据进行操作）。并发虽然是必须的，但可能会导致以下的问题。</p>
 <h4 id="脏读（Dirty-read）"><a href="#脏读（Dirty-read）" class="headerlink" title="脏读（Dirty read）"></a>脏读（Dirty read）</h4><p> 赃读：一个事务读到另外一个事务还没有提交的数据。（A写数据，没提交就被B读）</p>
 <blockquote>
-<p>一个事务读取数据并且对数据进行了修改，这个修改对其他事务来说是可见的，即使当前事务没有提交。这时另外一个事务读取了这个还未提交的数据，但第一个事务突然回滚，导致数据并没有被提交到数据库，那第二个事务读取到的就是脏数据，这也就是脏读的由来。</p>
+<p>一个事务读取数据并且对数据进行了修改，这个修改对其他事务来说是可见的，即使当前事务没有提交。这时另外一个事务读取了这个还未提交的数据，但第一个事务突然回滚，导致数据并没有被提交到数据库，那<strong>第二个事务读取到的就是脏数</strong>据，这也就是脏读的由来。</p>
 </blockquote>
 <img src="https://javaguide.cn/assets/concurrency-consistency-issues-dirty-reading-C1rL9lNt.png" alt="脏读" style="zoom:80%;">
 
@@ -1667,7 +1667,7 @@ BEFORE<span class="token operator">/</span><span class="token keyword">AFTER</sp
     old<span class="token punctuation">.</span>phone<span class="token punctuation">,</span> <span class="token string">', email='</span><span class="token punctuation">,</span> old<span class="token punctuation">.</span>email<span class="token punctuation">,</span> <span class="token string">', profession='</span><span class="token punctuation">,</span> old<span class="token punctuation">.</span>profession<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p><strong>锁是计算机协调多个进程或线程并发访问某一资源的机制。</strong>在数据库中，除传统的计算资源（CPU、RAM、I/O）的争用以外，数据也是一种供许多用户共享的资源。如何<strong>保证数据并发访问的一致性、有效性</strong>是所有数据库必须解决的一个问题，锁冲突也是影响数据库并发访问性能的一个重要因素。从这个角度来说，锁对数据库而言显得尤其重要，也更加复杂。</p>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁***"></a>锁***</h2><p><strong>锁是计算机协调多个进程或线程并发访问某一资源的机制。</strong>在数据库中，除传统的计算资源（CPU、RAM、I/O）的争用以外，数据也是一种供许多用户共享的资源。如何<strong>保证数据并发访问的一致性、有效性</strong>是所有数据库必须解决的一个问题，锁冲突也是影响数据库并发访问性能的一个重要因素。从这个角度来说，锁对数据库而言显得尤其重要，也更加复杂。</p>
 <p>MySQL中的锁，按照锁的粒度分，分为以下三类：</p>
 <h3 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h3><ul>
 <li><p><strong>全局锁</strong>：锁定数据库中的所有表。全局锁就是对整个数据库实例加锁，加锁后整个实例就处于只读状态，后续的DML的写语句，DDL语句，已经更新操作的事务提交语句都将被阻塞。其典型的使用场景是<strong>做全库的逻辑备份，对所有的表进行锁定，从而获取一致性视图，保证数据的完整性</strong>。</p>
@@ -1683,6 +1683,13 @@ mysqldump <span class="token operator">-</span>uroot –p1234 itcast <span class
 <p>在InnoDB引擎中，我们可以在备份时加上参数 –single-transaction 参数来完成不加锁的一致性数据备份。</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">mysqldump <span class="token comment">--single-transaction -uroot –p123456 itcast &gt; itcast.sql</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
 </ul>
+<blockquote>
+<p>如果数据库的引擎支持的事务支持<strong>可重复读的隔离级别</strong>，那么在备份数据库之前先开启事务，会先创建 Read View，然后整个事务执行期间都在用这个 Read View，而且<strong>由于 MVCC 的支持，备份期间业务依然可以对数据进行更新操作</strong>。</p>
+<p>因为在可重复读的隔离级别下，<strong>即使其他事务更新了表的数据，也不会影响备份数据库时的 Read View</strong>，这就是事务四大特性中的隔离性，这样备份期间备份的数据一直是在开启事务时的数据。</p>
+<p>备份数据库的工具是 mysqldump，在使用 mysqldump 时加上 <code>–single-transaction</code> 参数的时候，就会<strong>在备份数据库之前先开启事务</strong>。这种方法只适用于<strong>支持「可重复读隔离级别的事务」</strong>的存储引擎。</p>
+<p>InnoDB 存储引擎默认的事务隔离级别正是可重复读，因此可以采用这种方式来备份数据库。</p>
+<p>但是，对于 MyISAM 这种不支持事务的引擎，在备份数据库时就要使用全局锁的方法。</p>
+</blockquote>
 <h3 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h3><ul>
 <li><p><strong>表级锁</strong>：每次操作锁住整张表。锁定粒度大，发生锁冲突的概率最高，并发度最低。应用在MyISAM、InnoDB、BDB等存储引擎中。</p>
 <p>表级锁主要分为：表锁，元数据锁，意向锁</p>
@@ -1697,21 +1704,39 @@ mysqldump <span class="token operator">-</span>uroot –p1234 itcast <span class
 <p>常见的SQL操作时，所添加的元数据锁：</p>
 <img src="/2024/04/26/mysql/image-20240510171058496.png" style="zoom:80%;">
 
-<h4 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h4><p>为了避免DML在执行时，加的行锁与表锁的冲突，在InnoDB中引入了意向锁，<strong>使得表锁不用检查每行数据是否加锁，使用意向锁来减少表锁的检查。</strong></p>
+<p>MDL 是在事务提交后才会释放，这意味着<strong>事务执行期间，MDL 是一直持有的</strong>。</p>
+<p>那如果数据库有一个长事务（所谓的长事务，就是开启了事务，但是一直还没提交），那在对表结构做变更操作的时候，可能会发生意想不到的事情，比如下面这个顺序的场景：</p>
+<ol>
+<li>首先，线程 A 先启用了事务（但是一直不提交），然后执行一条 select 语句，此时就先对该表加上 MDL 读锁；</li>
+<li>然后，线程 B 也执行了同样的 select 语句，此时并不会阻塞，因为「读读」并不冲突；</li>
+<li>接着，线程 C 修改了表字段，此时由于线程 A 的事务并没有提交，也就是 MDL 读锁还在占用着，这时线程 C 就无法申请到 MDL 写锁，就会被阻塞，</li>
+</ol>
+<p>那么在线程 C 阻塞后，后续有对该表的 select 语句，就都会被阻塞，如果此时有大量该表的 select 语句的请求到来，就会有大量的线程被阻塞住，这时数据库的线程很快就会爆满了。</p>
+<blockquote>
+<p>为什么线程 C 因为申请不到 MDL 写锁，而导致后续的申请读锁的查询操作也会被阻塞？</p>
+</blockquote>
+<p>这是因为申请 MDL 锁的操作会形成一个队列，队列中<strong>写锁获取优先级高于读锁</strong>，一旦出现 MDL <strong>写锁等待，会阻塞后续该表的所有 CRUD 操作。</strong></p>
+<p>所以为了能安全的对表结构进行变更，在对表结构变更前，先要看看数据库中的长事务，是否有事务已经对表加上了 MDL 读锁，如果可以考虑 kill 掉这个长事务，然后再做表结构的变更。</p>
+<h4 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h4><p>为了避免DML在执行时，加的<strong>行锁与表锁的冲突</strong>，在InnoDB中引入了意向锁，<strong>使得表锁不用检查每行数据是否加锁，使用意向锁来减少表锁的检查。</strong></p>
 <p>假如没有意向锁，客户端一对表加了行锁后，客户端二如何给表加表锁呢：</p>
 <p>1.首先客户端一，开启一个事务，然后执行DML操作，在执行DML语句时，会对涉及到的行加行锁</p>
 <p>2.当客户端二，想对这张表加表锁时，会检查当前表是否有对应的行锁，如果没有，则添加表锁，此时就会<strong>从第一行数据，检查到最后一行数据，效率较低。</strong></p>
 <p>有了意向锁之后 :</p>
-<p>1.客户端一，在执行DML操作时，会对涉及的行加行锁，同时也会对<strong>该表</strong>加上意向锁。</p>
+<p>1.客户端一，在执行DML操作时，会对涉及的行<strong>加行锁</strong>，同时也会对<strong>该表</strong>加上<strong>意向锁</strong>。</p>
 <p>2.而其他客户端，在对这张表加表锁的时候，会<strong>根据该表上所加的意向锁来判定是否可以成功加表锁</strong>，而不用逐行判断行锁情况了。</p>
 <p>分类：</p>
 <ul>
-<li><p><strong>意向共享锁(IS):</strong> 由语句<strong>select … lock in share mode</strong>添加 。 与 <strong>表锁共享锁 (read)兼容</strong>，与表锁排他锁(write)互斥。</p>
+<li><p><strong>意向共享锁(IS):</strong> 由语句<strong>select … lock in share mode</strong>添加 。 与 <strong>表锁共享锁 (read)兼容</strong>，与<strong>表锁排他锁</strong>(write)互斥。</p>
 </li>
 <li><p><strong>意向排他锁(IX):</strong> 由insert、update、delete、select…<strong>for update</strong>添加 。与<strong>表锁共享锁(read)及排他锁(write)都互斥</strong>，<strong>意向锁之间不会互斥。</strong></p>
-</li>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">//先在表上加上意向共享锁，然后对读取的记录加共享锁</span>
+<span class="token keyword">select</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token keyword">lock</span> <span class="token operator">in</span> <span class="token keyword">share</span> <span class="token keyword">mode</span><span class="token punctuation">;</span>
+
+<span class="token comment">//先表上加上意向独占锁，然后对读取的记录加独占锁</span>
+<span class="token keyword">select</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token keyword">for</span> <span class="token keyword">update</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
 </ul>
 <blockquote>
+<p><strong>意向共享锁和意向独占锁是表级锁，不会和行级的共享锁和独占锁发生冲突，而且意向锁之间也不会发生冲突，只会和共享表锁（lock tables … read）和独占表锁（lock tables … write）发生冲突。</strong>（也就是说，意向锁只用于处理行锁与表锁冲突的情况）</p>
 <p>一旦事务提交了，意向共享锁、意向排他锁，都会自动释放。</p>
 </blockquote>
 <p>可以通过以下SQL，查看意向锁及行锁的加锁情况：</p>
@@ -1720,12 +1745,68 @@ mysqldump <span class="token operator">-</span>uroot –p1234 itcast <span class
 <h3 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h3><ul>
 <li><strong>行级锁</strong>：每次操作锁住对应的行数据。锁定粒度最小，发生锁冲突的概率最低，并发度最高。应用在InnoDB存储引擎中</li>
 </ul>
-<p>InnoDB的数据是基于索引组织的，<strong>行锁是通过对索引上的索引项加锁来实现的</strong>，而不是对记录加的锁。对于行级锁，主要分为以下三类：</p>
+<p>InnoDB的数据是基于索引组织的，<strong>行锁是通过对索引上的索引项加锁来实现的</strong>，而不是对记录加的锁。对于行级锁，主要分为以下三类：（行锁感觉叫记录锁更清晰）</p>
 <img src="/2024/04/26/mysql/image-20240510173950346.png" style="zoom:80%;">
 
+<h4 id="记录锁"><a href="#记录锁" class="headerlink" title="记录锁"></a>记录锁</h4><p>InnoDB实现了以下两种类型的行锁：</p>
+<ul>
+<li><p>共享锁（S）：允许一个事务去读一行，阻止其他事务获得相同数据集的排它锁。</p>
+</li>
+<li><p>排他锁（X）：允许获取排他锁的事务更新数据，阻止其他事务获得相同数据集的共享锁和排他锁。</p>
+</li>
+</ul>
+<p>共享锁和共享锁兼容，其他情况（共享与排他，排他与排他）不兼容。</p>
+<p>普通的 select 语句是不会对记录加锁的，因为它属于<strong>快照读</strong>。如果要在查询时对记录加行锁，可以使用下面这两个方式（lock in share mode和for update，前面意向锁也有提到，这个语句会先加意向锁再加S/X锁），这种<strong>查询会加锁</strong>的语句称为<strong>锁定读</strong>。</p>
+<img src="/2024/04/26/mysql/image-20240511095420544.png" style="zoom:80%;">
+
+<blockquote>
+<p>针对唯一索引进行检索时，对已存在的记录进行等值匹配时，将会自动优化为行锁。</p>
+<p>InnoDB的行锁是针对于索引加的锁，不通过索引条件检索数据，那么InnoDB将对表中的所有记录加锁，此时 就会升级为表锁。</p>
+</blockquote>
+<p>示例：</p>
+<img src="/2024/04/26/mysql/image-20240511110015133.png">
+
+<p>在客户端一中，开启事务，并执行update语句，更新name为Lily的数据，也就是id为19的记录 。然后在客户端二中更新id为3的记录，却不能直接执行，会处于阻塞状态，为什么呢？原因就是因为此时，客户端一，<strong>根据name字段进行更新时，name字段是没有索引的，如果没有索引，此时行锁会升级为表锁</strong>(因为行锁是对索引项加的锁，而name没有索引)。</p>
+<h4 id="间隙锁-临键锁"><a href="#间隙锁-临键锁" class="headerlink" title="间隙锁&amp;临键锁"></a>间隙锁&amp;临键锁</h4><p>Gap Lock 称为间隙锁，只存在于</p>
+<p>可重复读隔离级别，目的是为了解决可重复读隔离级别下幻读的现象。</p>
+<blockquote>
+<p>间隙锁虽然存在 X 型间隙锁和 S 型间隙锁，但是并没有什么区别，间隙锁之间是兼容的，即两个事务可以<strong>同时持有包含共同间隙范围的间隙锁</strong>，并不存在互斥关系，因为间隙锁的目的是防止插入幻影记录而提出的。</p>
+</blockquote>
+<p>Next-Key Lock 称为临键锁，是 Record Lock + Gap Lock 的组合，锁定一个范围，并且锁定记录本身。</p>
+<blockquote>
+<p><strong>next-key lock 是包含间隙锁+记录锁的，如果一个事务获取了 X 型的 next-key lock，那么另外一个事务在获取相同范围的 X 型的 next-key lock 时，是会被阻塞的</strong>。</p>
+</blockquote>
+<ul>
+<li><p>索引上的等值查询(唯一索引)，给不存在的记录加锁时, 优化为间隙锁 。</p>
+<img src="/2024/04/26/mysql/image-20240511110551714.png">
+
+
+</li>
+<li><p>索引上的等值查询(<strong>非唯一普通索引</strong>)，向右遍历时最后一个值不满足查询需求时，next-key lock 退化为间隙锁。</p>
+<p>我们知道InnoDB的B+树索引，叶子节点是有序的双向链表。 假如，我们要根据这个二级索引<strong>查询值为18的数据，并加上共享锁</strong>，我们是只锁定18这一行就可以了吗？ 并不是，因为是<strong>非唯一索引，这个结构中可能有多个18的存在</strong>，所以，在加锁时会继续往后找，找到一个不满足条件的值（当前案例中也就是29）。此时会<strong>对18加临键锁，并对29之前的间隙加锁。</strong></p>
+<img src="/2024/04/26/mysql/image-20240511110923868.png" alt="image-20240511110923868" style="zoom:80%;">
+
+<img src="/2024/04/26/mysql/image-20240511111206605.png">
+
+<p><strong>间隙锁（X,GAP），行锁（X,REC_NOT_GAP），临键锁（X）</strong></p>
+</li>
+<li><p>索引上的范围查询(唯一索引)–会访问到不满足条件的第一个值为止。</p>
+<p>查询的条件为id&gt;=19，并添加共享锁。 此时我们可以根据数据库表中现有的数据，将数据分为三个部分：[19]，(19,25]，(25,+∞]</p>
+<p>所以数据库数据在加锁是，就是将19加了行锁，25的临键锁（包含25及25之前的间隙），正无穷的临键锁(正无穷及之前的间隙)。</p>
+<img src="/2024/04/26/mysql/image-20240511111948747.png"></li>
+</ul>
+<h4 id="插入意向锁"><a href="#插入意向锁" class="headerlink" title="插入意向锁"></a>插入意向锁</h4><p>一个事务在插入一条记录的时候，需要判断插入位置是否已被其他事务加了间隙锁（next-key lock 也包含间隙锁）。</p>
+<p>如果有的话，插入操作就会发生<strong>阻塞</strong>，直到拥有间隙锁的那个事务提交为止（释放间隙锁的时刻），在此期间会生成一个<strong>插入意向锁</strong>，表明有事务想在某个区间插入新记录，但是现在处于等待状态。</p>
+<p>举个例子，假设事务 A 已经对表加了一个范围 id 为（3，5）间隙锁。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/mysql/%E9%94%81/gap%E9%94%81.drawio.png" alt="img"></p>
+<p>当事务 A 还没提交的时候，事务 B 向该表插入一条 id = 4 的新记录，这时会判断到插入的位置已经被事务 A 加了间隙锁，于是事物 B 会生成一个<strong>插入意向锁</strong>，然后将锁的状态设置为<strong>等待状态</strong>（PS：MySQL 加锁时，是先<strong>生成锁结构，然后设置锁的状态</strong>，如果锁状态是等待状态，并不是意味着事务成功获取到了锁，只有当锁状态为正常状态时，才代表事务成功获取到了锁），此时事务 B 就会发生阻塞，直到事务 A 提交了事务。</p>
+<p>插入意向锁名字虽然有意向锁，但是它并<strong>不是意向锁，它是一种特殊的间隙锁，属于行级别锁</strong>。</p>
+<p>如果说间隙锁锁住的是一个区间，那么<strong>「插入意向锁」锁住的就是一个点</strong>。因而从这个角度来说，插入意向锁确实是一种特殊的间隙锁。</p>
+<p>插入意向锁与间隙锁的另一个非常重要的差别是：尽管「插入意向锁」也属于间隙锁，但两个事务却不能在同一时间内，一个拥有间隙锁，另一个拥有该间隙区间内的插入意向锁（当然，插入意向锁如果不在间隙锁区间内则是可以的）。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员MySQL：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c">https://www.bilibili.com/video/BV1Kr4y1i7ru/?vd_source=8f6745987f6d9c4a333570852e433d6c</a></p>
 <p>JavaGuide：<a target="_blank" rel="noopener" href="https://javaguide.cn/database/mysql/mysql-questions-01.html">https://javaguide.cn/database/mysql/mysql-questions-01.html</a></p>
 <p>最左前缀匹配原则：<a target="_blank" rel="noopener" href="https://blog.csdn.net/yuanchangliang/article/details/107798724">https://blog.csdn.net/yuanchangliang/article/details/107798724</a></p>
+<p>小林coding：<a target="_blank" rel="noopener" href="https://xiaolincoding.com/mysql/lock/mysql_lock.html">https://xiaolincoding.com/mysql/lock/mysql_lock.html</a></p>
 
                 
             </div>
@@ -2278,7 +2359,7 @@ mysqldump <span class="token operator">-</span>uroot –p1234 itcast <span class
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">59.5k</span>&nbsp;字
+                class="white-color">61.9k</span>&nbsp;字
             
             
             
