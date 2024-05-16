@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-05-15
+                    2024-05-16
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.2k
+                    9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    20 分
+                    33 分
                 </div>
                 
 
@@ -1021,7 +1021,7 @@
         <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">ok</span><span class="token punctuation">(</span>shop<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h2 id="商户类型序列缓存"><a href="#商户类型序列缓存" class="headerlink" title="商户类型序列缓存"></a>商户类型序列缓存</h2><p>shopTypeController</p>
+<h3 id="商户类型序列缓存"><a href="#商户类型序列缓存" class="headerlink" title="商户类型序列缓存"></a>商户类型序列缓存</h3><p>shopTypeController</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"list"</span><span class="token punctuation">)</span>
 <span class="token keyword">public</span> <span class="token class-name">Result</span> <span class="token function">queryTypeList</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment">//        List&lt;ShopType&gt; typeList = typeService</span>
@@ -1068,8 +1068,212 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<h2 id="缓存更新策略"><a href="#缓存更新策略" class="headerlink" title="缓存更新策略"></a>缓存更新策略</h2><p>上面的作用模型可能会造成数据一致性问题，当我们对数据库进行修改的时候，缓存并没有同步进行修改，页面在缓存中获取数据的时候，其实并不是最新的数据。这肯定是不允许的。</p>
+<p>下面是缓存更新策略：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="center">内存淘汰</th>
+<th align="center">超时剔除</th>
+<th align="center">主动更新</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>说明</td>
+<td align="center">不用自己维护，利用Redis的内存淘汰机制，<strong>内存不足时自动淘汰部分数据</strong>，下次查询时更新缓存</td>
+<td align="center">给缓存数据添加TTL时间，<strong>到期后自动删除缓存</strong>。下次查询即可实现缓存的更新</td>
+<td align="center">自己编写业务逻辑，在修改数据库的同时，更新缓存</td>
+</tr>
+<tr>
+<td>一致性</td>
+<td align="center">差</td>
+<td align="center">一般</td>
+<td align="center">好</td>
+</tr>
+<tr>
+<td>维护成本</td>
+<td align="center">无</td>
+<td align="center">低</td>
+<td align="center">高</td>
+</tr>
+</tbody></table>
+<p>上述的策略选择要根据具体的业务场景：<br>1、低一致性需求/数据很少更新：使用内存淘汰机制。例如店铺类型的查询缓存。<br>2、高一致性需求：<strong>主动更新，以超时剔除作兜底方案。例如店铺详情查询的缓存。</strong></p>
+<h3 id="主动更新策略"><a href="#主动更新策略" class="headerlink" title="主动更新策略"></a>主动更新策略</h3><p>1、<strong>Cache Aside Pattern（最常用）</strong> – 由缓存的调用者，在更新数据库的同时更新缓存<br>2、<strong>Read/Write Through Pattern</strong> – 缓存与数据库整合为一个<strong>服务</strong>，由服务来维护一致性（调用者不知道服务内部）。调用者调用该服务无需关注一致性问题。但这种服务的成本肯定是很高的。<br>3、<strong>Write Behind Caching Pattern（写回）</strong> – 调用<strong>者只操作缓存</strong>，<strong>由其它线程异步的将缓存数据持久化到数据库</strong>，保证最终一致。<br>比如我们一直对缓存进行更新，更新10次以后轮到这个线程工作，就维护一下数据库的数据为更新10次后的数据，中途的其他9次更新操作根本不重要，这样的<strong>性能显然是很高的</strong>。这种方式当然也有很大问题，比如<strong>长期的数据不一致、缓存宕机造成的严重后果</strong>等。</p>
+<p>操作缓存和数据库时要考虑如下几个问题：</p>
+<ul>
+<li>删除缓存还是更新缓存？ 	<ul>
+<li>更新缓存：每次更新数据库都更新缓存，<strong>无效写操作较多</strong>。（写多读少的情况，假设更新100次数据，读1次数据，这边会有100次无效更新缓存）	</li>
+<li>删除缓存：<strong>更新数据库时让缓存失效，查询时再更新缓存</strong>（<strong>更优</strong>） 。（写多读少时，更新100次也只需要删一次缓存，避免无效写操作）</li>
+</ul>
+</li>
+<li>如何保证缓存和数据库的操作的同时成功或失败？（原子性） 	<br>- 单体系统：<strong>事务控制</strong>，将缓存与数据库操作放在一个事务 	<br>- 分布式系统：利用TCC等<strong>分布式事务方案</strong> </li>
+<li>先操作缓存还是先操作数据库？（线程安全） 	<br>- 先删除缓存，再操作数据库 	<br>- 先操作数据库，再删除缓存 	- 由于 redis 的速度远比MySQL要快，所以方案二为优选</li>
+</ul>
+<p><strong>先删缓存再操作数据库的线程安全问题：</strong>正常情况如左图，两个线程得到的数据一致。异常情况下如果线程2（读操作）在线程1写数据库之前查缓存，就会使得缓存与数据库不同步。因为写MySQL数据库操作比查Redis缓存操作慢，所以异常情况很容易发生。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516121851596.png" style="zoom:80%;">
 
+<p><strong>先操作数据库再删缓存的线程安全问题</strong>：正常情况如左图。异常情况如右图。异常情况发生条件是（1）线程并行（2）缓存失效（3）在线程1（读操作）查数据库过程中，线程2完成了更新数据库和删缓存两个操作。由于MySQL写数据比查数据慢，在微秒级别内完成更新数据库和删除缓存概率很低。所以这个方式更好。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516122155989.png" alt="image-20240516122155989" style="zoom:80%;">
 
+<h3 id="总结Redis读写策略"><a href="#总结Redis读写策略" class="headerlink" title="总结Redis读写策略"></a>总结Redis读写策略</h3><p>读操作：</p>
+<ul>
+<li>缓存命中则直接返回</li>
+<li>缓存未命中则查询数据库，并写入缓存，设定超时时间</li>
+</ul>
+<p>写操作：</p>
+<ul>
+<li><strong>先写数据库，然后再删除缓存</strong></li>
+<li>要确保数据库与缓存操作的原子性</li>
+</ul>
+<h2 id="商铺缓存与双写一致"><a href="#商铺缓存与双写一致" class="headerlink" title="商铺缓存与双写一致"></a>商铺缓存与双写一致</h2><p>现在我们要给查询商铺的缓存添加<strong>主动更新</strong>和<strong>超时剔除</strong>策略。<br>修改ShopController的业务逻辑满足：<br>（1）根据id查询店铺，没命中就查数据库，然后写入缓存，<strong>并设置超时时间</strong><br>（2）根据id<strong>修改</strong>店铺，<strong>先操作数据库，再删除缓存</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
+<span class="token annotation punctuation">@Transactional</span>  <span class="token comment">// 通过事务控制数据库和缓存操作的原子性</span>
+<span class="token keyword">public</span> <span class="token class-name">Result</span> <span class="token function">update</span><span class="token punctuation">(</span><span class="token class-name">Shop</span> shop<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Long</span> id <span class="token operator">=</span> shop<span class="token punctuation">.</span><span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>id <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"店铺不存在"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 更新数据库</span>
+    <span class="token function">updateById</span><span class="token punctuation">(</span>shop<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 删除缓存</span>
+    stringRedisTemplate<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span><span class="token constant">CACHE_SHOP_KEY</span> <span class="token operator">+</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">ok</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="缓存穿透、雪崩、击穿"><a href="#缓存穿透、雪崩、击穿" class="headerlink" title="缓存穿透、雪崩、击穿"></a>缓存穿透、雪崩、击穿</h2><h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p><strong>缓存穿透</strong>是指<strong>客户端请求的数据在缓存和数据库中都不存在</strong>，这样缓存永远不会生效，这些请求都会打到数据库。不断发起这样的请求，给数据库带来巨大压力。过程即：<br>（1）客户端访问Redis，未命中	（2）接着访问数据库，未命中<br>这样的话，如果有人恶意多线程地访问不存在的内容，可能就把我们的系统弄垮了。</p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p><strong>1、缓存空对象：</strong><br>（1）客户端请求Redis，未命中<br>（2）接着访问数据库，未命中<br>（3）<strong>数据库将空值null缓存到Redis里</strong><br>这样如果继续访问的话，<strong>就会访问Redis了，不会一直去对数据库造成攻击</strong>，尽管访问Redis以后返回的内容是NULL。<br><strong>优点</strong>：实现简单，维护方便<br><strong>缺点</strong>：<strong>额外内存消耗</strong>（每次进行不同的访问，都创建null，不过设置TTL可以解决）；可能<strong>造成短期的不一致</strong>（设置为NULL之后，数据库真的新增了这个数据，不过设置TTL可以有效缓解这种情况的出现概率）</p>
+<p><strong>2、布隆过滤：</strong><br>这其实是一种算法，它<strong>在客户端与Redis交互之间加了一个布隆过滤器</strong>：<br>（1）用户请求布隆过滤器，<strong>不存在就直接拒绝</strong><br>（2）存在的话就放行，让客户端去访问Redis，有就返回，没有就访问数据库<br>布隆过滤器存储的一系列的二进制位，<strong>这种二进制数是先对数据库数据进行某种哈希运算以后再转成二进制存储到布隆过滤器的</strong>，具体原理可以自行查询，这种算法实现方式决定了<strong>过滤器存在概率性</strong>：如果过滤器返回<strong>不存在</strong>，那就是不存在；如果返回<strong>存在</strong>，那就不一定了。</p>
+<p><strong>优点</strong>：<strong>内存占用较少</strong>，没有多余key<br><strong>缺点</strong>：实现复杂（不过Redis里面存在，可以简化开发）；存在<strong>误判可能</strong>。</p>
+<p>因为布隆过滤器存在误判，所以我们的开发过程中，会选择<strong>缓存空对象</strong>的方式来解决缓存穿透。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516130239055.png" alt="image-20240516130239055">
+
+<p><strong>缓存穿透的其他解决方案：</strong></p>
+<ul>
+<li>增强id的复杂度，避免被猜测id规律</li>
+<li>做好数据的基础格式校验</li>
+<li>加强用户权限校验</li>
+<li>做好热点参数的限流</li>
+</ul>
+<h3 id="解决商铺查询的缓存穿透问题"><a href="#解决商铺查询的缓存穿透问题" class="headerlink" title="解决商铺查询的缓存穿透问题"></a>解决商铺查询的缓存穿透问题</h3><p>1、我们需要在之前业务流程环节中增加缓存空对象的环节，即可解决，也就是根据id查询数据库的时候，判断商铺不存在之后，不再直接结束，而是将空值写入Redis。<br>2、那么我们之后的查询，可以在缓存中查询出null值，因此我们的查询就需要对查询出来的值进行判断，不是空值的话才能返回商铺信息到前端。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516214714449.png" alt="image-20240516214714449" style="zoom:80%;">
+
+<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p><strong>缓存雪崩</strong>是指在同一时段<strong>大量的缓存key同时失效或者Redis服务宕机</strong>，导致大量请求到达数据库，带来巨大压力。</p>
+<p>正常情况下，大量请求会到达Redis，少数请求到达数据库。而Redis一旦宕机，或者Redis中的大量key都因为TTL到期而失效了，这时候的很多请求都会指向数据库。<br>针对这个问题，我们可以提出一些解决方案：<br>1、给不同的key的<strong>TTL添加随机值</strong>，避免大量的key在同一个小时段内失效<br>2、利用<strong>Redis集群</strong>提高服务的可用性（Redis哨兵机制可以实现服务的监控，<strong>发现宕机的主Redis，就可以立刻将从Redis替代上去</strong>），这个内容相对比较高级，在之后讲。<br>3、给<strong>缓存业务添加降级限流策略（微服务部分）</strong>（如果整个集群的Redis全部都宕机了，我们可以提前做容错处理，当这些Redis都失效的时候，我们要<strong>及时的拒绝请求</strong>，防止大量请求到达数据库）<br>4、给业务添加<strong>多级缓存</strong></p>
+<h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><p><strong>缓存击穿</strong>也叫作热点key问题，就是一个被<strong>高并发访问</strong>并且<strong>缓存重建业务较复杂</strong>的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。</p>
+<blockquote>
+<p>我们可以这么理解，网站中有一些内容是非常的重要的，很可能<strong>在同一时段被多个用户给同时访问，也就是高并发访问</strong>，而这个<strong>被高并发访问的key失效了，这时候访问就会到达数据库</strong>，大量请求到达数据库是很危险的，很容易造成缓存雪崩。<br>即便数据库比较坚强，也有可能用户进行访问的内容是很复杂的，可能涉及到了多表查询，也可能其转换到Redis中进行存储的时候需要进行一系列的业务。当缓存重建业务复杂的时候，如此大的请求在那一瞬间给数据库带来的冲击是非常巨大的。</p>
+</blockquote>
+<p>缓存击穿问题，有两种比较主流的解决方法：<br>1、互斥锁<br>2、逻辑过期</p>
+<h4 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h4><p>1、当第一个线程<strong>未命中缓存</strong>的时候，<strong>获取互斥锁，直到这个线程查询数据库完，并且重建了缓存数据并存入Redis，才能释放互斥锁；</strong><br>2、后面的线程在缓存数据存入Redis的过程中，同样会发生查询Redis未命中的情况，那么这些线程无法获得互斥锁，只能进行<strong>休眠，休眠一段时间后再重试，直到锁被解开</strong>（Redis中已经有数据了）。</p>
+<h4 id="逻辑过期"><a href="#逻辑过期" class="headerlink" title="逻辑过期"></a>逻辑过期</h4><p>缓存击穿会出现的原因，其实无非就是TTL到期，Redis失效了，因此我们可以<strong>不给其设置TTL</strong>。但是我们该如何知道key过期了呢？我们要给这个key设置一个逻辑过期，类似：</p>
+<table>
+<thead>
+<tr>
+<th>KEY</th>
+<th>VALUE</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>wxj:user:1</td>
+<td>{name:“Jack”, age:21, expire:151467}</td>
+</tr>
+</tbody></table>
+<p>这里的expire不是TTL，而是我们添加到Redis之前设定的，用<strong>代码逻辑来进行维护</strong>。</p>
+<p>那么这个key一旦存储到了Redis里面，没有任何干预的情况下是永不过期的。</p>
+<p>也就是说有线程在查询缓存的时候，代码逻辑里发现<strong>逻辑时间过期了，我们也直接把旧数据返还给客户端</strong>，同时数据更新交给另一个线程去做。此时有更多线程要查缓存，因为拿不到锁所以直接返回旧数据，避免了等待。</p>
+<p>毕竟已经是高并发，一时的旧数据在很多时候也能接受，在我看来这是一种牺牲策略，客户端无须等待新数据到来，当然了，<strong>旧数据迟早要进行修改，但数据的更新操作完全可以交给其他线程，这样可以提高效率</strong>。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><table>
+<thead>
+<tr>
+<th>解决方案</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>互斥锁</td>
+<td>没有额外内存消耗；保持一致性；实现简单</td>
+<td>线程要等待，性能受影响；可能死锁</td>
+</tr>
+<tr>
+<td>逻辑过期</td>
+<td>线程无需等待，性能较好</td>
+<td><strong>不保证一致性</strong>；有额外内存消耗；实现复杂</td>
+</tr>
+</tbody></table>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516215835297.png" alt="image-20240516215835297" style="zoom:80%;">
+
+<h3 id="解决商铺查询的缓存击穿问题"><a href="#解决商铺查询的缓存击穿问题" class="headerlink" title="解决商铺查询的缓存击穿问题"></a>解决商铺查询的缓存击穿问题</h3><p>加互斥锁。获取锁与释放锁的方法定义如下：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">boolean</span> <span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token class-name">String</span> key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 利用redis setnx - 向Redis中添加一个key，只用当key不存在的时候才添加并返回1</span>
+    <span class="token class-name">Boolean</span> flag <span class="token operator">=</span> stringRedisTemplate<span class="token punctuation">.</span><span class="token function">opsForValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setIfAbsent</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> <span class="token string">"1"</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">SECONDS</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 直接返回flag的话，拆箱可能拿到空指针</span>
+    <span class="token keyword">return</span> <span class="token class-name">BooleanUtil</span><span class="token punctuation">.</span><span class="token function">isTrue</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">unlock</span><span class="token punctuation">(</span><span class="token class-name">String</span> key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    stringRedisTemplate<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>整合了缓存穿透和缓存击穿的代码。和前面的代码相比主要是在没有命中缓存，且没有存储空值的情况下，<strong>在查数据库前要先获取互斥锁。防止多个线程同时打到数据库。</strong>拿到锁以后查了数据库同步重建缓存返回数据，也就是这个线程的任务完成后，<strong>才能释放锁给其他线程用</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token class-name">Shop</span> <span class="token function">queryWithMutex</span><span class="token punctuation">(</span><span class="token class-name">Long</span> id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 查缓存，若存在直接返回，不存在就查数据库</span>
+    <span class="token class-name">String</span> key <span class="token operator">=</span> <span class="token constant">CACHE_SHOP_KEY</span> <span class="token operator">+</span> id<span class="token punctuation">;</span>
+    <span class="token class-name">String</span> shopJson <span class="token operator">=</span> stringRedisTemplate<span class="token punctuation">.</span><span class="token function">opsForValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token class-name">StrUtil</span><span class="token punctuation">.</span><span class="token function">isNotBlank</span><span class="token punctuation">(</span>shopJson<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 存在店铺信息，反序列化json为bean对象并返回</span>
+        <span class="token class-name">Shop</span> shop <span class="token operator">=</span> <span class="token class-name">JSONUtil</span><span class="token punctuation">.</span><span class="token function">toBean</span><span class="token punctuation">(</span>shopJson<span class="token punctuation">,</span> <span class="token class-name">Shop</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span>  shop<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">// 如果没有命中缓存。命中空值，也就是shopJson是“” 空字符串，而非null，返回错误</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>shopJson <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// ====== 没缓存，没空值，需要查数据库 -- 查之前先尝试获取互斥锁，拿到锁以后才能查数据库 ======</span>
+    <span class="token class-name">String</span> lockKey <span class="token operator">=</span> <span class="token string">"lock:shop:"</span> <span class="token operator">+</span> id<span class="token punctuation">;</span> <span class="token comment">// 每个商户都对应一个锁</span>
+    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+        <span class="token keyword">boolean</span> isLock <span class="token operator">=</span> <span class="token function">tryLock</span><span class="token punctuation">(</span>lockKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// 判断是否获取成功</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>isLock<span class="token punctuation">)</span><span class="token punctuation">{</span>   <span class="token comment">// 失败则休眠并重试（递归）</span>
+            <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">// 单位：ms</span>
+            <span class="token comment">// 如果担心递归造成爆栈，可以用循环，一样的</span>
+            <span class="token keyword">return</span> <span class="token function">queryWithMutex</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token comment">// 拿到了锁，查数据库</span>
+        <span class="token class-name">Shop</span> shop <span class="token operator">=</span> <span class="token function">getById</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// 模拟重建的延时，测试用</span>
+        <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>shop <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 空值有效期相对更短</span>
+            stringRedisTemplate<span class="token punctuation">.</span><span class="token function">opsForValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token constant">CACHE_NULL_TTL</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">MINUTES</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+        <span class="token punctuation">}</span>
+        <span class="token comment">// 数据库中存在，将店铺信息序列化为json字符串，存储到redis缓存中，并添加超时剔除</span>
+        stringRedisTemplate<span class="token punctuation">.</span><span class="token function">opsForValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> <span class="token class-name">JSONUtil</span><span class="token punctuation">.</span><span class="token function">toJsonStr</span><span class="token punctuation">(</span>shop<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token constant">CACHE_SHOP_TTL</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">MINUTES</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> shop<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">InterruptedException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">RuntimeException</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">finally</span> <span class="token punctuation">{</span>
+        <span class="token function">unlock</span><span class="token punctuation">(</span>lockKey<span class="token punctuation">)</span><span class="token punctuation">;</span>    <span class="token comment">// 释放锁</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>使用Jmeter做并发测试，设定并发量为1000。配置好路径和接口。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516223930023.png" alt="image-20240516223930023" style="zoom: 80%;">
+
+<p>运行完以后打开查看结果树：</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516224240314.png" alt="image-20240516224240314" style="zoom:80%;">
+
+<p>打开汇总报告可以看到我们的吞吐量为204</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516224424100.png" alt="image-20240516224424100" style="zoom:80%;">
+
+<p>如此大的数据量打下去，但是我们的日志显示我们的数据库只执行了一次的查询语句：</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240516224134785.png" alt="image-20240516224134785" style="zoom:80%;">
+
+<p>说明我们已经使用互斥锁成功避免了缓存击穿。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员Redis部分资料</p>
 <p>Cookie、Session、Token概念、区别、如何实现：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44369049/article/details/132062232">https://blog.csdn.net/weixin_44369049/article/details/132062232</a></p>
 <p>CSDN博主布布要成为最负责的男人笔记：<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_52380556?type=blog">https://blog.csdn.net/m0_52380556?type=blog</a></p>
@@ -1626,7 +1830,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">76k</span>&nbsp;字
+                class="white-color">79.7k</span>&nbsp;字
             
             
             
