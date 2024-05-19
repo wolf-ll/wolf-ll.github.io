@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-05-17
+                    2024-05-19
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    10.9k
+                    15.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    41 分
+                    58 分
                 </div>
                 
 
@@ -987,7 +987,7 @@
     <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h2 id="商户查询缓存"><a href="#商户查询缓存" class="headerlink" title="商户查询缓存"></a>商户查询缓存</h2><h3 id="什么是缓存"><a href="#什么是缓存" class="headerlink" title="什么是缓存"></a>什么是缓存</h3><p>缓存：数据交换的缓冲区（Cache），是<strong>存储数据的临时地方，读写性能高。</strong>俗称的缓存就是<strong>缓冲区内的数据</strong>,一般从数据库中获取,存储于本地代码(例如:</p>
+<h2 id="商户查询缓存"><a href="#商户查询缓存" class="headerlink" title="==商户查询缓存=="></a>==商户查询缓存==</h2><h3 id="什么是缓存"><a href="#什么是缓存" class="headerlink" title="什么是缓存"></a>什么是缓存</h3><p>缓存：数据交换的缓冲区（Cache），是<strong>存储数据的临时地方，读写性能高。</strong>俗称的缓存就是<strong>缓冲区内的数据</strong>,一般从数据库中获取,存储于本地代码(例如:</p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java">例<span class="token number">1</span><span class="token operator">:</span><span class="token class-name">Static</span> <span class="token keyword">final</span> <span class="token class-name">ConcurrentHashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span> map <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ConcurrentHashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 本地用于高并发
 例<span class="token number">2</span><span class="token operator">:</span><span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">Cache</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span> <span class="token constant">USER_CACHE</span> <span class="token operator">=</span> <span class="token class-name">CacheBuilder</span><span class="token punctuation">.</span><span class="token function">newBuilder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">build</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 用于redis等缓存
 例<span class="token number">3</span><span class="token operator">:</span><span class="token class-name">Static</span> <span class="token keyword">final</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span> map <span class="token operator">=</span>  <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 本地缓存<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
@@ -1463,7 +1463,324 @@
     <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">ok</span><span class="token punctuation">(</span>shop<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<h2 id="优惠券秒杀"><a href="#优惠券秒杀" class="headerlink" title="==优惠券秒杀=="></a>==优惠券秒杀==</h2><h3 id="全局唯一ID"><a href="#全局唯一ID" class="headerlink" title="全局唯一ID"></a>全局唯一ID</h3><p>每个店铺都可以发布优惠券（代金券），当用户抢购的时候，就会生成订单并且保存到tb_voucher_order这张表中：</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token identifier"><span class="token punctuation">`</span>tb_voucher_order<span class="token punctuation">`</span></span>  <span class="token punctuation">(</span>
+  <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'主键'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>user_id<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'下单的用户id'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>voucher_id<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'购买的代金券id'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>pay_type<span class="token punctuation">`</span></span> <span class="token keyword">tinyint</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token number">1</span> <span class="token keyword">COMMENT</span> <span class="token string">'支付方式 1：余额支付；2：支付宝；3：微信'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>status<span class="token punctuation">`</span></span> <span class="token keyword">tinyint</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token number">1</span> <span class="token keyword">COMMENT</span> <span class="token string">'订单状态，1：未支付；2：已支付；3：已核销；4：已取消；5：退款中；6：已退款'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>create_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'下单时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>pay_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'支付时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>use_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'核销时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>refund_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'退款时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>update_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'更新时间'</span><span class="token punctuation">,</span>
+  <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span> <span class="token keyword">USING</span> <span class="token keyword">BTREE</span>
+<span class="token punctuation">)</span> <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> <span class="token operator">=</span> utf8mb4 <span class="token keyword">COLLATE</span> <span class="token operator">=</span> utf8mb4_general_ci ROW_FORMAT <span class="token operator">=</span> Compact<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<p>可以发现，我们的主键ID没有使用自增长，这是因为如果使用数据库自增ID就会存在一些问题：<br>1、ID的规律性太明显，容易让别人猜测到信息（比如商城在一天时间内，卖出了多少单）<br>2、受单表数据量的限制（<strong>订单可能数据非常大，可能会分多表进行存储</strong>，但表的自增长相互之间不受影响，所以不同表之间可能会出现ID相同的情况，也就是说这种时候会违背ID的唯一性，这显然是不可以的）<br><strong>全局ID生成器</strong>，是一种在分布式系统下用来生成全局唯一ID的工具，一般要满足下列特性：<strong>1、唯一性  2、高可用  3、高性能  4、递增性  5、安全性</strong></p>
+<p>除了第5点，Redis及其数据结构已经可以直接满足前4点的要求了，为了增加ID的安全性，不要直接使用Redis自增的数值，而是拼接一些其他信息，最终我们将ID组成定义为64位的二进制数，分别是<strong>1位符号位，31位时间戳，32位序列号。</strong></p>
+<h4 id="Redis实现"><a href="#Redis实现" class="headerlink" title="Redis实现"></a>Redis实现</h4><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Component</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RedisIdWorker</span> <span class="token punctuation">{</span>
+
+    <span class="token annotation punctuation">@Resource</span>
+    <span class="token keyword">private</span> <span class="token class-name">StringRedisTemplate</span> stringRedisTemplate<span class="token punctuation">;</span>
+
+    <span class="token comment">/**
+     * 开始时间戳由main函数运行得到
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">long</span> <span class="token constant">BEGIN_TIMESTAMP</span> <span class="token operator">=</span> <span class="token number">1716076800L</span><span class="token punctuation">;</span>
+    <span class="token comment">/**
+     * 序列号的位数：32bit，秒内的计数器，支持每秒产生2^32个不同ID
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token constant">COUNT_BITS</span> <span class="token operator">=</span> <span class="token number">32</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">long</span> <span class="token function">nextId</span><span class="token punctuation">(</span><span class="token class-name">String</span> keyPrefix<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token comment">//获得当前时间</span>
+        <span class="token class-name">LocalDateTime</span> now <span class="token operator">=</span> <span class="token class-name">LocalDateTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">long</span> nowSecond <span class="token operator">=</span> now<span class="token punctuation">.</span><span class="token function">toEpochSecond</span><span class="token punctuation">(</span><span class="token class-name">ZoneOffset</span><span class="token punctuation">.</span><span class="token constant">UTC</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//生成时间戳：31bit，以秒为单位，可以使用69年</span>
+        <span class="token keyword">long</span> timestamp <span class="token operator">=</span> nowSecond <span class="token operator">-</span> <span class="token constant">BEGIN_TIMESTAMP</span><span class="token punctuation">;</span>
+        <span class="token comment">/**
+         * 接下来生成序列号
+         * 我们的key的设置除了加上icr表示是自增长的，还需要在最后拼接一个日期字符串
+         * 这是因为我们的序列号上限是2^32，并不大，如果每天的key都是一样的，这是很有可能超过上限的
+         * 在后面拼接一个日期字符串，可以保证每一天的key都是不一样的，而且一天内也基本不可能到达2^32的上限
+         * 这样做还有一个好处，我们以后可以根据每天或者每月来查看value值，起到统计效果
+         */</span>
+        <span class="token comment">//获取当前日期，精确到天</span>
+        <span class="token class-name">String</span> date <span class="token operator">=</span> now<span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span><span class="token class-name">DateTimeFormatter</span><span class="token punctuation">.</span><span class="token function">ofPattern</span><span class="token punctuation">(</span><span class="token string">"yyyy:MM:dd"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">long</span> count <span class="token operator">=</span> stringRedisTemplate<span class="token punctuation">.</span><span class="token function">opsForValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">increment</span><span class="token punctuation">(</span><span class="token string">"icr:"</span> <span class="token operator">+</span> keyPrefix <span class="token operator">+</span> <span class="token string">":"</span> <span class="token operator">+</span> date<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">//拼接并返回，这里灵活用位运算</span>
+        <span class="token keyword">return</span> timestamp <span class="token operator">&lt;&lt;</span> <span class="token constant">COUNT_BITS</span> <span class="token operator">|</span> count<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">//定义时间为2024年5月19日00:00:00</span>
+        <span class="token class-name">LocalDateTime</span> time <span class="token operator">=</span> <span class="token class-name">LocalDateTime</span><span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span><span class="token number">2024</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">19</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//将时间变成变成秒数的形式</span>
+        <span class="token keyword">long</span> second <span class="token operator">=</span> time<span class="token punctuation">.</span><span class="token function">toEpochSecond</span><span class="token punctuation">(</span><span class="token class-name">ZoneOffset</span><span class="token punctuation">.</span><span class="token constant">UTC</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//在这里运行出来的时间作为BEGIN_TIMESETAMP</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>second<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="全局唯一ID生成策略"><a href="#全局唯一ID生成策略" class="headerlink" title="全局唯一ID生成策略"></a>全局唯一ID生成策略</h3><ul>
+<li>UUID：优点使用简单，不依赖其他组件，不影响数据库扩展；缺点数据库索引效率低，太过于无意义.用户不友好，空间占用大，集群环境容易重复</li>
+<li>Redis自增：优点利用redis操作原子性的特征,可以保证在并发的时候不会重复，拓展性强,可以方便的结合业务进行处理；缺点增加一侧网络开销 需要对reids服务实现高可用</li>
+<li>snowflake算法：优点性能较优,速度快 无需第三方依赖,实现也简单 可以根据实际情况调整和拓展算法,方便灵活；缺点依赖时间机器,如果发生回拨会导致生成id重复</li>
+<li>数据库自增：优点无需编码，性能也过得去，索引友好；缺点大表不能做水平分表,否则插入删除易出现问题，依赖前期规划,拓展麻烦 依赖mysql内部维护自增锁,高并发下插入数据影响性能</li>
+</ul>
+<h3 id="秒杀数据表"><a href="#秒杀数据表" class="headerlink" title="秒杀数据表"></a>秒杀数据表</h3><p>每个店铺都可以发布优惠券，分为平价券和特价券，平价券可以任意购买，而特价券需要秒杀抢购，表关系如下</p>
+<p>tb_voucher（平价与秒杀券都有）：优惠券基本信息（金额，规则等）:上面的type可以表示标识出是平价券还是特价券，如果是特价券我们也需要一些特定的信息，因此我们会专门拓展出一张表。<br>tb_seckill_voucher（对应秒杀券）：优惠券库存、开始抢购时间、结束抢购时间（特价券需要此表）</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token identifier"><span class="token punctuation">`</span>tb_voucher<span class="token punctuation">`</span></span>  <span class="token punctuation">(</span>
+  <span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">AUTO_INCREMENT</span> <span class="token keyword">COMMENT</span> <span class="token string">'主键'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>shop_id<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'商铺id'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>title<span class="token punctuation">`</span></span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">255</span><span class="token punctuation">)</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> utf8mb4 <span class="token keyword">COLLATE</span> utf8mb4_general_ci <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'代金券标题'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>sub_title<span class="token punctuation">`</span></span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">255</span><span class="token punctuation">)</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> utf8mb4 <span class="token keyword">COLLATE</span> utf8mb4_general_ci <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'副标题'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>rules<span class="token punctuation">`</span></span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">1024</span><span class="token punctuation">)</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> utf8mb4 <span class="token keyword">COLLATE</span> utf8mb4_general_ci <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'使用规则'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>pay_value<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'支付金额，单位是分。例如200代表2元'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>actual_value<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'抵扣金额，单位是分。例如200代表2元'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>type<span class="token punctuation">`</span></span> <span class="token keyword">tinyint</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token number">0</span> <span class="token keyword">COMMENT</span> <span class="token string">'0,普通券；1,秒杀券'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>status<span class="token punctuation">`</span></span> <span class="token keyword">tinyint</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token number">1</span> <span class="token keyword">COMMENT</span> <span class="token string">'1,上架; 2,下架; 3,过期'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>create_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'创建时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>update_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'更新时间'</span><span class="token punctuation">,</span>
+  <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>id<span class="token punctuation">`</span></span><span class="token punctuation">)</span> <span class="token keyword">USING</span> <span class="token keyword">BTREE</span>
+<span class="token punctuation">)</span> <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span> <span class="token keyword">AUTO_INCREMENT</span> <span class="token operator">=</span> <span class="token number">10</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> <span class="token operator">=</span> utf8mb4 <span class="token keyword">COLLATE</span> <span class="token operator">=</span> utf8mb4_general_ci ROW_FORMAT <span class="token operator">=</span> Compact<span class="token punctuation">;</span>
+
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token identifier"><span class="token punctuation">`</span>tb_seckill_voucher<span class="token punctuation">`</span></span>  <span class="token punctuation">(</span>
+  <span class="token identifier"><span class="token punctuation">`</span>voucher_id<span class="token punctuation">`</span></span> <span class="token keyword">bigint</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">UNSIGNED</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'关联的优惠券的id'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>stock<span class="token punctuation">`</span></span> <span class="token keyword">int</span><span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'库存'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>create_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'创建时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>begin_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'生效时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>end_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'失效时间'</span><span class="token punctuation">,</span>
+  <span class="token identifier"><span class="token punctuation">`</span>update_time<span class="token punctuation">`</span></span> <span class="token keyword">timestamp</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">ON</span> <span class="token keyword">UPDATE</span> <span class="token keyword">CURRENT_TIMESTAMP</span> <span class="token keyword">COMMENT</span> <span class="token string">'更新时间'</span><span class="token punctuation">,</span>
+  <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token identifier"><span class="token punctuation">`</span>voucher_id<span class="token punctuation">`</span></span><span class="token punctuation">)</span> <span class="token keyword">USING</span> <span class="token keyword">BTREE</span>
+<span class="token punctuation">)</span> <span class="token keyword">ENGINE</span> <span class="token operator">=</span> <span class="token keyword">InnoDB</span> <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> <span class="token operator">=</span> utf8mb4 <span class="token keyword">COLLATE</span> <span class="token operator">=</span> utf8mb4_general_ci <span class="token keyword">COMMENT</span> <span class="token operator">=</span> <span class="token string">'秒杀优惠券表，与优惠券是一对一关系'</span> ROW_FORMAT <span class="token operator">=</span> Compact<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="添加优惠券"><a href="#添加优惠券" class="headerlink" title="添加优惠券"></a>添加优惠券</h3><p>在VoucherController中提供一个接口，调用就可以实现添加普通券。mapper中普通券除了定义对应tb_voucher的内容，还添加了库存、生效时间和失效时间字段。这样添加普通券和添加秒杀券都可以通过这个类传递对象，传递过来以后如果是普通券，这几个字段默认exsit=false（也就是没有该字段到数据库表的映射），直接利用VoucherServiceImpl的save方法保存即可。如果是秒杀券，就首先save到tb_voucher，再对库存、生效时间、失效时间等手动保存，利用seckillVoucherService添加到tb_seckill_voucher表。也就实现了通过前端一次传递，就在后端保存两张表的信息，简化代码逻辑。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519145646945.png" alt="image-20240519145646945" style="zoom:80%;">
+
+<h3 id="实现秒杀下单"><a href="#实现秒杀下单" class="headerlink" title="实现秒杀下单"></a>实现秒杀下单</h3><p><strong>接口地址</strong>:<code>/voucher-order/seckill/{id}</code></p>
+<p><strong>请求方式</strong>:<code>POST</code></p>
+<p><strong>请求参数</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+<th>请求类型</th>
+<th>是否必须</th>
+<th>数据类型</th>
+<th>schema</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>优惠券id</td>
+<td>path</td>
+<td>true</td>
+<td>integer(int64)</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>返回值</strong>：订单id</p>
+<p>基础功能实现（不考虑并发）：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
+<span class="token annotation punctuation">@Transactional</span>  <span class="token comment">// 涉及多表操作，添加事务以便回滚</span>
+<span class="token keyword">public</span> <span class="token class-name">Result</span> <span class="token function">seckillVoucher</span><span class="token punctuation">(</span><span class="token class-name">Long</span> voucherId<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 查询优惠券</span>
+    <span class="token class-name">SeckillVoucher</span> voucher <span class="token operator">=</span> seckillVoucherService<span class="token punctuation">.</span><span class="token function">getById</span><span class="token punctuation">(</span>voucherId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"秒杀券不存在！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">// 判断时间区间</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher<span class="token punctuation">.</span><span class="token function">getBeginTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isAfter</span><span class="token punctuation">(</span><span class="token class-name">LocalDateTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"秒杀尚未开始！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher<span class="token punctuation">.</span><span class="token function">getEndTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isBefore</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">LocalDateTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"秒杀已经结束！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 判断库存</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher<span class="token punctuation">.</span><span class="token function">getStock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"库存不足！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">// 扣减库存</span>
+    <span class="token keyword">boolean</span> success <span class="token operator">=</span> seckillVoucherService<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setSql</span><span class="token punctuation">(</span><span class="token string">"stock = stock - 1"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"voucher_id"</span><span class="token punctuation">,</span> voucherId<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>success<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"库存不足！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 创建订单</span>
+    <span class="token class-name">VoucherOrder</span> voucherOrder <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">VoucherOrder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">long</span> orderId <span class="token operator">=</span> redisIdWorker<span class="token punctuation">.</span><span class="token function">nextId</span><span class="token punctuation">(</span><span class="token string">"order"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    voucherOrder<span class="token punctuation">.</span><span class="token function">setId</span><span class="token punctuation">(</span>orderId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 从threadlocal中取用户id</span>
+    <span class="token class-name">Long</span> userId <span class="token operator">=</span> <span class="token class-name">UserHolder</span><span class="token punctuation">.</span><span class="token function">getUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>userId <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"用户未登录！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    voucherOrder<span class="token punctuation">.</span><span class="token function">setUserId</span><span class="token punctuation">(</span>userId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    voucherOrder<span class="token punctuation">.</span><span class="token function">setVoucherId</span><span class="token punctuation">(</span>voucherId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 保存订单</span>
+    <span class="token function">save</span><span class="token punctuation">(</span>voucherOrder<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 返回订单id</span>
+    <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">ok</span><span class="token punctuation">(</span>orderId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="库存超卖问题"><a href="#库存超卖问题" class="headerlink" title="库存超卖问题"></a>库存超卖问题</h2><p>以上代码存在线程安全问题。高并发场景下会有库存超卖 – 在库存为1的时候，多个线程同时查询库存，得到库存1，后面的线程读到的都是脏数据。</p>
+<p>超卖问题是典型的多线程安全问题，针对这一问题的常见解决方案就是加锁：而对于加锁，我们通常有两种解决方案：</p>
+<p><strong>悲观锁</strong>：认为线程安全问题一定会发生，因此在操作数据之前先获取锁，确保<strong>线程串行执行</strong>。（Synchronized、Lock等）</p>
+<p><strong>乐观锁</strong>：认为线程安全问题不一定会发生，因此<strong>不加锁</strong>，只是<strong>在更新数据时去判断有没有其它线程对数据做了修改</strong>。（如果没有修改，那就是安全的；<strong>如果已经被其他线程修改说明发生了安全问题，此时可以重试或异常</strong>）</p>
+<p>显然乐观锁的性能会好很多，但是实现起来会更复杂，我们要处理好关键的一点，那就是更新数据的时候，该<strong>如何去判断有没有其它线程对数据做了修改</strong>。</p>
+<p>乐观锁的实现方式有2种方法（其实思想相同）：<br><strong>1、版本号法：</strong><br>给数据增加一个字段version，初始值为1，每次我们<strong>要修改库存量之前都需要先查询库存量与版本号</strong>，然后线程执行SQL语句，执行SQL语句必须要确定数据库中的这条数据的版本号就是查询出来的版本号，<strong>如果不相同说明有其他线程修改了数据</strong>，导致当前数据的版本号与之前查询的不一样：<br><strong>2、CAS法</strong><br>上面的方法加一个版本号其实是一种标识，但是我们不一定要借助version，实际上我们可以<strong>直接依靠库存量来做标识</strong>，在对数据库进行修改的时候，我们要首先判断当前数据的库存量与之前线程查询出来的库存量是否相同，不相同则说明发生线程安全问题，不能修改</p>
+<h3 id="乐观锁解决超卖"><a href="#乐观锁解决超卖" class="headerlink" title="乐观锁解决超卖"></a>乐观锁解决超卖</h3><p>我们选用CAS法来解决超卖，根据上述思想，我们只需要在SQL语句那增加一个判断库存量的条件：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 扣减库存</span>
+<span class="token keyword">boolean</span> success <span class="token operator">=</span> seckillVoucherService<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">setSql</span><span class="token punctuation">(</span><span class="token string">"stock = stock - 1"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"voucher_id"</span><span class="token punctuation">,</span> voucherId<span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"stock"</span><span class="token punctuation">,</span> voucher<span class="token punctuation">.</span><span class="token function">getStock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>用Jmeter测试发现200个线程抢100张票，只卖出了20+张票。</p>
+<p><strong>问题</strong>：假设stock=100，当线程查询出来的stock与数据库的stock不一致的时候，并不能说明票卖完了，只能说明其他线程抢先了票。理论上库存量大概率不为0，该线程还是应该要能够实现买票操作，但全都因为查询的stock与数据库不一致导致有大量线程买票失败。</p>
+<p><strong>修改</strong>：只需要查询数据库中的stock是否大于0即可。— <code>.gt("stock", 0)</code></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">boolean</span> success <span class="token operator">=</span> seckillVoucherService<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">setSql</span><span class="token punctuation">(</span><span class="token string">"stock = stock - 1"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"voucher_id"</span><span class="token punctuation">,</span> voucherId<span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">gt</span><span class="token punctuation">(</span><span class="token string">"stock"</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>	<span class="token comment">// /where id = ? and stock &gt; 0</span>
+    <span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>重新测试发现能够正好下单100份秒杀券。</p>
+<blockquote>
+<p>但是这不代表乐观锁就是完美的，很显然代码逻辑中要操作数据库，大量的线程就会给数据库带来压力，仅仅使用乐观锁在更高并发的场景下还是不太够的。</p>
+</blockquote>
+<h2 id="一人一单"><a href="#一人一单" class="headerlink" title="一人一单"></a>一人一单</h2><p>需求：修改秒杀业务，要求同一个优惠券，一个用户只能下一单。</p>
+<p>解决：只需要判断当前尝试抢优惠券的线程，其用户id在订单表中是否已经存在了，如果存在则不允许下单。</p>
+<p>这里仍然会有多线程问题，由于这段逻辑不涉及数据库更新而是要插入数据，所以<strong>加悲观锁</strong>。这里锁放在函数内部，因为如果在方法上加锁，那么不管是哪个用户来下单都变成串行了，所以我们需要在内部调用synchronized，并指定锁定对象为userId。</p>
+<h3 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h3><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Service</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">VoucherOrderServiceImpl</span> <span class="token keyword">extends</span> <span class="token class-name">ServiceImpl</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">VoucherOrderMapper</span><span class="token punctuation">,</span> <span class="token class-name">VoucherOrder</span><span class="token punctuation">&gt;</span></span> <span class="token keyword">implements</span> <span class="token class-name">IVoucherOrderService</span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Resource</span>
+    <span class="token keyword">private</span> <span class="token class-name">ISeckillVoucherService</span> seckillVoucherService<span class="token punctuation">;</span>
+    <span class="token annotation punctuation">@Resource</span>
+    <span class="token keyword">private</span> <span class="token class-name">RedisIdWorker</span> redisIdWorker<span class="token punctuation">;</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Result</span> <span class="token function">seckillVoucher</span><span class="token punctuation">(</span><span class="token class-name">Long</span> voucherId<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 查询优惠券</span>
+        <span class="token class-name">SeckillVoucher</span> voucher <span class="token operator">=</span> seckillVoucherService<span class="token punctuation">.</span><span class="token function">getById</span><span class="token punctuation">(</span>voucherId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"秒杀券不存在！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token comment">// 判断时间区间</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher<span class="token punctuation">.</span><span class="token function">getBeginTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isAfter</span><span class="token punctuation">(</span><span class="token class-name">LocalDateTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"秒杀尚未开始！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher<span class="token punctuation">.</span><span class="token function">getEndTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isBefore</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">LocalDateTime</span><span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"秒杀已经结束！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// 判断库存</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>voucher<span class="token punctuation">.</span><span class="token function">getStock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"库存不足！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token function">createVoucherOrder</span><span class="token punctuation">(</span>voucherId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Transactional</span>
+    <span class="token keyword">public</span> <span class="token class-name">Result</span> <span class="token function">createVoucherOrder</span><span class="token punctuation">(</span><span class="token class-name">Long</span> voucherId<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 从threadlocal中取用户id</span>
+        <span class="token class-name">Long</span> userId <span class="token operator">=</span> <span class="token class-name">UserHolder</span><span class="token punctuation">.</span><span class="token function">getUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">/**
+         * userId值一样的，我们用同一把锁，即为同一个用户的多线程访问加锁。
+         * 但是每个请求一来，我们的id对象都是全新的（toString得到的是新的string对象）
+         * 所以要加上intern()方法，从字符串常量池中返回字符串的规范表示，保证多个请求访问一个用户字符串时得到的是同样的地址
+         */</span>
+        <span class="token keyword">synchronized</span> <span class="token punctuation">(</span>userId<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">intern</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 查询用户是否已经下单了对应优惠券</span>
+            <span class="token keyword">long</span> count <span class="token operator">=</span> <span class="token function">query</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"user_id"</span><span class="token punctuation">,</span> userId<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"voucher_id"</span><span class="token punctuation">,</span> voucherId<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">count</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>count <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"用户已经购买！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+
+            <span class="token comment">// 没买过，扣减库存</span>
+            <span class="token keyword">boolean</span> success <span class="token operator">=</span> seckillVoucherService<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">setSql</span><span class="token punctuation">(</span><span class="token string">"stock = stock - 1"</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">eq</span><span class="token punctuation">(</span><span class="token string">"voucher_id"</span><span class="token punctuation">,</span> voucherId<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">gt</span><span class="token punctuation">(</span><span class="token string">"stock"</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>success<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">fail</span><span class="token punctuation">(</span><span class="token string">"库存不足！"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+
+            <span class="token comment">// 创建订单</span>
+            <span class="token keyword">long</span> orderId <span class="token operator">=</span> redisIdWorker<span class="token punctuation">.</span><span class="token function">nextId</span><span class="token punctuation">(</span><span class="token string">"order"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">VoucherOrder</span> voucherOrder <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">VoucherOrder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            voucherOrder<span class="token punctuation">.</span><span class="token function">setId</span><span class="token punctuation">(</span>orderId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            voucherOrder<span class="token punctuation">.</span><span class="token function">setUserId</span><span class="token punctuation">(</span>userId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            voucherOrder<span class="token punctuation">.</span><span class="token function">setVoucherId</span><span class="token punctuation">(</span>voucherId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment">// 保存订单</span>
+            <span class="token function">save</span><span class="token punctuation">(</span>voucherOrder<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token comment">// 返回订单id</span>
+            <span class="token keyword">return</span> <span class="token class-name">Result</span><span class="token punctuation">.</span><span class="token function">ok</span><span class="token punctuation">(</span>orderId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>需要注意一个细节，<strong>上面代码还是会发生并发安全问题：</strong></p>
+<blockquote>
+<p>我们这边的整个函数已经是被Spring托管了，所以<strong>事务的提交会在函数执行完毕之后</strong>，也就是说我们会<strong>先释放锁，再提交事务</strong>，当我们事务还没有提交完成，<strong>修改数据还没写入数据库，却又有其他线程进来了</strong>，再次发生线程并发问题。</p>
+</blockquote>
+<h3 id="事务与锁顺序"><a href="#事务与锁顺序" class="headerlink" title="事务与锁顺序"></a>事务与锁顺序</h3><p>所以，锁的范围太小了，我们应该要把整个函数都锁起来。这样就是<strong>先获取锁，提交事务，再释放锁。</strong></p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519174917100.png" alt="image-20240519174917100">
+
+<h3 id="事务生效问题"><a href="#事务生效问题" class="headerlink" title="事务生效问题"></a>事务生效问题</h3><p>直接调用createVoucherOrder方法是不行的，因为它相当于调用了this.createVoucherOrder，然而当前类并不是代理对象，这会导致Sping代理失效。</p>
+<blockquote>
+<p>Spring的事务是通过AOP来实现的，只有通过代理对象调用<code>@Transactional</code>注解的对象方法时，事务才会生效，也就是直接调用<code>createVoucherOrder()</code>方法事务才会生效，调用<code>seckillVoucher()</code>方法后间接调用<code>createVoucherOrder()</code>方法事务是不会生效的。因为这次调用并不是通过代理对象来实现的。</p>
+</blockquote>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519175418682.png" alt="image-20240519175418682">
+
+<p>所以我们要先获得当前对象的代理对象，然后再去调用这个函数（这个函数也要创建在service接口中，表明它属于代理对象能调用的方法）：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">synchronized</span> <span class="token punctuation">(</span>userId<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">intern</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">IVoucherOrderService</span> proxy <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">IVoucherOrderService</span><span class="token punctuation">)</span> <span class="token class-name">AopContext</span><span class="token punctuation">.</span><span class="token function">currentProxy</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> proxy<span class="token punctuation">.</span><span class="token function">createVoucherOrder</span><span class="token punctuation">(</span>voucherId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>需要引入依赖：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">&lt;dependency<span class="token punctuation">&gt;</span>
+        &lt;groupId<span class="token punctuation">&gt;</span>org.aspectj&lt;/groupId<span class="token punctuation">&gt;</span>
+        &lt;artifactId<span class="token punctuation">&gt;</span>aspectjweaver&lt;/artifactId<span class="token punctuation">&gt;</span>
+&lt;/dependency<span class="token punctuation">&gt;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>并且在启动类中需要暴露代理对象：</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519180101176.png" alt="image-20240519180101176" style="zoom:80%;">
+
+<p>使用Jmeter测试，同一用户200个线程，最终只插入一条数据。问题解决。</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519222713031.png" alt="image-20240519222713031" style="zoom:80%;">
+
+<h2 id="集群下的线程并发安全问题"><a href="#集群下的线程并发安全问题" class="headerlink" title="集群下的线程并发安全问题"></a>集群下的线程并发安全问题</h2><p>现在已经通过加锁解决一人一单问题安全，但是这只能解决单机情况的，集群模式依旧不行。</p>
+<p>利用idea模拟集群模式，复制一个新的服务，设置端口8082（program arguments）</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519225432012.png" alt="image-20240519225432012" style="zoom:80%;">
+
+<p>重启形成2个机子的集群：</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519231204101.png" alt="image-20240519231204101">
+
+<p>修改nginx的conf目录下的nginx.conf文件，配置反向代理、负载均衡：</p>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519230039737.png" alt="image-20240519230039737" style="zoom:80%;">
+
+<p>最后重新加载一下Nginx：<code>nginx.exe -s reload</code></p>
+<p>最后访问网址，并连续刷新2次：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://localhost:8080/api/voucher/list/1">http://localhost:8080/api/voucher/list/1</a></p>
+</blockquote>
+<p>查看后台可以发现两个启动服务都可以接受到信息，因为api（8080）包括了8081与8082，访问是以<strong>轮询</strong>的方式进行的。这样就实现了负载均衡。</p>
+<p>测试：需要在锁那里打个断点，并且在postman里面分别抢券（都用同一个用户）来进行优惠券抢购，可以发现只用1个用户信息，数据库中却少了2张券，说明又一次发生了并发问题。</p>
+<blockquote>
+<p>我们部署另外一台Tomcat，这是<strong>锁的锁监视器</strong>，<strong>其监视的内容和之前锁中的监视器内容是不一样的</strong>，那么新Tomcat的线程获取锁就会成功（获取的userId.toString()是不一样的，不理解的可以去看toString方法的源码），并成功的操作数据库，因此才会造成线程并行问题。<br>如下图，线程1、3发生了线程安全问题。因此我们只能保证单个JVM下的线程安全，却无法保证集群中多个JVM的线程安全，我们需要在集群中加锁，也就是<strong>分布式锁</strong>，将在后续讲解。</p>
+</blockquote>
+<img src="/2024/05/13/hei-ma-dian-ping/image-20240519231759949.png" alt="image-20240519231759949" style="zoom:80%;">
 
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员Redis部分资料</p>
 <p>Cookie、Session、Token概念、区别、如何实现：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44369049/article/details/132062232">https://blog.csdn.net/weixin_44369049/article/details/132062232</a></p>
@@ -2021,7 +2338,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">81.6k</span>&nbsp;字
+                class="white-color">85.9k</span>&nbsp;字
             
             
             
