@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Java</title>
+      <link href="/2024/06/14/java/"/>
+      <url>/2024/06/14/java/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h1><h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><p><strong>Java特点</strong>：面向对象（封装，继承，多态）；平台无关（基于JVM）；可靠安全（异常处理，自动内存管理，多重安全防护）；编译与解释并存-&gt;一次编译，到处运行；Java生态</p><p>Java SE 是 Java 的基础版本，Java EE 是 Java 的高级版本。Java SE 更适合开发桌面应用程序或简单的服务器应用程序，Java EE 更适合开发复杂的企业级应用程序或 Web 应用程序。</p><blockquote><p>编译型：译型语言会通过编译器将源代码一次性翻译成可被该平台执行的机器码。一般情况下，编译语言的执行速度比较快，开发效率比较低。常见的编译性语言有C、C++、Go、Rust等等。<br>解释型：释型语言会通过解释器一句一句的将代码解释（interpret）为机器代码后再执行。解释型语言开发效率比较快，执行速度比较慢。常见的解释性语言有 Python、JavaScript、PHP 等等。<br>Java为了实现“一次编译，处处运行”的特性，把编译的过程分成两部分，首先它会先由javac编译成通用的中间形式——字节码，这些字节码可以在任何安装了Java虚拟机的平台上运行，由解释器逐条将字节码解释为机器码来执行。这种方式使得Java程序具有了跨平台性，同一份Java代码可以在各种操作系统和硬件平台上运行，而不需要针对不同平台进行重新编译。</p></blockquote><p>在 Java 中，JVM 可以理解的代码就叫做字节码（即扩展名为 <code>.class</code> 的文件），它不面向任何特定的处理器，只面向虚拟机。Java 语言通过字节码的方式，<strong>在一定程度上解决了传统解释型语言执行效率低的问题，同时又保留了解释型语言可移植的特点</strong>。</p><p>JVM引入 <strong>JIT（Just in Time Compilation）</strong> 编译器， 属于运行时编译。当 JIT 编译器完成第一次编译后，其会将字节码对应的机器码保存下来，下次可以直接使用。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://javaguide.cn/">https://javaguide.cn/</a></p><p>为什么说Java语言“编译与解释并存“：<a href="https://blog.csdn.net/Your_Boy_Tt/article/details/137797219">https://blog.csdn.net/Your_Boy_Tt/article/details/137797219</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 后端 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Java </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SSM</title>
       <link href="/2024/05/21/ssm/"/>
       <url>/2024/05/21/ssm/</url>
