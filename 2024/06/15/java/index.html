@@ -588,21 +588,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-06-18
+                    2024-06-19
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    21.6k
+                    23.1k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    81 分
+                    86 分
                 </div>
                 
 
@@ -1606,6 +1606,8 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 <p>JDK 1.8 的 hash 方法 相比于 JDK 1.7 hash 方法更加简化，但是原理不变。</p>
 <p><strong>JDK1.8 之后</strong></p>
 <p>相比于之前的版本， JDK1.8 之后在解决哈希冲突时有了较大的变化，当链表长度大于阈值（默认为 8）（将链表转换成红黑树前会判断，<strong>如果当前数组的长度小于 64，那么会选择先进行数组扩容</strong>，而不是转换为红黑树）时，将链表转化为红黑树，以减少搜索时间。</p>
+<img src="/2024/06/15/java/jdk1.8_hashmap.png" alt="jdk1.8之后的内部结构-HashMap" style="zoom:80%;">
+
 <blockquote>
 <p>TreeMap、TreeSet 以及 JDK1.8 之后的 HashMap 底层都用到了红黑树。红黑树就是为了解决二叉查找树的缺陷，因为二叉查找树在某些情况下会退化成一个线性结构。</p>
 </blockquote>
@@ -1796,7 +1798,7 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 </li>
 <li><p><strong>效率：</strong> 因为线程安全的问题，<code>HashMap</code> 要比 <code>Hashtable</code> 效率高一点。另外，<code>Hashtable</code> 基本被淘汰，不要在代码中使用它；</p>
 </li>
-<li><p><strong>对 Null key 和 Null value 的支持：</strong> <strong><code>HashMap</code> 可以存储 null 的 key 和 value</strong>，但 null 作为键只能有一个，null 作为值可以有多个；Hashtable 不允许有 null 键和 null 值，否则会抛出 <code>NullPointerException</code>。</p>
+<li><p><strong>对 Null key 和 Null value 的支持：</strong> <strong><code>HashMap</code> 可以存储 null 的 key 和 value</strong>，但 null 作为键只能有一个，null 作为值可以有多个；Hashtable 不允许有 null 键和 null 值，否则会抛出 <code>NullPointerException</code>。（ConcurrentHashMap也不支持存储null）</p>
 </li>
 <li><p><strong>初始容量大小和每次扩充容量大小的不同：</strong> ① 创建时如果不指定容量初始值，<code>Hashtable</code> 默认的初始大小为 11，之后每次扩充，容量变为原来的 2n+1。**<code>HashMap</code> 默认的初始化大小为 16。之后每次扩充，容量变为原来的 2 倍。<strong>② 创建时如果给定了容量初始值，那么 <code>Hashtable</code> 会直接使用你给定的大小，而 <code>HashMap</code> 会将其</strong>扩充为 2 的幂次方大小**（<code>HashMap</code> 中的<code>tableSizeFor()</code>方法保证，下面给出了源代码）。也就是说=== <strong><code>HashMap</code> 总是使用 2 的幂作为哈希表的大小</strong>==。</p>
 <ul>
@@ -1807,7 +1809,7 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 </li>
 </ul>
 <h4 id="HashMap-vs-TreeMap"><a href="#HashMap-vs-TreeMap" class="headerlink" title="HashMap vs TreeMap"></a>HashMap vs TreeMap</h4><p><code>TreeMap</code> 和<code>HashMap</code> 都继承自<code>AbstractMap</code> ，但是需要注意的是<code>TreeMap</code>它还实现了<code>NavigableMap</code>接口和<code>SortedMap</code> 接口。</p>
-<p><code>NavigableMap</code> 接口提供了丰富的方法来探索和操作键值对，可以对集合元素进行搜索:</p>
+<p><code>NavigableMap</code> 接口提供了丰富的方法来探索和操作键值对，可以对集合元素进行<strong>搜索</strong>:</p>
 <ol>
 <li><strong>定向搜索</strong>: <code>ceilingEntry()</code>, <code>floorEntry()</code>, <code>higherEntry()</code>和 <code>lowerEntry()</code> 等方法可以用于定位<strong>大于、小于、大于等于、小于等于给定键</strong>的最接近的键值对。</li>
 <li><strong>子集操作</strong>: <code>subMap()</code>, <code>headMap()</code>和 <code>tailMap()</code> 方法可以高效地创建原集合的子集视图，而无需复制整个集合。</li>
@@ -1817,10 +1819,10 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 <p>这些方法都是基于<strong>红黑树</strong>数据结构的属性实现的，红黑树保持平衡状态，从而保证了搜索操作的时间复杂度为 O(log n)，这让 <code>TreeMap</code> 成为了处理<strong>有序集合搜索问题</strong>的强大工具。</p>
 <p>实现<code>SortedMap</code>接口让 <code>TreeMap</code> 有了对集合中的元素根据键排序的能力。默认是按 key 的升序排序，不过我们也可以指定排序的比较器。</p>
 <p><strong>综上，相比于<code>HashMap</code>来说， <code>TreeMap</code> 主要多了对集合中的元素根据键排序的能力以及对集合内元素的搜索的能力</strong></p>
-<h4 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h4><p>1.7版本：Java 7 中 <code>ConcurrentHashMap</code> 的存储结构如上图，<code>ConcurrnetHashMap</code> 由很多个 <code>Segment</code> 组合，而每一个 <code>Segment</code> 是一个类似于 <code>HashMap</code> 的结构，所以每一个 <code>HashMap</code> 的内部可以进行扩容。但是 <code>Segment</code> 的个数一旦<strong>初始化就不能改变</strong>，默认 <code>Segment</code> 的个数是 16 个，你也可以认为 <code>ConcurrentHashMap</code> <strong>默认支持最多 16 个线程并发。</strong></p>
+<h4 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h4><h5 id="1-7版本"><a href="#1-7版本" class="headerlink" title="1.7版本"></a>1.7版本</h5><p>1.7版本：Java 7 中 <code>ConcurrentHashMap</code> 的存储结构如上图，<code>ConcurrnetHashMap</code> 由很多个 <code>Segment</code> 组合，而每一个 <code>Segment</code> 是一个类似于 <code>HashMap</code> 的结构，所以<strong>每一个 <code>HashMap</code> 的内部可以进行扩容</strong>。但是 <code>Segment</code> 的个数一旦<strong>初始化就不能改变</strong>，默认 <code>Segment</code> 的个数是 16 个，你也可以认为 <code>ConcurrentHashMap</code> <strong>默认支持最多 16 个线程并发。</strong></p>
 <img src="/2024/06/15/java/java7_concurrenthashmap.png" alt="Java 7 ConcurrentHashMap 存储结构" style="zoom:80%;">
 
-<p>在 Java 7 中 ConcurrentHashMap 的初始化逻辑。</p>
+<p>在 Java 7 中 ConcurrentHashMap 的<strong>初始化</strong>逻辑。</p>
 <ol>
 <li>必要参数校验。</li>
 <li>校验并发级别 <code>concurrencyLevel</code> 大小，如果大于最大值，重置为最大值。无参构造<strong>默认值是 16.</strong></li>
@@ -1829,6 +1831,119 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 <li>记录 <code>segmentMask</code>，默认是 ssize - 1 = 16 -1 = 15.</li>
 <li><strong>初始化 <code>segments[0]</code><strong>，</strong>默认大小为 2</strong>，<strong>负载因子 0.75</strong>，<strong>扩容阀值是 2*0.75=1.5</strong>，插入第二个值时才会进行扩容。</li>
 </ol>
+<p><strong>========put========</strong></p>
+<p><code>ConcurrentHashMap</code> 在**put **一个数据时的处理流程：</p>
+<ol>
+<li><p>计算要 put 的 key 的位置，获取指定位置的 <code>Segment</code>。</p>
+</li>
+<li><p>如果指定位置的 <code>Segment</code> 为空，则初始化这个 <code>Segment</code>.</p>
+<p><strong>初始化 Segment 流程：</strong></p>
+<ol>
+<li>检查计算得到的位置的 <code>Segment</code> 是否为 null.</li>
+<li>为 null 继续初始化，使用 <code>Segment[0]</code> 的容量和负载因子创建一个 <code>HashEntry</code> 数组。</li>
+<li>再次检查计算得到的指定位置的 <code>Segment</code> 是否为 null.</li>
+<li>使用创建的 <code>HashEntry</code> 数组初始化这个 Segment.</li>
+<li>自旋判断计算得到的指定位置的 <code>Segment</code> 是否为 null，使用 CAS 在这个位置赋值为 <code>Segment</code></li>
+</ol>
+</li>
+<li><p><strong><code>Segment.put</code> 插入 key,value 值。</strong></p>
+<p>由于 <code>Segment</code> 继承了 <code>ReentrantLock</code>，所以 <code>Segment</code> 内部可以很方便的获取锁，put 流程就用到了这个功能。</p>
+<ol>
+<li><p><code>tryLock()</code> 获取锁，获取不到使用 <strong><code>scanAndLockForPut</code></strong> 方法继续获取。</p>
+</li>
+<li><p>计算 put 的数据要放入的 index 位置，然后获取这个位置上的 <code>HashEntry</code> 。</p>
+</li>
+<li><p>遍历 put 新元素，为什么要遍历？因为这里获取的 <code>HashEntry</code> 可能是一个空元素，也可能是链表已存在，所以要区别对待。</p>
+<p>如果这个位置上的 <strong><code>HashEntry</code> 不存在</strong>：</p>
+<ol>
+<li>如果当前容量大于扩容阀值，小于最大容量，<strong>进行扩容</strong>。</li>
+<li>直接头插法插入。</li>
+</ol>
+<p>如果这个位置上的 <strong><code>HashEntry</code> 存在</strong>：</p>
+<ol>
+<li>判断链表当前元素 key 和 hash 值是否和要 put 的 key 和 hash 值一致。一致则替换值</li>
+<li>不一致，获取链表下一个节点，直到发现相同进行值替换，或者链表表里完毕没有相同的。 <ol>
+<li>如果当前容量大于扩容阀值，小于最大容量，<strong>进行扩容</strong>。</li>
+<li>直接链表头插法插入。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>如果要插入的位置之前已经存在，替换后返回旧值，否则返回 null.</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><strong>========扩容rehash========</strong></p>
+<p><code>ConcurrentHashMap</code> 的扩容只会扩容到原来的两倍。老数组里的数据移动到新的数组时，位置要么不变，要么变为 <code>index+ oldSize</code>，参数里的 node 会在扩容之后使用链表<strong>头插法</strong>插入到指定位置。</p>
+<p><strong>===========get=========</strong></p>
+<ol>
+<li>计算得到 key 的存放的segment的对应HashEntry数组位置。</li>
+<li>遍历指定位置的链表查找相同 key 的 value 值。</li>
+</ol>
+<h5 id="1-8版本"><a href="#1-8版本" class="headerlink" title="1.8版本"></a>1.8版本</h5><p>可以发现 Java8 的 ConcurrentHashMap 相对于 Java7 来说变化比较大，不再是之前的 <strong>Segment 数组 + HashEntry 数组 + 链表</strong>，而是 <strong>Node 数组 + 链表 / 红黑树</strong>。当冲突链表达到一定长度时，链表会转换成红黑树。</p>
+<img src="/2024/06/15/java/java8_concurrenthashmap.png" alt="Java8 ConcurrentHashMap 存储结构（图片来自 javadoop）" style="zoom: 80%;">
+
+<p><strong>==========初始化==========</strong></p>
+<p><code>ConcurrentHashMap</code> 的初始化是通过<strong>自旋和 CAS</strong> 操作完成的。里面需要注意的是变量 <code>sizeCtl</code> （sizeControl 的缩写），它的值决定着当前的初始化状态。</p>
+<ol>
+<li>-1 说明正在初始化，其他线程需要<strong>自旋等待</strong></li>
+<li>-N 说明 table 正在进行扩容，高 16 位表示扩容的标识戳，低 16 位减 1 为正在进行扩容的线程数</li>
+<li>0 表示 table 初始化大小，如果 table 没有初始化</li>
+<li>&gt;0 表示 table 扩容的阈值，如果 table 已经初始化。</li>
+</ol>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">/**
+ * Initializes table, using the size recorded in sizeCtl.
+ */</span>
+<span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Node</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">initTable</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Node</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">[</span><span class="token punctuation">]</span> tab<span class="token punctuation">;</span> <span class="token keyword">int</span> sc<span class="token punctuation">;</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>tab <span class="token operator">=</span> table<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">||</span> tab<span class="token punctuation">.</span>length <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">//　如果 sizeCtl &lt; 0 ,说明另外的线程执行CAS 成功，正在进行初始化。</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>sc <span class="token operator">=</span> sizeCtl<span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span>
+            <span class="token comment">// 让出 CPU 使用权，自旋等待</span>
+            <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token keyword">yield</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// lost initialization race; just spin</span>
+        <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token class-name">U</span><span class="token punctuation">.</span><span class="token function">compareAndSwapInt</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token constant">SIZECTL</span><span class="token punctuation">,</span> sc<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>tab <span class="token operator">=</span> table<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">||</span> tab<span class="token punctuation">.</span>length <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">int</span> n <span class="token operator">=</span> <span class="token punctuation">(</span>sc <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token operator">?</span> sc <span class="token operator">:</span> <span class="token constant">DEFAULT_CAPACITY</span><span class="token punctuation">;</span>
+                    <span class="token annotation punctuation">@SuppressWarnings</span><span class="token punctuation">(</span><span class="token string">"unchecked"</span><span class="token punctuation">)</span>
+                    <span class="token class-name">Node</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">[</span><span class="token punctuation">]</span> nt <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Node</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">K</span><span class="token punctuation">,</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token keyword">new</span> <span class="token class-name">Node</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">,</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">[</span>n<span class="token punctuation">]</span><span class="token punctuation">;</span>
+                    table <span class="token operator">=</span> tab <span class="token operator">=</span> nt<span class="token punctuation">;</span>
+                    sc <span class="token operator">=</span> n <span class="token operator">-</span> <span class="token punctuation">(</span>n <span class="token operator">&gt;&gt;&gt;</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+                sizeCtl <span class="token operator">=</span> sc<span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> tab<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>==========put===========</strong></p>
+<ol>
+<li>根据 key 计算出 hashcode 。</li>
+<li>判断是否需要进行初始化。</li>
+<li>即为当前 key 定位出的 Node，如果为空表示当前位置可以写入数据，利用 CAS 尝试写入，失败则自旋保证成功。</li>
+<li>如果当前位置的 <code>hashcode == MOVED == -1</code>,则需要进行扩容。</li>
+<li>如果都不满足(桶里有数据，数组不需要扩容），则利用 synchronized 锁写入数据，写入时判断结构是链表还是红黑树，执行对应的插入操作。</li>
+<li>如果数量大于 <code>TREEIFY_THRESHOLD</code> 则要执行树化方法，在 <code>treeifyBin</code> 中会首先判断当前数组长度 ≥64 时才会将链表转换为红黑树。</li>
+</ol>
+<p><strong>==========get===========</strong></p>
+<ol>
+<li>根据 hash 值计算node数组位置。</li>
+<li>查找到指定位置，如果头节点就是要找的，直接返回它的 value.</li>
+<li>如果头节点 hash 值小于 0 ，说明正在扩容或者是红黑树，使用find查找。</li>
+<li>如果是链表，遍历查找之。</li>
+</ol>
+<h5 id="线程安全实现"><a href="#线程安全实现" class="headerlink" title="线程安全实现"></a>线程安全实现</h5><ul>
+<li><p>JDK1.8之前：首先将数据分为一段一段（这个“段”就是 <code>Segment</code>）的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据时，其他段的数据也能被其他线程访问。<code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成。**<code>Segment</code> 继承了 <code>ReentrantLock</code>,所以 <code>Segment</code> 是一种可重入锁**，扮演锁的角色。<code>HashEntry</code> 用于存储键值对数据。对同一 <code>Segment</code> 的并发写入会被阻塞，不同 <code>Segment</code> 的写入是可以并发执行的。</p>
+</li>
+<li><p>JDK1.8之后：<code>ConcurrentHashMap</code> 取消了 <code>Segment</code> 分段锁，采用 <strong><code>Node + CAS + synchronized</code></strong> 来保证并发安全。数据结构跟 <code>HashMap</code> 1.8 的结构类似，数组+链表/红黑二叉树。Java 8 在链表长度超过一定阈值（8）时将链表（寻址时间复杂度为 O(N)）转换为红黑树（寻址时间复杂度为 O(log(N))）。</p>
+<p>Java 8 中，锁粒度更细，<code>synchronized</code> <strong>只锁定当前链表或红黑二叉树的首节点</strong>，这样<strong>只要 hash 不冲突，就不会产生并发</strong>，就不会影响其他 Node 的读写，效率大幅提升。</p>
+</li>
+</ul>
+<p>总结：1.7中使用segment分段锁，锁范围较大，最大并发数为segment数量，默认是16。1.8中使用Node+CAS+synchronized，只锁定链表或红黑树的头节点，锁粒度更细，最大并发数是node数组的大小。</p>
 <h4 id="ConcurrentHashMap-vs-Hashtable"><a href="#ConcurrentHashMap-vs-Hashtable" class="headerlink" title="ConcurrentHashMap vs Hashtable"></a>ConcurrentHashMap vs Hashtable</h4><p><code>ConcurrentHashMap</code> 和 <code>Hashtable</code> 的区别主要体现在实现线程安全的方式上不同。</p>
 <ul>
 <li><p><strong>底层数据结构：</strong> JDK1.7 的 <code>ConcurrentHashMap</code> 底层采用 <strong>分段的数组+链表</strong> 实现，JDK1.8 采用的数据结构跟 <code>HashMap1.8</code> 的结构一样，<strong>数组+链表/红黑二叉树</strong>。<code>Hashtable</code> 和 JDK1.8 之前的 <code>HashMap</code> 的底层数据结构类似都是采用 <strong>数组+链表</strong> 的形式，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的；</p>
@@ -1844,6 +1959,10 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 </ul>
 </li>
 </ul>
+<img src="/2024/06/15/java/image-20240619175017147.png" alt="image-20240619175017147">
+
+
+
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/">https://javaguide.cn/</a></p>
 <p>泛型：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45395059/article/details/126006369">Java 中的泛型（两万字超全详解）_java 泛型-CSDN博客</a></p>
 <p>反射：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_74268571/article/details/131345164">Java反射详解-CSDN博客</a></p>
@@ -2389,7 +2508,7 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">142.6k</span>&nbsp;字
+                class="white-color">144.1k</span>&nbsp;字
             
             
             
