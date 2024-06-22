@@ -588,21 +588,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-06-20
+                    2024-06-21
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    27.1k
+                    31.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    101 分
+                    117 分
                 </div>
                 
 
@@ -2079,7 +2079,7 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 <p>3.破坏循环等待条件：按顺序申请资源，反序释放资源</p>
 <p>避免死锁：</p>
 <p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
-<h3 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h3><p>volatile是Java提供的一种轻量级的同步机制，在并发编程中，它也扮演着比较重要的角色在。<code>volatile</code> 关键字可以保证变量的可见性， <strong>所谓可见性，是指当一个线程修改了某一个共享变量的值，其他线程是否能够立即知道该变更</strong>。如果我们将变量声明为 <strong><code>volatile</code></strong> ，这就指示 JVM，这个变量是共享且不稳定的，每次使用它都到主存中进行读取。<code>volatile</code> 关键字能保证数据的可见性，<strong>但不能保证数据的原子性</strong>。<code>synchronized</code> 关键字两者都能保证。</p>
+<h3 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h3><p>volatile是Java提供的一种轻量级的同步机制，在并发编程中，它也扮演着比较重要的角色在。<code>volatile</code> 关键字可以保证变量的可见性， <strong>所谓可见性，是指当一个线程修改了某一个共享变量的值，其他线程是否能够立即知道该变更</strong>。如果我们将变量声明为 <strong><code>volatile</code></strong> ，这就指示 JVM，这个变量是<strong>共享且不稳定</strong>的，每次使用它都到<strong>主存</strong>中进行读取。<code>volatile</code> 关键字能保证数据的可见性，<strong>但不能保证数据的原子性</strong>。<code>synchronized</code> 关键字两者都能保证。</p>
 <p><strong>JMM规定了所有的变量都存储在主内存中</strong>。普通变量不能保证内存可见性。而volatile则保证了<strong>可见性和有序性</strong>。</p>
 <ul>
 <li>当<strong>写</strong>一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值<strong>立即刷新回主内存中</strong>。</li>
@@ -2128,6 +2128,131 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
 <li>将 <code>uniqueInstance</code> 指向分配的内存地址</li>
 </ol>
 <p>但是由于 JVM 具有指令重排的特性，执行顺序有可能变成 1-&gt;3-&gt;2。指令重排在单线程环境下不会出现问题，但是在多线程环境下会导致一个线程获得还没有初始化的实例。例如，线程 T1 执行了 1 和 3，此时 T2 调用 <code>getUniqueInstance</code>() 后发现 <code>uniqueInstance</code> 不为空，因此返回 <code>uniqueInstance</code>，但此时 <code>uniqueInstance</code> 还未被初始化。使用volatile修饰，就能禁止指令重排。</p>
+<h3 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h3><p>悲观锁总是假设最坏的情况，认为共享资源每次被访问的时候就会出现问题(比如共享数据被修改)，所以每次在获取资源操作的时候都会上锁，这样其他线程想拿到这个资源就会阻塞直到锁被上一个持有者释放。也就是说，<strong>共享资源每次只给一个线程使用，其它线程阻塞，用完后再把资源转让给其它线程</strong>。</p>
+<p>像 Java 中<code>synchronized</code>和<code>ReentrantLock</code>等独占锁就是悲观锁思想的实现。</p>
+<blockquote>
+<p>高并发的场景下，激烈的锁竞争会造成线程阻塞，大量阻塞线程会导致系统的上下文切换，增加系统的性能开销。并且，悲观锁还可能会存在死锁问题，影响代码的正常运行。</p>
+</blockquote>
+<p>乐观锁总是假设最好的情况，认为共享资源每次被访问的时候不会出现问题，线程可以不停地执行，无需加锁也无需等待，只是在提交修改的时候去验证对应的资源（也就是数据）是否被其它线程修改了（具体方法可以使用<strong>版本号机制或 CAS 算法</strong>）。</p>
+<p>在 Java 中<code>java.util.concurrent.atomic</code>包下面的原子变量类（比如<code>AtomicInteger</code>、<code>LongAdder</code>）就是使用了乐观锁的一种实现方式 <strong>CAS</strong> 实现的。</p>
+<blockquote>
+<p>高并发的场景下，乐观锁相比悲观锁来说，不存在锁竞争造成线程阻塞，也不会有死锁的问题，在性能上往往会更胜一筹。但是，如果冲突频繁发生（写占比非常多的情况），会频繁失败和重试，这样同样会非常影响性能，导致 CPU 飙升。</p>
+</blockquote>
+<p>理论上来说：</p>
+<ul>
+<li>悲观锁通常多用于写比较多的情况（多写场景，竞争激烈），这样可以<strong>避免频繁失败和重试影响性能</strong>，悲观锁的<strong>开销是固定的</strong>。不过，如果乐观锁解决了频繁失败和重试这个问题的话（比如<code>LongAdder</code>），也是可以考虑使用乐观锁的，要视实际情况而定。</li>
+<li>乐观锁通常多用于写比较少的情况（多读场景，竞争较少），这样可以<strong>避免频繁加锁影响性能</strong>。不过，乐观锁主要针对的对象是单个共享变量（参考<code>java.util.concurrent.atomic</code>包下面的原子变量类）。</li>
+</ul>
+<h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><p>CAS 的全称是 <strong>Compare And Swap（比较与交换）</strong> ，用于实现乐观锁，被广泛应用于各大框架中。CAS 的思想很简单，就是<strong>用一个预期值和要更新的变量值进行比较，两值相等才会进行更新。</strong></p>
+<p>CAS 是一个原子操作，底层依赖于一条 CPU 的原子指令。</p>
+<p>CAS 涉及到三个操作数：<strong>V</strong>：要更新的变量值(Var)；<strong>E</strong>：预期值(Expected)；<strong>N</strong>：拟写入的新值(New)</p>
+<p>当且仅当 V 的值等于 E 时，CAS 通过原子方式用新值 N 来更新 V 的值。如果不等，说明已经有其它线程更新了 V，则当前线程放弃更新。（和版本号机制思想一致）</p>
+<p>问题：如果一个变量 V 初次读取的时候是 A 值，并且在准备赋值的时候检查到它仍然是 A 值，那我们就能说明它的值没有被其他线程修改过了吗？很明显是不能的，因为在这段时间它的值可能被改为其他值，然后又改回 A，那 CAS 操作就会误认为它从来没有被修改过。这个问题被称为 CAS 操作的 <strong>“ABA”问题。</strong></p>
+<p>解决方案：在变量前面追加上<strong>版本号或者时间戳</strong>。<code>AtomicStampedReference</code> 类的 <code>compareAndSet()</code> 方法就是首先检查当前<strong>引用</strong>是否等于预期引用，并且当前<strong>标志</strong>是否等于预期标志，如果<strong>全部相等</strong>，则以原子方式将该引用和该标志的值设置为给定的更新值。</p>
+<p>另一个问题：<strong>循环时间长开销大</strong>。CAS 经常会用到自旋操作来进行重试，也就是不成功就一直循环执行直到成功。如果长时间不成功，会给 CPU 带来非常大的执行开销。如果 JVM 能支持处理器提供的 pause 指令那么效率会有一定的提升。</p>
+<h3 id="Synchronized"><a href="#Synchronized" class="headerlink" title="Synchronized"></a>Synchronized</h3><p><code>synchronized</code> 是 Java 中的一个关键字，翻译成中文是同步的意思，主要解决的是<strong>多个线程之间访问资源的同步性</strong>，可以保证被它修饰的方法或者代码块在任意时刻只能有一个线程执行。</p>
+<p>在 Java 早期版本中，<code>synchronized</code> 属于 <strong>重量级锁</strong>，效率低下。因为早期锁依赖于操作系统底层mutex lock实现，Java线程要映射到操作系统原生线程之上，也就是挂起或唤醒线程进行线程上下文切换时，<strong>都需要从用户态转换成内核态</strong>，这个状态之间的转换需要相对比较长的时间，时间成本相对较高。</p>
+<p>在 Java 6 之后， <code>synchronized</code> 引入了大量的优化如自旋锁、适应性自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等技术来减少锁操作的开销，这些优化让 <code>synchronized</code> 锁的效率提升了很多。（JDK18 中，偏向锁已经被彻底废弃）锁主要存在四种状态，依次是：<strong>无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态</strong>，他们会随着竞争的激烈而逐渐升级。注意<strong>锁可以升级不可降级</strong>，这种策略是为了提高获得锁和释放锁的效率。</p>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 修饰实例方法，给当前对象实例加锁，进入同步代码前要获得 当前对象实例的锁 。</span>
+<span class="token keyword">synchronized</span> <span class="token keyword">void</span> <span class="token function">method</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//业务代码</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 修饰静态方法，当前类加锁，会作用于类的所有对象实例 ，进入同步代码前要获得 当前 class 的锁。</span>
+<span class="token keyword">synchronized</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">method</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//业务代码</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 修饰代码块，对括号里指定的对象/类加锁：synchronized(object)或synchronized(类.class)</span>
+<span class="token keyword">synchronized</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">//业务代码</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h4><p>synchronized 关键字底层原理属于 JVM 层面的东西。</p>
+<p><strong>同步语句块</strong></p>
+<p><code>synchronized</code> <strong>同步语句块</strong>的实现使用的是 <code>monitorenter</code> 和 <code>monitorexit</code> 指令，其中 <code>monitorenter</code> 指令指向同步代码块的开始位置，<code>monitorexit</code> 指令则指明同步代码块的结束位置。</p>
+<p>当执行 <code>monitorenter</code> 指令时，线程试图获取锁也就是获取 <strong>对象监视器 <code>monitor</code></strong> 的持有权。如果锁的计数器为 0 则表示锁可以被获取，获取后将锁计数器设为 1 也就是加 1。对象锁的的拥有者线程才可以执行 <code>monitorexit</code> 指令来释放锁。在执行 <code>monitorexit</code> 指令后，将锁计数器设为 0，表明锁被释放，其他线程可以尝试获取锁。如果获取对象锁失败，那当前线程就要阻塞等待，直到锁被另外一个线程释放为止。</p>
+<p><strong>同步方法</strong></p>
+<p><code>synchronized</code> 修饰的方法并没有 <code>monitorenter</code> 指令和 <code>monitorexit</code> 指令，取得代之的确实是 <code>ACC_SYNCHRONIZED</code> 标识，该标识指明了该方法是一个同步方法。<strong>不过两者的本质都是对对象监视器 monitor 的获取。</strong>JVM 通过该 <code>ACC_SYNCHRONIZED</code> 访问标志来辨别一个方法是否声明为同步方法，从而执行相应的同步调用。如果是实例方法，JVM 会尝试获取实例对象的锁。如果是静态方法，JVM 会尝试获取当前 class 的锁。</p>
+<h4 id="synchronized-vs-volatile"><a href="#synchronized-vs-volatile" class="headerlink" title="synchronized vs volatile"></a>synchronized vs volatile</h4><p><code>synchronized</code> 关键字和 <code>volatile</code> 关键字是两个<strong>互补</strong>的存在，而不是对立的存在！</p>
+<ul>
+<li><code>volatile</code> 关键字是线程同步的<strong>轻量级</strong>实现，所以 <code>volatile</code>性能肯定比<code>synchronized</code>关键字要好 。但是 <code>volatile</code> 关键字<strong>只能用于变量</strong>而 <code>synchronized</code> 关键字可以修饰方法以及代码块 。</li>
+<li><code>volatile</code> 关键字能保证<strong>数据的可见性</strong>，但不能保证数据的原子性。<code>synchronized</code> 关键字<strong>两者都能保证</strong>。</li>
+<li><code>volatile</code>关键字主要用于解决<strong>变量在多个线程之间的可见性</strong>，而 <code>synchronized</code> 关键字解决的是<strong>多个线程之间访问资源的同步性</strong>。</li>
+</ul>
+<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p><code>ReentrantLock</code> 实现了 <code>Lock</code> 接口，是一个<strong>可重入且独占</strong>式的锁，和 <code>synchronized</code> 关键字类似。不过，<code>ReentrantLock</code> 更灵活、更强大，增加了<strong>轮询、超时、中断、公平锁和非公平锁</strong>等高级功能。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReentrantLock</span> <span class="token keyword">implements</span> <span class="token class-name">Lock</span><span class="token punctuation">,</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>Serializable</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><code>ReentrantLock</code> 里面有一个**内部类 <code>Sync</code>**，<code>Sync</code> 继承 AQS（<code>AbstractQueuedSynchronizer</code>），添加锁和释放锁的大部分操作实际上都是在 <code>Sync</code> 中实现的。<code>Sync</code> 有公平锁 <code>FairSync</code> 和非公平锁 <code>NonfairSync</code> 两个子类。</p>
+<p><code>ReentrantLock</code> 默认使用非公平锁，也可以通过构造器来显式的指定使用公平锁。<code>ReentrantLock</code> 的底层就是由 AQS 来实现的。</p>
+<img src="/2024/06/15/java/reentrantlock-class-diagram.png" alt="img" style="zoom: 50%;">
+
+<p><strong>公平锁</strong> : 锁被释放之后，<strong>先申请的线程先得到锁</strong>。性能较差一些，因为公平锁为了保证时间上的绝对顺序，<strong>上下文切换更频繁</strong>。</p>
+<ul>
+<li>优点：所有的线程都能得到资源，不会饿死在队列中。</li>
+<li>缺点：吞吐量会下降很多，队列里面除了第一个线程，其他的线程都会阻塞，<strong>cpu唤醒阻塞线程的开销会很大</strong>。</li>
+</ul>
+<p><strong>非公平锁</strong>：锁被释放之后，后申请的线程可能会先获取到锁，是随机或者按照其他优先级排序的。<strong>性能更好</strong>，但可能会导致某些线程永远无法获取到锁。</p>
+<ul>
+<li>非公平锁比公平锁效率高的原因主要在于<strong>减少了线程切换和同步操作的次数</strong>。</li>
+<li>当线程在运行期间直接抢占到锁资源时，不需要进行“执行现场保存和恢复”的操作，从而能够更快地执行业务代码。相比之下，如果一个就绪态的线程想要获得锁资源，首先需要恢复现场，之后争抢锁（可能成功也可能失败），这个过程浪费了大量的CPU资源，只有在获取锁成功后才能继续执行业务代码。因此，非公平锁在效率上优于公平锁，主要原因就在于是否需要进行现场恢复和不同态之间的切换。<strong>非公平锁减少了线程挂起的几率</strong>，后来的线程有一定几率逃离被挂起的开销。</li>
+</ul>
+<h3 id="synchronized-vs-ReentrantLock"><a href="#synchronized-vs-ReentrantLock" class="headerlink" title="synchronized vs ReentrantLock"></a>synchronized vs ReentrantLock</h3><ul>
+<li><p>两者都是可重入锁。<strong>可重入锁</strong> 也叫<strong>递归锁</strong>，指的是<strong>线程可以再次获取自己的内部锁</strong>。比如一个线程获得了某个对象的锁，此时这个对象锁还没有释放，当其再次想要获取这个对象的锁的时候还是可以获取的，<strong>如果是不可重入锁的话，就会造成死锁。</strong></p>
+<ul>
+<li>可重入锁主要用在线程需要多次进入临界区代码时，需要使用可重入锁。</li>
+<li>每一个锁关联一个线程持有者和计数器，当计数器为 0 时表示该锁没有被任何线程持有，那么任何线程都可能获得该锁而调用相应的方法；当某一线程请求成功后，JVM会<strong>记下锁的持有线程</strong>，并且将计数器置为 1；此时其它线程请求该锁，则必须等待；而该持有锁的线程如果再次请求这个锁，就可以<strong>再次拿到这个锁，同时计数器会递增</strong>；当线程<strong>退出同步代码块时，计数器会递减</strong>，如果计数器为 0，则释放该锁。</li>
+</ul>
+</li>
+<li><p><code>synchronized</code> 是依赖于 JVM 实现的，前面我们也讲到了 虚拟机团队在 JDK1.6 为 synchronized 关键字进行了很多优化，但是<strong>这些优化都是在虚拟机层面实现的，并没有直接暴露给我们</strong>。ReentrantLock 是 JDK 层面实现的（也就是 API 层面，需要 lock() 和 unlock() 方法配合 try/finally 语句块来完成），所以我们可以<strong>通过查看它的源代码，来看它是如何实现的</strong>。</p>
+</li>
+<li><p>相比<code>synchronized</code>，<code>ReentrantLock</code>增加了一些高级功能。主要来说主要有三点：</p>
+<ul>
+<li><strong>等待可中断</strong> : <code>ReentrantLock</code>提供了一种能够<strong>中断等待锁的线程</strong>的机制，通过 <code>lock.lockInterruptibly()</code> 来实现这个机制。也就是说<strong>正在等待的线程可以选择放弃等待，改为处理其他事情。</strong><ul>
+<li><strong>可中断锁</strong>：获取锁的过程中可以被中断，不需要一直等到获取锁之后 才能进行其他逻辑处理。<code>ReentrantLock</code> 就属于是可中断锁。</li>
+<li><strong>不可中断锁</strong>：一旦线程申请了锁，就只能<strong>等到拿到锁以后才能进行其他的逻辑处理</strong>。 <code>synchronized</code> 就属于是不可中断锁。</li>
+</ul>
+</li>
+<li><strong>可实现公平锁</strong> : <code>ReentrantLock</code>可以指定是公平锁还是非公平锁。而**<code>synchronized</code>只能是非公平锁**。所谓的公平锁就是先等待的线程先获得锁。<code>ReentrantLock</code>默认情况是非公平的，可以通过 <code>ReentrantLock</code>类的<code>ReentrantLock(boolean fair)</code>构造方法来指定是否是公平的。</li>
+<li><strong>可实现选择性通知（锁可以绑定多个条件）</strong>: <code>synchronized</code>关键字与<code>wait()</code>和<code>notify()</code>/<code>notifyAll()</code>方法相结合可以实现等待/通知机制。<code>ReentrantLock</code>类当然也可以实现，但是需要借助于<code>Condition</code>接口与<code>newCondition()</code>方法。<ul>
+<li><code>Condition</code>是 JDK1.5 之后才有的，它具有很好的灵活性，比如可以实现<strong>多路通知功能</strong>也就是在一个<code>Lock</code>对象中可以创建多个<code>Condition</code>实例（即对象监视器），<strong>线程对象可以注册在指定的<code>Condition</code>中，从而可以有选择性的进行线程通知，</strong>在调度线程上更加灵活。 在使用<code>notify()/notifyAll()</code>方法进行通知时，被通知的线程是由 JVM 选择的，用<code>ReentrantLock</code>类结合<code>Condition</code>实例可以实现“选择性通知” ，这个功能非常重要，而且是 <code>Condition</code> 接口默认提供的。而**<code>synchronized</code>关键字就相当于整个 <code>Lock</code> 对象中只有一个<code>Condition</code>实例<strong>，所有的线程都注册在它一个身上。如果执行<code>notifyAll()</code>方法的话就会通知所有处于等待状态的线程，这样会造成很大的效率问题。而</strong><code>Condition</code>实例的<code>signalAll()</code>方法，只会唤醒注册在该<code>Condition</code>实例中的所有等待线程。**</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="ReentrantReadWriteLock"><a href="#ReentrantReadWriteLock" class="headerlink" title="ReentrantReadWriteLock"></a>ReentrantReadWriteLock</h3><p><code>ReentrantReadWriteLock</code> 实现了 <code>ReadWriteLock</code> ，是一个<strong>可重入的读写锁</strong>，既可以保证多个线程同时读的效率，同时又可以保证有写入操作时的线程安全。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ReentrantReadWriteLock</span>
+        <span class="token keyword">implements</span> <span class="token class-name">ReadWriteLock</span><span class="token punctuation">,</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>Serializable</span><span class="token punctuation">{</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">ReadWriteLock</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Lock</span> <span class="token function">readLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">Lock</span> <span class="token function">writeLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>ReentrantReadWriteLock</code> 其实是两把锁，一把是 <code>WriteLock</code> (写锁)，一把是 <code>ReadLock</code>（读锁） 。<strong>读锁是共享锁，写锁是独占锁</strong>。读锁可以被同时读，可以同时被多个线程持有，而写锁最多只能同时被一个线程持有。和 <code>ReentrantLock</code> 一样，<code>ReentrantReadWriteLock</code> 底层也是基于 AQS 实现的。<code>ReentrantReadWriteLock</code> 也支持公平锁和非公平锁，默认使用非公平锁，可以通过构造器来显示的指定。</p>
+<p>在<strong>读多写少</strong>的情况下，使用 <code>ReentrantReadWriteLock</code> 能够明显提升系统性能。</p>
+<ul>
+<li><strong>共享锁</strong>：一把锁可以被多个线程同时获得。</li>
+<li><strong>独占锁</strong>：一把锁只能被一个线程获得。</li>
+</ul>
+<p>读写锁进行并发控制的规则：读读不互斥、读写互斥、写写互斥（只有读读不互斥）。</p>
+<p><strong>在线程持有读锁的情况下，该线程不能取得写锁。</strong>在线程持有写锁的情况下，该线程可以继续获取读锁。</p>
+<p><strong>当线程获取读锁的时候，可能有其他线程同时也在持有读锁，因此不能把获取读锁的线程“升级”为写锁；而对于获得写锁的线程，它一定独占了读写锁，因此可以继续让它获取读锁，当它同时获取了写锁和读锁后，还可以先释放写锁继续持有读锁，这样一个写锁就“降级”为了读锁。</strong></p>
+<h3 id="StampedLock"><a href="#StampedLock" class="headerlink" title="StampedLock"></a>StampedLock</h3><p><code>StampedLock</code> 是 JDK 1.8 引入的性能更好的读写锁，<strong>不可重入且不支持条件变量</strong> <code>Condition</code>。</p>
+<p><code>StampedLock</code> 并不是直接实现 <code>Lock</code>或 <code>ReadWriteLock</code>接口，而是基于 <strong>CLH 锁</strong> 独立实现的（AQS 也是基于这玩意），CLH 锁是对自旋锁的一种改良，是一种隐式的链表队列。<code>StampedLock</code> 通过 CLH 队列进行线程的管理，通过同步状态值 <code>state</code> 来表示锁的状态和类型。</p>
+<p><code>StampedLock</code> 提供了三种模式的读写控制模式：读锁、写锁和乐观读。</p>
+<ul>
+<li><strong>写锁</strong>：独占锁，一把锁只能被一个线程获得。当一个线程获取写锁后，其他请求读锁和写锁的线程必须等待。类似于 <code>ReentrantReadWriteLock</code> 的写锁，不过这里的写锁是<strong>不可重入</strong>的。</li>
+<li><strong>读锁</strong> （悲观读）：共享锁，没有线程获取写锁的情况下，多个线程可以同时持有读锁。如果己经有线程持有写锁，则其他线程请求获取该读锁会被阻塞。类似于 <code>ReentrantReadWriteLock</code> 的读锁，不过这里的读锁是不可重入的。</li>
+<li><strong>乐观读</strong>：<strong>允许多个线程获取乐观读以及读锁。同时允许一个写线程获取写锁。</strong></li>
+</ul>
+<p><code>StampedLock</code> 在获取锁的时候会返回一个 long 型的数据戳，该数据戳用于稍后的锁释放参数，如果返回的数据戳为 0 则表示锁获取失败。当前线程持有了锁再次获取锁还是会返回一个新的数据戳，这也是<code>StampedLock</code>不可重入的原因。</p>
+<p><strong>StampedLock比ReentrantReadWriteLock性能更好，主要体现在以下几个方面：</strong><br>1、增加乐观读功能，减少写线程饥饿现象出现</p>
+<p>​	当线程尝试获取乐观读锁时，StampedLock 会检查当前是否有写锁被持有。如果没有，它会增加一个读锁计数器并返回一个 stamp（通常是当前状态的一个快照）。乐观读锁不会阻塞其他读线程或写线程，但可能在写线程获得锁后读取到不一致的数据。</p>
+<p>2、StampedLock要比ReentrantReadWriteLock消耗小</p>
+<p>3、StampedLock增加了更多的无锁操作，使线程间阻塞减少到最小。</p>
+<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h3><p><code>ThreadLocal</code>类主要解决的就是让每个线程绑定自己的值，拥有自己的私有数据（专属本地变量）。如果你创建了一个<code>ThreadLocal</code>变量，那么访问这个变量的<strong>每个线程都会有这个变量的本地副本</strong>，这也是<code>ThreadLocal</code>变量名的由来。他们可以使用 <code>get()</code> 和 <code>set()</code> 方法来获取默认值或将其值更改为当前线程所存的副本的值，从而<strong>避免了线程安全问</strong>题。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/">https://javaguide.cn/</a></p>
 <p>泛型：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45395059/article/details/126006369">Java 中的泛型（两万字超全详解）_java 泛型-CSDN博客</a></p>
 <p>反射：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_74268571/article/details/131345164">Java反射详解-CSDN博客</a></p>
@@ -2674,7 +2799,7 @@ randomAccessFile<span class="token punctuation">.</span><span class="token funct
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">148.2k</span>&nbsp;字
+                class="white-color">152.9k</span>&nbsp;字
             
             
             
