@@ -637,13 +637,13 @@
 <li>多模态核心技术又分为：<strong>多模态表示（Representation）、多模态融合（Fusion）、多模态转换（Translation）、多模态对齐（Alignment）和模态协同学习（Co-learning）</strong></li>
 <li>本文从自然语言处理的视角出发，介绍多模态信息处理技术的最新进展，组织结构如下：第１节介绍NLP领域关注度较高的多模态应用和相关的数据集。多模态融合是多模态信息处理的核心问题。第２节从单模态信息的表示方法、多模态信息的融合阶段、融合模型的网络结构、未对齐模态和模态缺失情况下的多模态融合等角度介绍主流的多模态融合方法。第３节介绍多模态预训练技术，并从模型的网络结构、模型的输入、预训练目标、预训练语料和下游任务等维度对比最新提出的多模态预训练模型。第４节介绍多模态技术在工业界的应用。最后一节是总结和对未来工作的展望。</li>
 </ul>
-<h2 id="多模态应用"><a href="#多模态应用" class="headerlink" title="多模态应用"></a>多模态应用</h2><img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909145625058.png" alt="image-20240909145625058" style="zoom: 33%;">
+<h2 id="多模态应用"><a href="#多模态应用" class="headerlink" title="多模态应用"></a>多模态应用</h2><img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909145625058.png" alt="image-20240909145625058" style="zoom: 33%;">
 
 <h3 id="多模态情感识别"><a href="#多模态情感识别" class="headerlink" title="多模态情感识别"></a>多模态情感识别</h3><ul>
 <li>在交互场景下，多模态情感识别研究如何从<strong>人的表情和动作手势、语音音调、语言</strong>等多模态信息中理解用户细颗粒度的情感表达，进而指导人机交互策略。</li>
 <li>其主要研究内容有：<strong>①基于多模态信息互补性和异步性的动态融合；</strong>②高噪声环境下对于<strong>模态模糊或模态缺失问题</strong>的鲁棒性融合；③客服和营销等<strong>自然交互情境</strong>下的情感识别等。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909151102370.png" alt="image-20240909151102370" style="zoom:67%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909151102370.png" alt="image-20240909151102370" style="zoom:67%;">
 
 <h3 id="视觉-语言生成"><a href="#视觉-语言生成" class="headerlink" title="视觉-语言生成"></a>视觉-语言生成</h3><ul>
 <li>视觉（图像或视频）到语言的生成和语言到视觉（图像或视频）的生成打破了计算机视觉和自然语言处理两个领域的边界</li>
@@ -669,7 +669,7 @@
 <li>视觉问答是一个典型的多模态问题，需要模型具备<strong>物体定位、属性检测、事件分类、场景理解和推理及数学计算</strong>等能力。</li>
 <li>根据图片类型不同，VQA又分为自然图像理解VQA、合成图像推理VQA和自然图像推理VQA</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909151819273.png" alt="image-20240909151819273" style="zoom:67%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909151819273.png" alt="image-20240909151819273" style="zoom:67%;">
 
 <h4 id="视觉对话"><a href="#视觉对话" class="headerlink" title="**视觉对话"></a>**视觉对话</h4><ul>
 <li>视觉对话（Visual DIalog）是给定一幅图像（或视频等视觉内容）和一个上下文相关的问题，要求模型根据图片（或视频）内容回答该问题。</li>
@@ -686,7 +686,7 @@
 </ul>
 </li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909151958971.png" alt="image-20240909151958971" style="zoom:67%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909151958971.png" alt="image-20240909151958971" style="zoom:67%;">
 
 <h3 id="多模态摘要"><a href="#多模态摘要" class="headerlink" title="多模态摘要"></a>多模态摘要</h3><ul>
 <li><p>多模态摘要是基于对多模态输入（文本、语音、图像和视频等）的理解，归纳并生成单模态或者多模态的概括性总结（摘要）任务。</p>
@@ -700,13 +700,13 @@
 <li>多模态对齐方法可直接应用于<strong>多模态检索</strong>等应用，也可作为<strong>图像描述、VQA、多模态预训练</strong>的训练语料，尤其是在缺乏大规模多模态人工标注语料的场景。</li>
 <li>Tan等人提出了 Vokenization技术（图３），其通过给文本中的每一个词打上一幅图像的标签，实现在大规模文本语料上自动构建多模态对齐语料库。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909152259522.png" alt="image-20240909152259522" style="zoom: 33%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909152259522.png" alt="image-20240909152259522" style="zoom: 33%;">
 
 <h4 id="图像短语定位"><a href="#图像短语定位" class="headerlink" title="图像短语定位"></a>图像短语定位</h4><ul>
 <li>图像中的目标和文本中的短语对齐也被称为<strong>图像短语定位</strong>（Phrase Grounding），可用于提高图像描述、VQA、视觉导航等视觉-语言下游任务的性能。</li>
 <li>Plummer等人发布了一个大规模的短语定位数据集Flickr30kEntities，如图4所示。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909152343325.png" alt="image-20240909152343325" style="zoom:67%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909152343325.png" alt="image-20240909152343325" style="zoom:67%;">
 
 <h4 id="视频定位"><a href="#视频定位" class="headerlink" title="**视频定位"></a>**视频定位</h4><ul>
 <li>视频定位（Video Grounding）是多模态对齐中另一项重要且具有挑战性的任务。给定一个查询（Query），它要求模型从视频中定位出与查询语言对应的一个目标视频片段。该技术可应用<strong>于视频理解、视频检索和人机交互</strong>等场景。</li>
@@ -726,7 +726,7 @@
 <li>多模态融合将多个单模态表征整合成为一个多模态信息表征，它是多模态信息处理的核心问题。</li>
 <li>多模态融合的研究方向有：基于多模态互补性的全模态融合问题、模态模糊或者模态缺失下的鲁棒性融合问题、非对齐的多模态融合问题等。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909154906558.png" alt="image-20240909154906558" style="zoom: 80%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909154906558.png" alt="image-20240909154906558" style="zoom: 80%;">
 
 <h3 id="根据单模态表示分类"><a href="#根据单模态表示分类" class="headerlink" title="根据单模态表示分类"></a>根据单模态表示分类</h3><ul>
 <li>单模态的特征表示是多模态融合的基石。这一类方法重点研究如何在多模态融合之前提取更好的单模态特征表示。</li>
@@ -754,7 +754,7 @@
 <li>视觉场景图表示（scene graph representation）是用场景图Ｇ=（V，R）表示一幅图像。</li>
 <li>场景图中的节点V={v1, v2…vk}是图像中的目标集合，关系R={r1, r2…rk}是图像中目标和目标间的显式语义关系（如 wearing、eating）、空间位置关系（如 cover、intersect、in）和隐式语义关系的集合。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909155741554.png" alt="image-20240909155741554" style="zoom:67%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909155741554.png" alt="image-20240909155741554" style="zoom:67%;">
 
 <h3 id="根据融合阶段进行分类"><a href="#根据融合阶段进行分类" class="headerlink" title="根据融合阶段进行分类"></a>根据融合阶段进行分类</h3><ul>
 <li>早期融合的特点是单模态表示学习简单，而多模态融合部分的模型深度大，融合策略复杂。例如，词的独热编码表示和视觉区域表示直接参与多模态融合</li>
@@ -776,14 +776,14 @@
 <li>BERT凭借着 transformer强大的特征学习能力和掩码语言模型（Masked Language Model）实现双向编码，刷新了多个 NLP任务的最优性能。</li>
 <li>基 于transformer的多模态融合又分为单流模型和双流模模型两大类。 单流模型使用一个transformer在一开始便对多模态信息进行充分的交互。双流模型则对不同的模态使用独立的transformer编码，再通过协同注意力机制实现不同模态间的融合，如图７所示。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909155859453.png" alt="image-20240909155859453" style="zoom: 80%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909155859453.png" alt="image-20240909155859453" style="zoom: 80%;">
 
 <h4 id="图模型融合"><a href="#图模型融合" class="headerlink" title="图模型融合"></a>图模型融合</h4><p>图模型融合方法将不同模态数据建模为图结构，并利用图神经网络（Graph Neural Networks）等方法进行图结构的表示和学习，从而实现对多模态信息的融合和推理。Yin 等人将基于图的多模态融合编码器应用到多模态神经机器翻译模型中，把源语言中的词和图像中的物体放到了同一个图中，再堆叠多个基于图神经网络的多模态融合层（在每一层顺序执行模态内融合和模态间融合）。</p>
 <h2 id="多模态预训练"><a href="#多模态预训练" class="headerlink" title="多模态预训练"></a>多模态预训练</h2><ul>
 <li>通过预训练语言模型从海量无标注数据中学习通用知识，再在下游任务上用少量的标注数据进行微调，已经成为自然语言处理领域成熟的新范式。</li>
 <li>相对于文本预训练语言模型，多模态预训练模型可以更好地对细颗粒度的多模态语义单元（词或者目标）间的相关性进行建模。</li>
 </ul>
-<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/my-hexo-blog\blogs\source\_posts\多模态信息处理\image-20240909160214538.png" alt="image-20240909160214538" style="zoom: 67%;">
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240909160214538.png" alt="image-20240909160214538" style="zoom: 67%;">
 
 <ul>
 <li><p>从表５中的１１个图像－语言跨模态预训练模型的对比，我们发现的跨模态预训练模型的特点如下</p>
