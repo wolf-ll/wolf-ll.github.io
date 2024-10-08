@@ -435,7 +435,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-09-09
+                    2024-10-08
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.5k
+                    6.2k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    15 分
+                    21 分
                 </div>
                 
 
@@ -800,6 +800,44 @@
 </ul>
 </li>
 </ul>
+<h1 id="多模态大模型"><a href="#多模态大模型" class="headerlink" title="多模态大模型"></a>多模态大模型</h1><p>多模态大语言模型（MLLM）是近年来以强大的大语言模型（LLM）作为大脑任务的多模态研究热点。MLLM令人惊讶的涌现能力，比如基于图像写故事和无ocr的数学推理，在传统方法中是罕见的，这表明了一条通往人工通用智能的潜在道路。本文旨在对MLLM的最新研究进展进行跟踪和总结。首先，我们提出了MLLM的公式，并描述了它的相关概念。然后，我们讨论了关键的技术和应用，包括多模态指令调整（M-IT）、多模态上下文学习（M-ICL）、多模态思维链（M-CoT）和llm辅助视觉推理（LAVR）。最后，我们讨论了现有的挑战，并指出了很有前景的研究方向。鉴于MLLM的时代才刚刚开始，我们将继续更新这项调查，并希望它能激发更多的研究。</p>
+<h2 id="引言-1"><a href="#引言-1" class="headerlink" title="引言"></a>引言</h2><p>LMM在上下文学习In-Context Learning (ICL)，指令遵循instruction following，以及思维链Chain of Thought (CoT) 等方面都表现良好。但是仅限于理解离散文本，对视觉不敏感。 作为对比，大视觉模型Large Vision Models (LVMs）可以捕获视觉特征，但是推理落后。</p>
+<p>鉴于此，多模态大模型Multimodal Large Language Model (MLLM)应运而生。在形式上，它指的是基于llm的具有接收、推理和输出多模态信息的能力的模型。在MLLM之前，有很多关于多模态的研究，可以分为判别的，生成的。CLIP，作为前者的代表，将视觉和文本信息投射到一个统一的表示空间中，为下游的多模态任务建立了一个桥梁。相比之下，OFA 是后者的代表，它以序列到序列的方式统一了多模态任务。</p>
+<p>MLLM与传统模型相比，有两个具有代表性的特征： (1) MLLM是基于具有十亿尺度参数的LLM，这在以往的模型中是没有的。(2) MLLM使用新的训练范式来充分释放其全部潜力，例如使用多模态指令调优来鼓励模型遵循新的指令。有了这两个特性，MLLM展示了新的功能，比如基于图像编写网站代码，理解模因的深层含义，以及无ocr的数学推理。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>MLLM通常包含以下三个组件：</p>
+<ul>
+<li>A pre-trained modality encoder  一个预训练的模态编码器（接收和处理视觉/听觉等信号）</li>
+<li>A pre-trained LLM 一个预训练的大模型（理解和推理信号）</li>
+<li>A modality interface to connect them 一个连接他们的模态接口（对齐不同的模态）</li>
+<li>一些mllm还包括一个生成器，用于输出除文本之外的其他模式。</li>
+</ul>
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240912200539075.png" alt="image-20240912200539075" style="zoom:80%;">
+
+<h3 id="模态编码器"><a href="#模态编码器" class="headerlink" title="模态编码器"></a>模态编码器</h3><p>编码器将原始信息，如图像或音频，压缩成一个更紧凑的表示形式。一种常见的方法是，使用一个<strong>预先训练过的编码器</strong>，而不是从头开始进行训练。例如，CLIP通过对图像-文本对的大规模预训练，集成了一个在语义上与文本对齐的视觉编码器。通过对齐预训练，使用这种最初预对齐的编码器与llm对齐更容易。</p>
+<p>表1总结了一系列常用的图像编码器的使用情况。</p>
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240912203228022.png" alt="image-20240912203228022" style="zoom:80%;">
+
+<p>在选择编码器时，通常会考虑<strong>分辨率、参数大小和预训练语料库</strong>等因素。许多工作已经验证，使用更高的分辨率可以实现显著的性能提高。放大输入分辨率的方法可以分为直接缩放和patch分割方法。</p>
+<p>不同架构对于处理不同分辨率的图片有着不同的策略。</p>
+<ul>
+<li><strong>使用不同编码器编码后进行特征融合</strong>：CogAgent使用了两个vision encoders去分别对高分辨率图片和低分辩率图片去进行编码，在得到高分辨率特征和低分辨率特征后，使用cross- attention进行高低分辨率特征融合。</li>
+<li><strong>图片切片方法</strong>（patch-division method）：将高分辨率图像分割成多个小块，再利用低分辨率编码器去执行。其中图片切片方法可能需要positional embedding去提示每个小块在原始图片中的相对位置。</li>
+</ul>
+<p>在众多因素当中，图片分辨率的重要性要大于模型参数量和和训练数据组成。</p>
+<h3 id="预训练LLM"><a href="#预训练LLM" class="headerlink" title="预训练LLM"></a>预训练LLM</h3><p>与从头开始训练LLM相比，从预先训练好的LLM开始更有效和实用。通过对web语料库进行大量的预训练，llm嵌入了丰富的世界知识，并展示了很强的泛化和推理能力。表2中总结了常用的和公开使用的llm。大多数llm在GPT-3之后，属于因果解码器类别</p>
+<img src="/2024/09/09/duo-mo-tai-xin-xi-chu-li/image-20240912205411017.png" alt="image-20240912205411017" style="zoom:80%;">
+
+<p>近年来，对混合专家模型（MoE）体系结构的探索越来越引起了[65]、[66]、[67]的关注。与密集模型相比，稀疏体系结构通过选择性地激活参数，可以在不增加计算成本的情况下放大总参数的大小。根据经验，MM1和MoE-LLaVA发现，MoE实现在几乎所有的基准测试上都比密集的实现获得了更好的性能。</p>
+<h3 id="模态接口"><a href="#模态接口" class="headerlink" title="模态接口"></a>模态接口</h3><p>由于llm只能感知文本，因此弥合自然语言和其他模式之间的差距是必要的。然而，以端到端方式训练一个大型多模式模型将是昂贵的。一种更实用的方法是在预先训练过的视觉编码器和LLM之间引入一个可学习的连接器。另一种方法是在专家模型的帮助下将图像翻译成语言，然后将该语言发送到LLM。</p>
+<h4 id="可学习的连接器"><a href="#可学习的连接器" class="headerlink" title="可学习的连接器"></a>可学习的连接器</h4><p>它负责弥合不同模式之间的差距。具体来说，该模块将信息投射到LLM能够有效理解的空间中。基于多模态信息的融合方式，大致有两种实现这种接口的方法，即token级融合和feature级融合。</p>
+<h5 id="token级融合"><a href="#token级融合" class="headerlink" title="token级融合"></a>token级融合</h5><p>对于在token层面的融合，modality encoder输出的特征会被转化成与LLM输入等价的token representation，通过将text token representation和其他模态转化后的token representation进行拼接，可以作为“可以被理解”的LLM输入。</p>
+<ul>
+<li><p><strong>BLIP-2方案</strong>：利用一组可学习的查询token，以基于查询的方式提取信息。这种q-formers方法将视觉token压缩为更少的表示向量。</p>
+</li>
+<li></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>吴友政,李浩然,姚霆,等.多模态信息处理前沿综述：应用、融合和预训练[J].中文信息学报,2022,36(05):1-20.</p>
+<p>A Survey on Multimodal Large Language Models</p>
 
                 
             </div>
@@ -1053,51 +1091,49 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/09/09/duo-mo-tai-xin-xi-chu-li/">
+                <a href="/2024/09/09/springcloud/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="多模态信息处理">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="SpringCloud">
                         
-                        <span class="card-title">多模态信息处理</span>
+                        <span class="card-title">SpringCloud</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            多模态概念，理论，应用，模型等整理，自用
+                            微服务理论，实践，八股
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-09-09
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-09-09
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E7%AC%94%E8%AE%B0/" class="post-category">
-                                    笔记
+                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
+                                    后端
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/LLM/">
-                        <span class="chip bg-color">LLM</span>
+                    <a href="/tags/%E6%A1%86%E6%9E%B6/">
+                        <span class="chip bg-color">框架</span>
                     </a>
                     
-                    <a href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">
-                        <span class="chip bg-color">多模态</span>
+                    <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+                        <span class="chip bg-color">微服务</span>
                     </a>
                     
                 </div>
@@ -1349,7 +1385,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">157.4k</span>&nbsp;字
+                class="white-color">166.6k</span>&nbsp;字
             
             
             
