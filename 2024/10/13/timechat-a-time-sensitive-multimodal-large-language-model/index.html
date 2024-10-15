@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-10-14
+                    2024-10-15
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.8k
+                    5.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    13 分
+                    19 分
                 </div>
                 
 
@@ -664,7 +664,7 @@
 <p>视觉-语言指令微调需要使用人工指令生成高质量的数据，这可以分为两个技术分支。（1）合并可用的多模态基准数据集，将它们转化为指令格式；（2）利用GPT生成更多样化的对话式数据。</p>
 <p>时间定位是视频理解任务的一个基本能力，特别是对于未修剪的长视频。有各种时间敏感的视频任务，包括视频时间定位、密集视频字幕、视频摘要、视频亮点检测、步长定位等。这些任务需要在视频语义和相应的时间戳之间进行显式的关联。以前的研究倾向于在专门的下游数据集上单独处理每个任务。尽管最近的工作对弥合一些任务进行了初步的尝试，但基于llm的通用范式仍在探索中。本文在语言建模上统一了一些时间敏感的视频任务，迈出了充分利用llm的通用能力的第一步。</p>
 <h2 id="本文方法"><a href="#本文方法" class="headerlink" title="本文方法"></a>本文方法</h2><p>模型组件主要由三部分构成：1）时间感知帧编码器，2）视频滑窗Q-Former，3）LLM</p>
-<p>给定一个输入视频，帧编码器首先独立地提取每个帧的视觉和时间戳特征。接下来，视频Q-Former建模滑动窗口内帧的时间关系，以生成视频token。最后，将这些视频token与可选的转录语音和用户指令连接起来，然后将这些指令输入LLM以生成响应。</p>
+<p>给定一个输入视频，帧编码器首先<strong>独立地提取每个帧的视觉和时间戳特征</strong>。接下来，视频Q-Former建模<strong>滑动窗口内帧的时间关系</strong>，以生成视频token。最后，将这些视频token与可选的转录语音和用户指令连接起来，然后将这些指令输入LLM以生成响应。</p>
 <img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241013153746315.png" alt="image-20241013153746315" style="zoom:80%;">
 
 <h3 id="Timestamp-aware-Frame-Encoder"><a href="#Timestamp-aware-Frame-Encoder" class="headerlink" title="Timestamp-aware Frame Encoder"></a>Timestamp-aware Frame Encoder</h3><p>以前的研究通常将视觉语义的建模和输入帧各自的时间戳信息分开。该方法不能直接捕获视觉事件发生时的时间。一些方法为视觉标记了可学习的位置（时间）嵌入。然而，<strong>这只能使模型能够识别帧的顺序，在确定精确的时间矩时缺乏精度。</strong></p>
@@ -692,18 +692,40 @@
 
 <h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>以EVA-CLIP中的ViT-G/14作为图像编码器，以LLaMA-2（7B）作为语言基础模型。图像Q-Former的参数从InstructBLIP的检查点初始化，而视频Q-Former从Video-LLaMA的检查点初始化。在TimeIT和Valley上调整了3个epoch，使用32的批处理大小，使用一台8-V100（32G）机器。如图2所示，ViT和LLM的参数被冻结，而图像Q-Former、视频Q-Former和线性层的参数被调整。窗口大小Lw、步幅S和每个窗口的视频token Nv数为32。输入帧数为96。其他超参数请参阅附录D。</p>
 <ul>
-<li><p>模型在三个任务上进行零样本长视频理解评估，即字幕生成，时间定位，和亮点检测。评估数据集包括YouCook2、 Charades-STA和 QVHighlights。评价指标的细节详见附录E。</p>
+<li><p>模型在三个任务上进行零样本长视频理解评估，即字幕（说明性文字）生成，时间定位，和亮点检测。评估数据集包括YouCook2、 Charades-STA和 QVHighlights。评价指标的细节详见附录E。</p>
 </li>
 <li><p>用于解析LLM输出的启发式规则：由llm生成的输出可能包括口语化表达式，从而导致较大的响应变化。因此，作者设计了大量的启发式规则，以保证能够准确地从模型的响应中提取预测的答案，以计算最终的度量。</p>
 </li>
 <li><p>方法比较：将模型与两个基线对比。（1）<strong>多模态pipeline</strong>： VideoChat-Text，InstructBLIP+ChatGPT。这些pipeline将专用的视觉模型与GPT集成，首先将视觉语义转换为文本描述，然后利用ChatGPT来处理所有输入来解决目标任务。（2）<strong>端到端模型</strong>：Valley，VideoChat-Embed，Video-LLaMA with 7B LLMs。这些模型直接将视频作为输入，并以端到端的方式生成响应。</p>
 </li>
 </ul>
-<p><strong>零样本性能</strong></p>
-<p>表2显示了TimeChat(7B)的零样本性能，它在所有任务中都优于以前的VidLLM(7B/13B)。</p>
+<h3 id="零样本性能"><a href="#零样本性能" class="headerlink" title="零样本性能"></a>零样本性能</h3><p>表2显示了TimeChat(7B)的零样本性能，它在所有任务中都优于以前的VidLLM(7B/13B)。</p>
 <img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241014173705687.png" alt="image-20241014173705687" style="zoom:80%;">
 
-<p>密集字幕生成：</p>
+<p><strong>密集字幕/说明文字生成</strong>：该任务在YouCook2上训练。模型需要在平均320秒的视频持续时间内，准确地识别出大约8个基本的烹饪步骤，并提供与视觉内容相匹配的忠实描述。烹饪的特殊性也提高了任务的复杂性，挑战了模型的通用性。现有的端到端VidLLM难以实现精确的moment定位，性能最好的VideoChat-Embed模型获得的低F1分数3.4就证明了这一点。<strong>这种moment定位的不精确显著影响了说明文字的评估，使得SODA_c和CIDEr指标都接近于零。</strong>与之相比，本文模型通过+1.0 SODA_c、+2.8 CIDEr和+9.2 F1评分获得了显著的SOTA。这表明TimeChat能够有效地处理长时间的视频，拥有精确的时间定位能力。此外，本文模型性能也显著超过了由ChatGPT提供的多模态pipeline（F1评分从8.4到12.6）。</p>
+<p><strong>视频亮点检测</strong>：dense video captioning任务集中于在clip级别定位事件，而亮点检测任务需要在帧级别进行更细粒度的视频理解。对于输入视频，其目标是输出亮点帧的时间和突出分数。整体来看，本文模型在QVHhemict上达到了14.5 mAP和23.9 HIT@1，比之前的vidllm分别获得了+1.4和+5.8分。这突出了<strong>时间戳感知帧编码器在识别每个帧的显著语义方面</strong>的贡献。此外，该任务是TimeIT的held-out任务，表明了模型对新任务的泛化能力。<strong>多模态pipeline方法获得了更好的性能</strong>，作者推测，这是由于高亮检测的格式与他们的方法更兼容，鉴于模型接收到一系列的输入帧的联合的时间戳-视觉描述。这使得LLM能够逐帧进行评估，从而促进更准确的判断。</p>
+<p><strong>时间定位</strong>：此任务旨在识别查询语句所描述的对应时间戳。TimeChat在Charades-STA数据集的“R@1，IoU=0.5”上达到32.2分，大大超过了之前的SOTA端到端VidLLM，即Valley（+27.5）。这表明，本文模型能够准确地定位给定文本查询的视频时刻。值得注意的是，TimeChat在时间定位任务上取得了最大的进步，作者认为该任务主要强调了<strong>长视频的时间定位能力</strong>，而这正是TimeChat的最佳优势。</p>
+<h3 id="定性评估"><a href="#定性评估" class="headerlink" title="定性评估"></a>定性评估</h3><p>图4显示了在零样本设置下，TimeChat和其他VidLLM之间的定性比较。Video-LLaMA没有完全理解用户的指令，因为它只描述了步骤，而没有给出相应时间戳。VideoChat生成了符合请求格式的说明，但错位了所有步骤的时间。此外，VideoChat生成的描述包含一些幻觉。与之相比，TimeChat显示了改进的时间定位和总结功能。它成功地匹配了几乎所有提取的剪辑的视频内容。此外，幻觉的发生也明显减少了。然而，在增强模型生成的摘要的丰富性和细节方面仍有改进的空间。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241015171454792.png" alt="image-20241015171454792" style="zoom:80%;">
+
+<p><strong>领域推广</strong>：在附录G中，展示了新领域的定性结果，如movie和egocentric videos，展示了TimeChat对新场景的泛化。这种泛化是一个实用的视频助手的一个关键特征，它代表了基于LLM的TimeChat和当前为特定的下游数据集量身定制的专用模型之间的根本区别。</p>
+<h3 id="消融实验"><a href="#消融实验" class="headerlink" title="消融实验"></a>消融实验</h3><p>当<strong>删除滑动视频Q-Former</strong>时，最终视觉token的数量从96减少到32，导致信息压缩率为3倍。语义信息的减少导致了生成的描述和视频内容之间的对齐性的降低。具体来说，SODA_c度量减少了1.0，而CIDEr度量减少了2.8。此外，时间戳的准确性（以F1分数衡量）降低了3.0。在<strong>去除时间戳感知帧编码器</strong>的情况下，模型对时间基础描述的能力显著下降，F1分数下降了2.3。这些结果突出了模型中两个新模块的有效性。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241015173335537.png" alt="image-20241015173335537" style="zoom:80%;">
+
+<h3 id="其他分析"><a href="#其他分析" class="headerlink" title="其他分析"></a>其他分析</h3><p>为了证明模型的性能提高不仅归因于新的TimeIT数据集，而且还归因于模型架构的改进，<strong>只使用YouCook2数据集进行微调和评估</strong>。在这个设置中，使用现有的开源检查点初始化模型（参见4.1）。对于所有的模型，应用LoRA 并微调Q-Former。Tab.4给出了结果，显示模型在所有指标上都始终优于以前的模型。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241015174655078.png" alt="image-20241015174655078" style="zoom:80%;">
+
+<p>在图5中，作者检查了模型关于输入帧数的性能测量。如3.1.3中提到的，以前的模型如Video-LLaMA和VideoChat压缩了长视频的过多信息，当输入帧数从32增加到96时，性能表现最差。相比之下，本文模型使用滑动视频Q-Former解耦帧数T和压缩率R‘。随着帧数的增加，曲线表现出线性提高，显示出优越的可伸缩性。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241015175208335.png" alt="image-20241015175208335" style="zoom:80%;">
+
+
+
+<h3 id="与专用模型的比较"><a href="#与专用模型的比较" class="headerlink" title="与专用模型的比较"></a>与专用模型的比较</h3><p>比较TimeChat与在三个任务上分别拥有最先进性能的专用模型。鉴于所有专用模型都在特定数据集上做了微调，作者对自己的模型也做了微调以进行公平比较。如表5所示，微调后TimeChat进一步提升了性能（+6.9 F1 score on YouCook2, +16.9 HIT@1 on</p>
+<p>QVHighlights, and +16.4 R@1 (IoU=0.5) on Charades-STA）。专用模型的优越性来自特定任务的设计，例如Vid2Seq在YT-Temporal-1B上做预训练，这个数据集具有更多高质量的长视频；QD-DETR采用一种特殊的显著性token进行显著性预测，并引入了4个损失函数用于训练，而本文模型纯粹通过语言建模进行训练。此外，这些模型还使用了更多的微调步骤，以更好地适应下游数据集。</p>
+<p>而作为一个通用模型，TimeChat在零样本场景、多任务和多领域设置中表现出很强的泛化能力，而这在这些专家模型中是不存在的。在每项任务上实现最先进的性能并不是本文的主要目标。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241015190311946.png" alt="image-20241015190311946" style="zoom:80%;">
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文提出了TimeChat，一个用于长视频理解的时间敏感的VidLLM。得益于新的时间感知帧编码器、滑动视频Q-Former和TimeIT上的指令调优，本文模型显示了强大的时间定位能力，这是在以前的VidLLM中所没有的。通过在冗长的视频中识别重大事件，确定事件的开始和结束时间，并生成简明的总结，TimeChat向智能视频助手迈出了关键的一步。在未来，将进一步取得架构上的进步，以提高视频语义密度，同时减少时空冗余。作者还将收集更多样化和高质量的指令调优数据，以扩大与时间相关的应用。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/672514787">TimeChat：基于Q-Former的时序感知VideoLLM - 知乎 (zhihu.com)</a></p>
 
                 
@@ -1257,7 +1279,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">174.3k</span>&nbsp;字
+                class="white-color">176.1k</span>&nbsp;字
             
             
             
