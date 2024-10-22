@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-10-19
+                    2024-10-23
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    8k
+                    10.7k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    34 分
+                    44 分
                 </div>
                 
 
@@ -668,13 +668,13 @@
 <img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241013153746315.png" alt="image-20241013153746315" style="zoom:80%;">
 
 <h3 id="Timestamp-aware-Frame-Encoder"><a href="#Timestamp-aware-Frame-Encoder" class="headerlink" title="Timestamp-aware Frame Encoder"></a>Timestamp-aware Frame Encoder</h3><p>以前的研究通常将视觉语义的建模和输入帧各自的时间戳信息分开。该方法不能直接捕获视觉事件发生时的时间。一些方法为视觉标记了可学习的位置（时间）嵌入。然而，<strong>这只能使模型能够识别帧的顺序，在确定精确的时间矩时缺乏精度。</strong></p>
-<p>为了解决这些问题，引入受 InstructBLIP启发的时间戳感知帧编码器。给定一个视频输入V，首先使用一个预训练好的图像编码器即ViT对 每一帧进行编码获得帧特征（n*n*d），随后，一个图像Q-Former进一步压缩帧token。如图2所示，Q-Former以Dq维的可学习查询作为输入。这些查询通过交叉注意力与frame feature进行交互，并将初始查询更新到维度Dq中的Ni视觉标记。值得注意的是，在视觉标记抽取过程中，添加了帧的时间戳例如“This frame is sampled at 2s.”作为Q-Former融合视觉和时间戳信息的一个条件。</p>
+<p>为了解决这些问题，引入受 InstructBLIP启发的时间戳感知帧编码器。给定一个视频输入V，首先使用一个<strong>预训练好的图像编码器</strong>即ViT对 每一帧进行编码获得<strong>帧特征（n*n*d）</strong>，随后，一个图像Q-Former进一步压缩帧token。如图2所示，Q-Former以Dq维的可学习查询作为输入。这些查询通过交叉注意力与frame feature进行交互，并将初始查询更新到维度Dq中的Ni视觉标记。值得注意的是，在视觉标记抽取过程中，添加了帧的时间戳例如“This frame is sampled at 2s.”作为Q-Former融合视觉和时间戳信息的一个条件。</p>
 <blockquote>
-<p>借鉴了InstructBLIP的Q-Former。首先通过ViT-G/14 from EVA-CLIP来抽取图片特征（n<em>n</em>d），再通过Q-Former来对feature做提取，并通过输入文本“This frame is sampled at 2s.”，来把时间戳信息也混合进去。一帧图像出来的特征是Ni*D的，Ni就是query向量的个数。这里的Q-Former是用InstructBLIP权重初始化的。</p>
+<p>借鉴了InstructBLIP的Q-Former。首先通过ViT-G/14 from EVA-CLIP来抽取图片特征（n*n*d），再通过Q-Former来对feature做提取，并通过输入文本“This frame is sampled at 2s.”，来把时间戳信息也混合进去。一帧图像出来的特征是Ni*D的，Ni就是query向量的个数。这里的Q-Former是用InstructBLIP权重初始化的。</p>
 </blockquote>
-<h3 id="Sliding-Video-Q-Former"><a href="#Sliding-Video-Q-Former" class="headerlink" title="Sliding Video Q-Former"></a>Sliding Video Q-Former</h3><p>对于T帧的视频输入，使用时间戳感知帧编码器后，获取到T*Ni*D的视觉token。此时各帧独立编码，没有建模<strong>帧间时间信息</strong>。为此，引入Q-Former滑窗，在时间维度上增强特征融合。设计了一个长度为Lw的滑动窗口，并在每个窗口内利用视频Q-Former从Lw帧中提取Nv长度的视频token。（<strong>滑窗Lw，步长S，Q-former查询向量数Nv</strong>）最终可以将输入的视频表示为（T /S）×Nv的视频token。（上图黄色部分）</p>
-<p>由于视频的三维特性，有大量冗余时空信息，原始视觉token会非常长（原始帧中的所有patch），需要压缩信息以降低LLM计算量。之前的工作一般都设置固定的视觉token数Nv比如32，当输入帧数T很大时，会造成严重的视觉语义退化。</p>
-<p>本文采用固定的步长来保证长视频不会被过度压缩，即最终送入LLM的tokens数量会根据视频的长度变化而变化。在送入LLM之前还会经过一个线性映射层来使tokens的特征维度符合LLM的输入特征维度需求。</p>
+<h3 id="Sliding-Video-Q-Former"><a href="#Sliding-Video-Q-Former" class="headerlink" title="Sliding Video Q-Former"></a>Sliding Video Q-Former</h3><p>对于T帧的视频输入，使用时间戳感知帧编码器后，获取到T*Ni*D的视觉token。此时各帧独立编码，没有建模<strong>帧间时间信息</strong>。为此，引入Q-Former滑窗，在时间维度上增强特征融合。设计了一个长度为Lw的滑动窗口，并在每个窗口内<strong>利用视频Q-Former从Lw帧中提取Nv长度的视频token</strong>。（<strong>滑窗Lw，步长S，Q-former查询向量数Nv</strong>）最终可以将输入的视频表示为（T /S）×Nv的视频token。（上图黄色部分）</p>
+<p>由于视频的三维特性，有大量冗余时空信息，原始视觉token会非常长（原始帧中的所有patch），需要压缩信息以降低LLM计算量。<strong>之前的工作一般都设置固定的视觉token数Nv比如32，当输入帧数T很大时，会造成严重的视觉语义退化。</strong></p>
+<p><strong>本文采用固定的步长来保证长视频不会被过度压缩，即最终送入LLM的tokens数量会根据视频的长度变化而变化。在送入LLM之前还会</strong>经过一个线性映射层来使tokens的特征维度符合LLM的输入特征维度需求。</p>
 <p>将压缩率R定义为<strong>原始视觉标记的数量与最终视频标记的数量之比</strong>。则以前Video-LLaMA的压缩率是：<br>$$<br>R=（T<em>N_P）/N_V<br>$$<br>其中，<strong>Np为每一帧的patch数</strong>。这个比率随着输入帧数T的增加而增加，并会导致长视频的过度压缩。使用滑动视频Q-Former，压缩率R’变成一个常数值：<br>$$<br>R’=\frac{T</em>N_P}{(T/S)<em>N_V}=\frac{S</em>N_P}{N_V}<br>$$<br>为长视频保留更丰富的语义。通过调整步幅S，可以根据计算预算来控制视频token的最终数量。最后，利用线性层对视频标记的维数DQ进行变换，以匹配LLM嵌入空间的维数DLLM。</p>
 <h3 id="Large-Language-Model"><a href="#Large-Language-Model" class="headerlink" title="Large Language Model"></a>Large Language Model</h3><p>将多种模态的输入连接起来，包括视频token Xv，文本查询向量Xq（包括可选的转录语音和用户指令），并将其输入一个大型语言模型，以生成合理和连贯的响应Xa。在这里，Xv、Xq和Xa具有相同的标记embedding维数DLLM。</p>
 <p>VidLLM的训练通常采用<strong>两阶段训练框架。</strong>第一阶段使用大规模图像/视频-文本对进行预训练，以实现<strong>视觉-语言对齐</strong>。第二阶段使用指令数据对模型进行微调，以实现<strong>指令遵循</strong>。考虑到计算效率，本文重用了在第一阶段训练后现有开源模型的检查点（模型用的是LLaMA-2 (7B)），<strong>仅进行指令微调</strong>。采用LoRA微调的方式来对LLM模型进行微调。在训练过程中，利用<strong>语言建模损失</strong>生成长度为LT的目标答案Xa：</p>
@@ -830,9 +830,7 @@ python utils<span class="token operator">/</span>compress_video_data<span class=
     <span class="token property">"5"</span><span class="token operator">:</span> <span class="token string">"Go through the video content, and upon identifying highlight moments that resonate with &lt;query_placeholder&gt;, list their timestamps. Subsequently, provide a saliency score for each identified highlight."</span>
 <span class="token punctuation">}</span>
 
-<span class="token punctuation">{</span><span class="token property">"video"</span><span class="token operator">:</span> <span class="token string">"QVhighlights/videos/train/v_j7rJstUseKg_360.0_510.0.mp4"</span><span class="token punctuation">,</span> <span class="token property">"QA"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token property">"q"</span><span class="token operator">:</span> <span class="token string">"Watch the provided video and mark out the scenes that stand out based on the description: 'some military patriots takes us through their safety procedures and measures.'. Document the timestamps of these highlights and evaluate their saliency scores."</span><span class="token punctuation">,</span> <span class="token property">"a"</span><span class="token operator">:</span> <span class="token string">"There are 29 highlight moments in the 72.0, 74.0, 76.0, 78.0, 80.0, 84.0, 86.0, 88.0, 90.0, 92.0, 96.0, 98.0, 100.0, 102.0, 104.0, 108.0, 110.0, 112.0, 114.0, 116.0, 120.0, 122.0, 124.0, 126.0, 128.0, 136.0, 138.0, 140.0, 144.0 second. Their saliency scores are 3.0, 2.7, 3.7, 2.3, 2.7, 2.7, 2.7, 2.7, 2.3, 2.7, 3.7, 3.3, 3.3, 3.7, 3.0, 2.3, 3.0, 2.3, 2.3, 2.3, 2.3, 3.0, 3.7, 2.7, 2.3, 2.3, 2.3, 2.3, 2.3."</span><span class="token punctuation">}</span><span class="token punctuation">]</span><span class="token punctuation">}</span>
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">{</span><span class="token property">"video"</span><span class="token operator">:</span> <span class="token string">"QVhighlights/videos/train/v_j7rJstUseKg_360.0_510.0.mp4"</span><span class="token punctuation">,</span> <span class="token property">"QA"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token property">"q"</span><span class="token operator">:</span> <span class="token string">"Watch the provided video and mark out the scenes that stand out based on the description: 'some military patriots takes us through their safety procedures and measures.'. Document the timestamps of these highlights and evaluate their saliency scores."</span><span class="token punctuation">,</span> <span class="token property">"a"</span><span class="token operator">:</span> <span class="token string">"There are 29 highlight moments in the 72.0, 74.0, 76.0, 78.0, 80.0, 84.0, 86.0, 88.0, 90.0, 92.0, 96.0, 98.0, 100.0, 102.0, 104.0, 108.0, 110.0, 112.0, 114.0, 116.0, 120.0, 122.0, 124.0, 126.0, 128.0, 136.0, 138.0, 140.0, 144.0 second. Their saliency scores are 3.0, 2.7, 3.7, 2.3, 2.7, 2.7, 2.7, 2.7, 2.3, 2.7, 3.7, 3.3, 3.3, 3.7, 3.0, 2.3, 3.0, 2.3, 2.3, 2.3, 2.3, 3.0, 3.7, 2.7, 2.3, 2.3, 2.3, 2.3, 2.3."</span><span class="token punctuation">}</span><span class="token punctuation">]</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>视频摘要：</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">{</span>
@@ -892,15 +890,91 @@ python utils<span class="token operator">/</span>compress_video_data<span class=
 <td>Fine-tuned on the instruction-tuning data from <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/ShuhuaiRen/TimeIT">TimeIT-104K</a> (asr version) and <a target="_blank" rel="noopener" href="https://huggingface.co/datasets/ShuhuaiRen/TimeIT/blob/main/data/valley/Valley_instruct_73k.json">Valley-73K</a> (previous version of current Valley-65K)</td>
 </tr>
 </tbody></table>
-<h3 id="EVA-ViT-g"><a href="#EVA-ViT-g" class="headerlink" title="EVA ViT-g"></a>EVA ViT-g</h3><p>预训练的图编码器<code>wget https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/eva_vit_g.pth</code></p>
+<h3 id="ViT-g-from-EVA-CLIP"><a href="#ViT-g-from-EVA-CLIP" class="headerlink" title="ViT-g from EVA-CLIP"></a>ViT-g from EVA-CLIP</h3><p><strong>预训练的图编码器</strong><code>wget https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/eva_vit_g.pth</code></p>
 <p>《EVA-CLIP: Improved Training Techniques for CLIP at Scale》</p>
+<p>EVA-CLIP是一系列改进的CLIP模型，通过结合新表示学习、优化和增强技术，降低训练成本，提高训练效率和零次学习性能。最大模型EVA-02-CLIP-E/14+在ImageNet-1K上实现82.0%的零次学习准确率，而较小的EVA-02-CLIP-L/14+模型也有80.4%的准确率，但参数和样本量更少。</p>
+<h4 id="CLIP"><a href="#CLIP" class="headerlink" title="CLIP"></a>CLIP</h4><blockquote>
+<p>CLIP（Contrastive Language-Image Pre-Training）模型是一种<strong>多模态预训练神经网络</strong>，由OpenAI在2021年发布，是从自然语言监督中学习的一种有效且可扩展的方法。CLIP在预训练期间学习执行广泛的任务，包括OCR，地理定位，动作识别。</p>
+<p>该模型的核心思想是<strong>使用大量图像和文本的配对数据进行预训练，以学习图像和文本之间的对齐关系。</strong>CLIP模型有两个模态，一个是<strong>文本模态</strong>，一个是<strong>视觉模态</strong>，包括两个主要部分：</p>
+<p>i. Text Encoder：用于将文本转换为低维向量表示-Embeding。</p>
+<p>ii. Image Encoder：用于将图像转换为类似的向量表示-Embedding。</p>
+<p>在预测阶段，CLIP模型通过计算文本和图像向量之间的<strong>余弦相似度</strong>来生成预测。这种模型特别适用于<strong>零样本学习</strong>任务，即模型不需要看到新的图像或文本的训练示例就能进行预测。CLIP模型在多个领域表现出色，如图像文本检索、图文生成等。</p>
+</blockquote>
+<p>CLIP的的核心思想是通过<strong>海量</strong>的<strong>弱监督</strong>文本对通过<strong>对比学习</strong>，将图片和文本通过各自的<strong>预训练</strong>模型获得的编码向量在向量空间上<strong>对齐</strong>。<strong>不足：clip可以实现图文匹配，但不具有文本生成能力。</strong></p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241021110850956.png" alt="image-20241021110850956" style="zoom:80%;">
+
+<p><strong>流程解读：</strong></p>
+<ul>
+<li><p>主要分为两个分支，一个图像encoder、一个文本encoder。<strong>图像分支是ResNet50或是VIT，文本分支和bert的结构类似，采用12层transformer</strong>，8个head，词表大小是49,152。最大sequence长度76。并且添加[SOS]和[EOS]标识token，并且[EOS]对应位置的特征就是最后的文本特征。</p>
+</li>
+<li><p>通过encoder特征提取以后，图像分支获得的特征是[batch, embed_dim]，文本分支获得的特征是[batch, embed_dim]。其中对应位置上的embedding是匹配的，来自同一组图像-文本对。<strong>对于优化任务，一种自然的想法，就是拉近同一对embedding之间的距离，推远不同对的embedding之间的距离。作者采用了InfoNCE loss。</strong>特征间进行两两计算，[batch, embed_dim] * [embed_dim, batch] = [batch, batch]，获取到batch*batch对样本之间的距离。</p>
+<ul>
+<li>这里对提取的文本特征和图像特征进行对比学习。对于一个包含N个文本-图像对的训练batch，将N个文本特征和N个图像特征两两组合，CLIP模型会预测出N^2个可能的文本-图像对的相似度，这里的相似度直接<strong>计算文本特征和图像特征的余弦相似性（cosine similarity）</strong>，即上图所示的矩阵。这里共有N个正样本，即真正属于一对的文本和图像（矩阵中的对角线元素），而剩余的N^2−N个文本-图像对为负样本，那么CLIP的训练目标就是最大化N个正样本的相似度，同时最小化N^2−N个负样本的相似度</li>
+</ul>
+</li>
+<li><p>作者采用的对称loss。针对每一个image特征，将text batch中对应的那个text特征拉近，而推远其余未配对的text特征。同样，针对每一个text特征，将image batch中对应的那个image特征拉进，而推远其余未配对的image特征。<strong>站在loss对称的角度，模型优化中图像、文本的地位是相同的。因此，论文标题想表达利用文本监督去学习视觉特征，但是这未尝不是利用图像监督去学习文本特征。</strong>对比纯图像领域的自监督学习方法，其实和上面的方法是类似的，只是将文本分支替换为图像分支，两个分支同时输入同一张图的图像增强版本。</p>
+</li>
+<li><p>CLIP之所以经典，在于其出色的zero-shot能力。</p>
+</li>
+<li><p>上面我们介绍了CLIP的原理，可以看到训练后的CLIP其实是两个模型，除了视觉模型外还有一个文本模型，那么如何对预训练好的视觉模型进行迁移呢？<strong>与CV中常用的先预训练然后微调不同，CLIP可以直接实现zero-shot的图像分类，即不需要任何训练数据，就能在某个具体下游任务上实现分类，</strong>这也是CLIP亮点和强大之处。用CLIP实现zero-shot分类很简单，只需要简单的两步：</p>
+</li>
+</ul>
+<ol>
+<li>根据任务的分类标签构建每个类别的描述文本：<code>A photo of {label}</code>，然后将这些文本送入Text Encoder得到对应的文本特征，如果类别数目为N，那么将得到N个文本特征；</li>
+<li>将要预测的图像送入Image Encoder得到图像特征，然后与N个文本特征计算缩放的余弦相似度（和训练过程一致），然后选择相似度最大的文本对应的类别作为图像分类预测结果，进一步地，可以将这些相似度看成logits，送入softmax后可以到每个类别的预测概率。</li>
+</ol>
+<ul>
+<li><p><strong>流程解读：</strong></p>
+</li>
+<li><p>输入单张图像，通过Image Encoder提取对应的embedding。然后设定想要查找的标签集合，如”plane”, “car”, “dog”等。然后<strong>利用prompt语句 “a photo of a {}”，分别构成”a photo of a plane”, “a photo of a dog”等文本</strong>。<strong>然后利用Text Encoder分别提取对应的文本embedding。最后利用文本embedding和图像embedding计算对应的相似度，然后对相似度进行softmax，获得最大的概率值，即为对应的label。</strong>实验结果显示CLIP在zero-shot上面具有较高的精度，表明CLIP的泛化性很好。</p>
+</li>
+<li><p>这里需要注意两点：<strong>一是标签集合是自行定义的</strong>，如果我们定义为imagenet的类别标签，那么这时zero-shot就相当于完成imagenet分类任务；<strong>二是prompt语句的改变，可能会影响最后的分类效果</strong>，论文指出不同的数据集，有自己最优的prompt语句，并且多个prompt语句的结果取平均，可能最终的效果更好。</p>
+</li>
+</ul>
+<h4 id="VIT"><a href="#VIT" class="headerlink" title="VIT"></a>VIT</h4><p>ViT（vision transformer）是Google在2020年提出的<strong>直接将transformer应用在图像分类的模型</strong>，后面很多的工作都是基于ViT进行改进的。ViT的思路很简单：</p>
+<ul>
+<li><p>直接把图像分成固定大小的patchs，然后通过线性变换得到<strong>patch embedding</strong>，这就类比NLP的words和word embedding</p>
+</li>
+<li><p>由于transformer的输入就是a sequence of token embeddings，所以将图像的patch embeddings送入transformer后就能够进行特征提取从而分类了。</p>
+</li>
+<li><p>ViT模型原理如下图所示，其实<strong>ViT模型只是用了transformer的Encoder来提取特征</strong>（原始的transformer还有decoder部分，用于实现sequence to sequence，比如机器翻译）。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241021112226815.png" alt="image-20241021112226815" style="zoom:80%;"></li>
+</ul>
 <h3 id="InstructBLIP-Q-Former"><a href="#InstructBLIP-Q-Former" class="headerlink" title="InstructBLIP Q-Former"></a>InstructBLIP Q-Former</h3><p>图片Q-Former <code>wget https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/InstructBLIP/instruct_blip_vicuna7b_trimmed.pth</code></p>
-<p>// todo blip详解</p>
-<p>BLIP-2：使用冻结图像编码器和大型语言模型进行语言图像预训练</p>
+<p><strong>BLIP-2：使用冻结图像编码器和大型语言模型进行语言图像预训练</strong></p>
+<blockquote>
+<p>InstructBLIP 是 BLIP 作者团队在多模态领域的又一续作。现代的大语言模型在无监督预训练之后会经过进一步的指令微调 (Instruction-Tuning) 过程，但是这种范式在视觉语言模型上面探索得还比较少。InstructBLIP 这个工作介绍了<strong>如何把指令微调的范式做在 BLIP-2 模型上面</strong>。用指令微调方法的时候会额外有一条 instruction，如何<strong>借助这个 instruction 提取更有用的视觉特征</strong>是本文的亮点之一。InstructBLIP 的架构和 BLIP-2 相似，<strong>从预训练好的 BLIP-2 模型初始化，由图像编码器、LLM 和 Q-Former 组成。</strong>在指令微调期间<strong>只训练 Q-Former</strong>，冻结图像编码器和 LLM 的参数。作者将26个数据集转化成指令微调的格式，把它们分成13个 held-in 数据集用于指令微调，和13个 held-out 数据集用于 Zero-Shot 能力的评估。</p>
+</blockquote>
+<p>Q-Former是一种轻量级transformer结构，采用一组可学习的查询向量来提取和压缩视觉特征。</p>
+<p>Q-Former 的输入还包括<strong>可学习的 Queries (BLIP-2 的做法)</strong> 和 <strong>Instruction</strong>。Q-Former 的内部结构如图3黄色部分所示，其中可学习的 Queries 通过 Self-Attention 和 Instruction 交互，可学习的 Queries 通过 Cross-Attention 和输入图片的特征交互，鼓励提取与任务相关的图像特征。</p>
+<p>Q-Former 的输出通过一个 FC 层送入 LLM，Q-Former 的预训练过程遵循 BLIP-2 的两步：1) 不用 LLM，固定视觉编码器的参数预训练 Q-Former 的参数，训练目标是视觉语言建模。2) 固定 LLM 的参数，训练 Q-Former 的参数，训练目标是文本生成。</p>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241022105848543.png" alt="image-20241022105848543" style="zoom:80%;">
+
+
+
 <h3 id="LLaMA-2-7B-Video-Q-Former-of-Video-LLaMA"><a href="#LLaMA-2-7B-Video-Q-Former-of-Video-LLaMA" class="headerlink" title="LLaMA-2-7B &amp; Video Q-Former of Video-LLaMA"></a>LLaMA-2-7B &amp; Video Q-Former of Video-LLaMA</h3><p>预训练的LLM及对应的视频编码器</p>
 <p>Video-LLaMA：指令微调的用于视频理解的视听语言模型</p>
 <p><code>git lfs install git clone https://huggingface.co/DAMO-NLP-SG/Video-LLaMA-2-7B-Finetuned</code></p>
-<h2 id="代码相关"><a href="#代码相关" class="headerlink" title="代码相关"></a>代码相关</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/672514787">TimeChat：基于Q-Former的时序感知VideoLLM - 知乎 (zhihu.com)</a></p>
+<h2 id="代码相关"><a href="#代码相关" class="headerlink" title="代码相关"></a>代码相关</h2><h3 id="Q-Former"><a href="#Q-Former" class="headerlink" title="Q-Former"></a>Q-Former</h3><ul>
+<li>Q-Former的实现基于BERT（BertModel），并包含自注意力和交叉注意力层。</li>
+<li>交叉注意力机制在模型的不同层插入，用于处理视觉和语言特征之间的结合，这使得模型可以在多模态任务中有效地执行跨模态对齐。</li>
+<li>模型包括输入embedding、编码器层和输出层，整体架构与BERT类似，但针对多模态任务进行了适配。</li>
+</ul>
+<img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241022195840325.png" alt="image-20241022195840325" style="zoom:80%;">
+
+<p>Q-Former由两个transfomer子模块组成，左边为(learnable) query encoder，右边为text encoder &amp; decoder。记视觉模型的image encoder的输出为I。左边网络的(learnable) query为Q，右边网络的输入text为T。注意Q是一个向量集，非单个向量。它可以视为Q-Former的参数。</p>
+<ul>
+<li>左边的transformer和视觉模型image encoder交互，提取视觉表征，右边的transformer同时作为text encoder和decoder。</li>
+<li>左边的query encoder和右边的text encoder共享self-attention layer。</li>
+<li>通过self attention layer，实现Q向量之间的交互。</li>
+<li>通过cross attention layer，实现Q向量和I的交互。</li>
+<li>Q和T之间的交互，也是通过共享的self attention layer实现的，不过根据训练目标的不同，通过不同的attention mask来实现不同的交互。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/672514787">TimeChat：基于Q-Former的时序感知VideoLLM - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/AIGCer/article/details/142799336">从秒级到小时级：TikTok等发布首篇面向长视频理解的多模态大语言模型全面综述_tiktok 语音大模型-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/650519771">https://zhuanlan.zhihu.com/p/650519771</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/638103950">多模态超详细解读 (八)：InstructBLIP: 指令微调训练通用视觉语言模型 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mieshizhishou/article/details/140719063">【有啥问啥】多模态大模型应用中的Q-Former是什么？_qformer-CSDN博客</a></p>
 
                 
             </div>
@@ -1453,7 +1527,7 @@ python utils<span class="token operator">/</span>compress_video_data<span class=
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">178.6k</span>&nbsp;字
+                class="white-color">181.2k</span>&nbsp;字
             
             
             
