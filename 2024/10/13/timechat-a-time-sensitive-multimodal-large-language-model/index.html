@@ -599,14 +599,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    10.7k
+                    11.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    44 分
+                    49 分
                 </div>
                 
 
@@ -702,9 +702,9 @@
 <h3 id="零样本性能"><a href="#零样本性能" class="headerlink" title="零样本性能"></a>零样本性能</h3><p>表2显示了TimeChat(7B)的零样本性能，它在所有任务中都优于以前的VidLLM(7B/13B)。</p>
 <img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241014173705687.png" alt="image-20241014173705687" style="zoom:80%;">
 
-<p><strong>密集字幕/说明文字生成</strong>：该任务在YouCook2上训练。模型需要在平均320秒的视频持续时间内，准确地识别出大约8个基本的烹饪步骤，并提供与视觉内容相匹配的忠实描述。烹饪的特殊性也提高了任务的复杂性，挑战了模型的通用性。现有的端到端VidLLM难以实现精确的moment定位，性能最好的VideoChat-Embed模型获得的低F1分数3.4就证明了这一点。<strong>这种moment定位的不精确显著影响了说明文字的评估，使得SODA_c和CIDEr指标都接近于零。</strong>与之相比，本文模型通过+1.0 SODA_c、+2.8 CIDEr和+9.2 F1评分获得了显著的SOTA。这表明TimeChat能够有效地处理长时间的视频，拥有精确的时间定位能力。此外，本文模型性能也显著超过了由ChatGPT提供的多模态pipeline（F1评分从8.4到12.6）。</p>
+<p><strong>密集字幕/说明文字生成</strong>：该任务在YouCook2上训练。模型需要在平均320秒的视频持续时间内，准确地识别出大约8个基本的烹饪步骤，并提供与视觉内容相匹配的忠实描述。烹饪的特殊性也提高了任务的复杂性，挑战了模型的通用性。现有的端到端VidLLM难以实现精确的moment定位，性能最好的VideoChat-Embed模型获得的低F1分数3.4就证明了这一点。<strong>这种momen定位的不精确显著影响了说明文字的评估，使得SODA_c和CIDEr指标都接近于零。</strong>与之相比，本文模型通过+1.0 SODA_c、+2.8 CIDEr和+9.2 F1评分获得了显著的SOTA。这表明TimeChat能够有效地处理长时间的视频，拥有精确的时间定位能力。此外，本文模型性能也显著超过了由ChatGPT提供的多模态pipeline（F1评分从8.4到12.6）。</p>
 <p><strong>视频亮点检测</strong>：dense video captioning任务集中于在clip级别定位事件，而亮点检测任务需要在帧级别进行更细粒度的视频理解。对于输入视频，其目标是输出亮点帧的时间和突出分数。整体来看，本文模型在QVHhemict上达到了14.5 mAP和23.9 HIT@1，比之前的vidllm分别获得了+1.4和+5.8分。这突出了<strong>时间戳感知帧编码器在识别每个帧的显著语义方面</strong>的贡献。此外，该任务是TimeIT的held-out任务，表明了模型对新任务的泛化能力。<strong>多模态pipeline方法获得了更好的性能</strong>，作者推测，这是由于高亮检测的格式与他们的方法更兼容，鉴于模型接收到一系列的输入帧的联合的时间戳-视觉描述。这使得LLM能够逐帧进行评估，从而促进更准确的判断。</p>
-<p><strong>时间定位</strong>：此任务旨在识别查询语句所描述的对应时间戳。TimeChat在Charades-STA数据集的“R@1，IoU=0.5”上达到32.2分，大大超过了之前的SOTA端到端VidLLM，即Valley（+27.5）。这表明，本文模型能够准确地定位给定文本查询的视频时刻。值得注意的是，TimeChat在时间定位任务上取得了最大的进步，作者认为该任务主要强调了<strong>长视频的时间定位能力</strong>，而这正是TimeChat的最佳优势。</p>
+<p><strong>时间定位</strong>：此任务旨在<strong>识别查询语句所描述的对应时间戳。</strong>TimeChat在Charades-STA数据集的“R@1，IoU=0.5”上达到32.2分，大大超过了之前的SOTA端到端VidLLM，即Valley（+27.5）。这表明，本文模型能够准确地定位给定文本查询的视频时刻。值得注意的是，TimeChat在时间定位任务上取得了最大的进步，作者认为该任务主要强调了<strong>长视频的时间定位能力</strong>，而这正是TimeChat的最佳优势。</p>
 <h3 id="定性评估"><a href="#定性评估" class="headerlink" title="定性评估"></a>定性评估</h3><p>图4显示了在零样本设置下，TimeChat和其他VidLLM之间的定性比较。Video-LLaMA没有完全理解用户的指令，因为它只描述了步骤，而没有给出相应时间戳。VideoChat生成了符合请求格式的说明，但错位了所有步骤的时间。此外，VideoChat生成的描述包含一些幻觉。与之相比，TimeChat显示了改进的时间定位和总结功能。它成功地匹配了几乎所有提取的剪辑的视频内容。此外，幻觉的发生也明显减少了。然而，在增强模型生成的摘要的丰富性和细节方面仍有改进的空间。</p>
 <img src="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/image-20241015171454792.png" alt="image-20241015171454792" style="zoom:80%;">
 
@@ -970,6 +970,197 @@ python utils<span class="token operator">/</span>compress_video_data<span class=
 <li>通过cross attention layer，实现Q向量和I的交互。</li>
 <li>Q和T之间的交互，也是通过共享的self attention layer实现的，不过根据训练目标的不同，通过不同的attention mask来实现不同的交互。</li>
 </ul>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">
+<span class="token keyword">class</span> <span class="token class-name">BertSelfAttention</span><span class="token punctuation">(</span>nn<span class="token punctuation">.</span>Module<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> config<span class="token punctuation">,</span> is_cross_attention<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>config <span class="token operator">=</span> config
+        <span class="token keyword">if</span> config<span class="token punctuation">.</span>hidden_size <span class="token operator">%</span> config<span class="token punctuation">.</span>num_attention_heads <span class="token operator">!=</span> <span class="token number">0</span> <span class="token keyword">and</span> <span class="token keyword">not</span> <span class="token builtin">hasattr</span><span class="token punctuation">(</span>
+            config<span class="token punctuation">,</span> <span class="token string">"embedding_size"</span>
+        <span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token keyword">raise</span> ValueError<span class="token punctuation">(</span>
+                <span class="token string">"The hidden size (%d) is not a multiple of the number of attention "</span>
+                <span class="token string">"heads (%d)"</span> <span class="token operator">%</span> <span class="token punctuation">(</span>config<span class="token punctuation">.</span>hidden_size<span class="token punctuation">,</span> config<span class="token punctuation">.</span>num_attention_heads<span class="token punctuation">)</span>
+            <span class="token punctuation">)</span>
+
+        <span class="token comment"># 初始化--设置注意力头的数量和每个头的维度</span>
+        self<span class="token punctuation">.</span>num_attention_heads <span class="token operator">=</span> config<span class="token punctuation">.</span>num_attention_heads
+        self<span class="token punctuation">.</span>attention_head_size <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>config<span class="token punctuation">.</span>hidden_size <span class="token operator">/</span> config<span class="token punctuation">.</span>num_attention_heads<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>all_head_size <span class="token operator">=</span> self<span class="token punctuation">.</span>num_attention_heads <span class="token operator">*</span> self<span class="token punctuation">.</span>attention_head_size
+
+        <span class="token comment"># 初始化查询query、键和值的线性变换</span>
+        self<span class="token punctuation">.</span>query <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>config<span class="token punctuation">.</span>hidden_size<span class="token punctuation">,</span> self<span class="token punctuation">.</span>all_head_size<span class="token punctuation">)</span>
+
+        <span class="token comment"># ===如果是交叉注意力（cross-attention），键和值从编码器获取，否则从隐层获取===</span>
+        <span class="token keyword">if</span> is_cross_attention<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>key <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>config<span class="token punctuation">.</span>encoder_width<span class="token punctuation">,</span> self<span class="token punctuation">.</span>all_head_size<span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>value <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>config<span class="token punctuation">.</span>encoder_width<span class="token punctuation">,</span> self<span class="token punctuation">.</span>all_head_size<span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>key <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>config<span class="token punctuation">.</span>hidden_size<span class="token punctuation">,</span> self<span class="token punctuation">.</span>all_head_size<span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>value <span class="token operator">=</span> nn<span class="token punctuation">.</span>Linear<span class="token punctuation">(</span>config<span class="token punctuation">.</span>hidden_size<span class="token punctuation">,</span> self<span class="token punctuation">.</span>all_head_size<span class="token punctuation">)</span>
+
+        <span class="token comment"># 注意力得分的dropout</span>
+        self<span class="token punctuation">.</span>dropout <span class="token operator">=</span> nn<span class="token punctuation">.</span>Dropout<span class="token punctuation">(</span>config<span class="token punctuation">.</span>attention_probs_dropout_prob<span class="token punctuation">)</span>
+
+        <span class="token comment"># 获取位置嵌入类型，如果是相对位置嵌入，则初始化相关嵌入层</span>
+        self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">=</span> <span class="token builtin">getattr</span><span class="token punctuation">(</span>
+            config<span class="token punctuation">,</span> <span class="token string">"position_embedding_type"</span><span class="token punctuation">,</span> <span class="token string">"absolute"</span>
+        <span class="token punctuation">)</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>
+            self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">==</span> <span class="token string">"relative_key"</span>
+            <span class="token keyword">or</span> self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">==</span> <span class="token string">"relative_key_query"</span>
+        <span class="token punctuation">)</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>max_position_embeddings <span class="token operator">=</span> config<span class="token punctuation">.</span>max_position_embeddings
+            self<span class="token punctuation">.</span>distance_embedding <span class="token operator">=</span> nn<span class="token punctuation">.</span>Embedding<span class="token punctuation">(</span>
+                <span class="token number">2</span> <span class="token operator">*</span> config<span class="token punctuation">.</span>max_position_embeddings <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> self<span class="token punctuation">.</span>attention_head_size
+            <span class="token punctuation">)</span>
+        <span class="token comment"># 是否保存注意力图（用于可视化或调试）</span>
+        self<span class="token punctuation">.</span>save_attention <span class="token operator">=</span> <span class="token boolean">False</span>
+
+    <span class="token keyword">def</span> <span class="token function">save_attn_gradients</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> attn_gradients<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>attn_gradients <span class="token operator">=</span> attn_gradients    <span class="token comment"># 注意力梯度</span>
+
+    <span class="token keyword">def</span> <span class="token function">get_attn_gradients</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> self<span class="token punctuation">.</span>attn_gradients
+
+    <span class="token keyword">def</span> <span class="token function">save_attention_map</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> attention_map<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>attention_map <span class="token operator">=</span> attention_map  <span class="token comment"># 注意力图</span>
+
+    <span class="token keyword">def</span> <span class="token function">get_attention_map</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> self<span class="token punctuation">.</span>attention_map
+
+    <span class="token keyword">def</span> <span class="token function">transpose_for_scores</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># 将输入的张量x转置为(num_attention_heads, attention_head_size)格式</span>
+        new_x_shape <span class="token operator">=</span> x<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token punctuation">(</span>
+            self<span class="token punctuation">.</span>num_attention_heads<span class="token punctuation">,</span>
+            self<span class="token punctuation">.</span>attention_head_size<span class="token punctuation">,</span>
+        <span class="token punctuation">)</span>
+        x <span class="token operator">=</span> x<span class="token punctuation">.</span>view<span class="token punctuation">(</span><span class="token operator">*</span>new_x_shape<span class="token punctuation">)</span>
+        <span class="token keyword">return</span> x<span class="token punctuation">.</span>permute<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>
+        self<span class="token punctuation">,</span>
+        hidden_states<span class="token punctuation">,</span>
+        attention_mask<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>    <span class="token comment"># 注意力掩码</span>
+        head_mask<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>     <span class="token comment"># 注意力头掩码</span>
+        encoder_hidden_states<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>
+        encoder_attention_mask<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>    <span class="token comment"># 编码器注意力掩码</span>
+        past_key_value<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">,</span>    <span class="token comment"># 前一个时间步的键值对</span>
+        output_attentions<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        <span class="token comment"># 如果是交叉注意力，键和值来自编码器，否则从当前隐藏状态获取</span>
+        is_cross_attention <span class="token operator">=</span> encoder_hidden_states <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span>
+
+        <span class="token keyword">if</span> is_cross_attention<span class="token punctuation">:</span>
+            <span class="token comment"># 计算交叉注意力的键和值</span>
+            key_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>self<span class="token punctuation">.</span>key<span class="token punctuation">(</span>encoder_hidden_states<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            value_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>self<span class="token punctuation">.</span>value<span class="token punctuation">(</span>encoder_hidden_states<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            attention_mask <span class="token operator">=</span> encoder_attention_mask     <span class="token comment"># 使用编码器的注意力掩码</span>
+        <span class="token keyword">elif</span> past_key_value <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            <span class="token comment"># 如果存在之前的键/值缓存，则将当前计算结果与缓存进行拼接</span>
+            key_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>self<span class="token punctuation">.</span>key<span class="token punctuation">(</span>hidden_states<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            value_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>self<span class="token punctuation">.</span>value<span class="token punctuation">(</span>hidden_states<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            key_layer <span class="token operator">=</span> torch<span class="token punctuation">.</span>cat<span class="token punctuation">(</span><span class="token punctuation">[</span>past_key_value<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> key_layer<span class="token punctuation">]</span><span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+            value_layer <span class="token operator">=</span> torch<span class="token punctuation">.</span>cat<span class="token punctuation">(</span><span class="token punctuation">[</span>past_key_value<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> value_layer<span class="token punctuation">]</span><span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            <span class="token comment"># 计算自注意力的键和值</span>
+            key_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>self<span class="token punctuation">.</span>key<span class="token punctuation">(</span>hidden_states<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            value_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>self<span class="token punctuation">.</span>value<span class="token punctuation">(</span>hidden_states<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># 计算查询向量</span>
+        mixed_query_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>query<span class="token punctuation">(</span>hidden_states<span class="token punctuation">)</span>
+
+        query_layer <span class="token operator">=</span> self<span class="token punctuation">.</span>transpose_for_scores<span class="token punctuation">(</span>mixed_query_layer<span class="token punctuation">)</span>
+
+        <span class="token comment"># 保存当前的键/值对，用于后续步骤</span>
+        past_key_value <span class="token operator">=</span> <span class="token punctuation">(</span>key_layer<span class="token punctuation">,</span> value_layer<span class="token punctuation">)</span>
+
+        <span class="token comment"># Take the dot product between "query" and "key" to get the raw attention scores.</span>
+        <span class="token comment"># 计算查询和键的点积，得到注意力得分</span>
+        attention_scores <span class="token operator">=</span> torch<span class="token punctuation">.</span>matmul<span class="token punctuation">(</span>query_layer<span class="token punctuation">,</span> key_layer<span class="token punctuation">.</span>transpose<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># 处理相对位置嵌入的情况</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>
+            self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">==</span> <span class="token string">"relative_key"</span>
+            <span class="token keyword">or</span> self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">==</span> <span class="token string">"relative_key_query"</span>
+        <span class="token punctuation">)</span><span class="token punctuation">:</span>
+            seq_length <span class="token operator">=</span> hidden_states<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+            position_ids_l <span class="token operator">=</span> torch<span class="token punctuation">.</span>arange<span class="token punctuation">(</span>
+                seq_length<span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">long</span><span class="token punctuation">,</span> device<span class="token operator">=</span>hidden_states<span class="token punctuation">.</span>device
+            <span class="token punctuation">)</span><span class="token punctuation">.</span>view<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+            position_ids_r <span class="token operator">=</span> torch<span class="token punctuation">.</span>arange<span class="token punctuation">(</span>
+                seq_length<span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">long</span><span class="token punctuation">,</span> device<span class="token operator">=</span>hidden_states<span class="token punctuation">.</span>device
+            <span class="token punctuation">)</span><span class="token punctuation">.</span>view<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+            <span class="token comment"># 计算位置差</span>
+            distance <span class="token operator">=</span> position_ids_l <span class="token operator">-</span> position_ids_r
+            positional_embedding <span class="token operator">=</span> self<span class="token punctuation">.</span>distance_embedding<span class="token punctuation">(</span>
+                distance <span class="token operator">+</span> self<span class="token punctuation">.</span>max_position_embeddings <span class="token operator">-</span> <span class="token number">1</span>
+            <span class="token punctuation">)</span>
+            positional_embedding <span class="token operator">=</span> positional_embedding<span class="token punctuation">.</span>to<span class="token punctuation">(</span>
+                dtype<span class="token operator">=</span>query_layer<span class="token punctuation">.</span>dtype
+            <span class="token punctuation">)</span>  <span class="token comment"># fp16 compatibility</span>
+
+            <span class="token keyword">if</span> self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">==</span> <span class="token string">"relative_key"</span><span class="token punctuation">:</span>
+                <span class="token comment"># 计算相对位置得分并加到注意力得分中</span>
+                relative_position_scores <span class="token operator">=</span> torch<span class="token punctuation">.</span>einsum<span class="token punctuation">(</span>
+                    <span class="token string">"bhld,lrd-&gt;bhlr"</span><span class="token punctuation">,</span> query_layer<span class="token punctuation">,</span> positional_embedding
+                <span class="token punctuation">)</span>
+                attention_scores <span class="token operator">=</span> attention_scores <span class="token operator">+</span> relative_position_scores
+            <span class="token keyword">elif</span> self<span class="token punctuation">.</span>position_embedding_type <span class="token operator">==</span> <span class="token string">"relative_key_query"</span><span class="token punctuation">:</span>
+                <span class="token comment"># 计算查询和键的相对位置得分，并加到注意力得分中</span>
+                relative_position_scores_query <span class="token operator">=</span> torch<span class="token punctuation">.</span>einsum<span class="token punctuation">(</span>
+                    <span class="token string">"bhld,lrd-&gt;bhlr"</span><span class="token punctuation">,</span> query_layer<span class="token punctuation">,</span> positional_embedding
+                <span class="token punctuation">)</span>
+                relative_position_scores_key <span class="token operator">=</span> torch<span class="token punctuation">.</span>einsum<span class="token punctuation">(</span>
+                    <span class="token string">"bhrd,lrd-&gt;bhlr"</span><span class="token punctuation">,</span> key_layer<span class="token punctuation">,</span> positional_embedding
+                <span class="token punctuation">)</span>
+                attention_scores <span class="token operator">=</span> <span class="token punctuation">(</span>
+                    attention_scores
+                    <span class="token operator">+</span> relative_position_scores_query
+                    <span class="token operator">+</span> relative_position_scores_key
+                <span class="token punctuation">)</span>
+
+        attention_scores <span class="token operator">=</span> attention_scores <span class="token operator">/</span> math<span class="token punctuation">.</span>sqrt<span class="token punctuation">(</span>self<span class="token punctuation">.</span>attention_head_size<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> attention_mask <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            <span class="token comment"># 添加注意力掩码（在BertModel前向传播中预计算）</span>
+            <span class="token comment"># Apply the attention mask is (precomputed for all layers in BertModel forward() function)</span>
+            attention_scores <span class="token operator">=</span> attention_scores <span class="token operator">+</span> attention_mask
+
+        <span class="token comment"># Normalize the attention scores to probabilities.</span>
+        <span class="token comment"># 归一化注意力得分为概率分布</span>
+        attention_probs <span class="token operator">=</span> nn<span class="token punctuation">.</span>Softmax<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">(</span>attention_scores<span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> is_cross_attention <span class="token keyword">and</span> self<span class="token punctuation">.</span>save_attention<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>save_attention_map<span class="token punctuation">(</span>attention_probs<span class="token punctuation">)</span>
+            attention_probs<span class="token punctuation">.</span>register_hook<span class="token punctuation">(</span>self<span class="token punctuation">.</span>save_attn_gradients<span class="token punctuation">)</span>
+
+        <span class="token comment"># This is actually dropping out entire tokens to attend to, which might</span>
+        <span class="token comment"># seem a bit unusual, but is taken from the original Transformer paper.</span>
+        attention_probs_dropped <span class="token operator">=</span> self<span class="token punctuation">.</span>dropout<span class="token punctuation">(</span>attention_probs<span class="token punctuation">)</span>
+
+        <span class="token comment"># Mask heads if we want to</span>
+        <span class="token comment"># 如果需要掩盖特定的注意力头</span>
+        <span class="token keyword">if</span> head_mask <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            attention_probs_dropped <span class="token operator">=</span> attention_probs_dropped <span class="token operator">*</span> head_mask
+
+        <span class="token comment"># 计算上下文向量（注意力概率与值的乘积）</span>
+        context_layer <span class="token operator">=</span> torch<span class="token punctuation">.</span>matmul<span class="token punctuation">(</span>attention_probs_dropped<span class="token punctuation">,</span> value_layer<span class="token punctuation">)</span>
+
+        <span class="token comment"># 调整上下文向量形状</span>
+        context_layer <span class="token operator">=</span> context_layer<span class="token punctuation">.</span>permute<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">.</span>contiguous<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        new_context_layer_shape <span class="token operator">=</span> context_layer<span class="token punctuation">.</span>size<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token punctuation">(</span>self<span class="token punctuation">.</span>all_head_size<span class="token punctuation">,</span><span class="token punctuation">)</span>
+        context_layer <span class="token operator">=</span> context_layer<span class="token punctuation">.</span>view<span class="token punctuation">(</span><span class="token operator">*</span>new_context_layer_shape<span class="token punctuation">)</span>
+
+        outputs <span class="token operator">=</span> <span class="token punctuation">(</span>
+            <span class="token punctuation">(</span>context_layer<span class="token punctuation">,</span> attention_probs<span class="token punctuation">)</span> <span class="token keyword">if</span> output_attentions <span class="token keyword">else</span> <span class="token punctuation">(</span>context_layer<span class="token punctuation">,</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span>
+
+        outputs <span class="token operator">=</span> outputs <span class="token operator">+</span> <span class="token punctuation">(</span>past_key_value<span class="token punctuation">,</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> outputs<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/672514787">TimeChat：基于Q-Former的时序感知VideoLLM - 知乎 (zhihu.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/AIGCer/article/details/142799336">从秒级到小时级：TikTok等发布首篇面向长视频理解的多模态大语言模型全面综述_tiktok 语音大模型-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/650519771">https://zhuanlan.zhihu.com/p/650519771</a></p>
@@ -1527,7 +1718,7 @@ python utils<span class="token operator">/</span>compress_video_data<span class=
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">181.2k</span>&nbsp;字
+                class="white-color">184.6k</span>&nbsp;字
             
             
             
