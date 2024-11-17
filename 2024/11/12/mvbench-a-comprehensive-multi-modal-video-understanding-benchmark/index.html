@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-11-15
+                    2024-11-17
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.6k
+                    4.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    9 分
+                    15 分
                 </div>
                 
 
@@ -694,18 +694,65 @@
 <h3 id="自动QA生成"><a href="#自动QA生成" class="headerlink" title="自动QA生成"></a>自动QA生成</h3><p>在时间任务定义的指导下，为每个任务收集和标注视频。具体来说，图2中设计了一个自动QA生成范式，它有效地将开源视频数据标注转换为评估mllm的多项选择QA。</p>
 <img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241115162755492.png" alt="image-20241115162755492" style="zoom:80%;">
 
-<h4 id="数据过滤"><a href="#数据过滤" class="headerlink" title="数据过滤"></a>数据过滤</h4><ul>
+<p><strong>数据过滤</strong></p>
+<ul>
 <li>考虑到<strong>视频多样性</strong>，仔细选择了11个视频数据集，覆盖广泛的领域和场景，尽可能地对不同的视频设计独立的问题；</li>
 <li>考虑到<strong>时序敏感性</strong>，采取每个数据集中合适的视频长度（5~35秒），过短的视频往往动作幅度较小，而过长的视频包含过于复杂的上下文，问题过难会导致无法区分不同模型的能力；</li>
 <li>考虑到<strong>问题复杂度</strong>，采取难度适中的问题，如在CLEVRER中，采取<strong>适当条件限制</strong>（排除需要超过10个条件的问题）的问题；如对于时间定位问题，不采用精细的秒级别定位任务，而采用粗略的时间段定位，如发生在视频的开始、中间还是结束。</li>
 </ul>
+<p><strong>QA生成</strong></p>
 <p>之后便来到生成多选题的问题及选项，对于已有多选QA的数据，可以直接采用。但对于没有多选QA的数据，利用ChatGPT来自动生成多选QA格式。</p>
 <ul>
 <li>对于<strong>问题</strong>，根据任务定义，让ChatGPT生成3-5个对应的问题随机选其一；</li>
-<li>对于<strong>选项</strong>，设计两种策略：(a)<strong>基于模版的构造</strong>，设计固定的选项模版，结合GPT匹配生成；(b)基于LLM的生成，我们将原始QA输入ChatGPT，并让ChatGPT生成新的问题以及选项。</li>
+<li>对于<strong>选项</strong>，设计两种策略：(a)<strong>基于模版的构造</strong>，设计固定的选项模版，从ground truth annotations中构建候选集（例如，针对<em>Action Antonym</em>任务，包含正确选项，相反选项，不确定选项；在<em>Moving Direction</em>任务中，包含<em>up</em>, <em>down</em>, <em>left</em>, <em>right</em>四个方向以及固定状态），结合GPT匹配生成；(b)<strong>基于LLM的生成</strong>，针对类似<em>Unexpected Action</em>任务，将原始QA输入ChatGPT，并让ChatGPT生成新的问题以及选项。使用多选格式而不是开放格式，保证评估的正确性和公平性（如果引入开放答案，可能导致评估偏差或人工干预）。最终，本文为每个时间理解任务产生了<strong>200对多项选择QA对。</strong></li>
 </ul>
+<p><strong>问题选项处理</strong></p>
+<p>对于每个问题，从可用的候选集中随机抽样三到五个答案选项，调整选项顺序以加强评估的稳健性。为了防止答案泄露，进一步使用LLM保证一个问题的所有答案选项具有相似和合理的长度。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241116140912529.png" alt="image-20241116140912529" style="zoom:80%;">
+
+<h3 id="evaluation的prompt设计"><a href="#evaluation的prompt设计" class="headerlink" title="evaluation的prompt设计"></a>evaluation的prompt设计</h3><p>对于具体的评测，作者设计了合理的system prompt和高效的answer prompt，其中<strong>system prompt</strong>用于<strong>激发模型的时间理解能力</strong>（见图2右下角），这一提示鼓励mllm仔细检查视频内容来回答问题，通过注意诸如人的动作和姿势，以及物体运动的细节和动作等因素。</p>
+<blockquote>
+<p><em>Carefully watch the video and pay attention to the <strong>cause and sequence of events, the detail and movement of objects and the action and pose of persons.</strong> Based on your observations, select the best option that accurately addresses the question.</em></p>
+</blockquote>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117103651589.png" alt="image-20241117103651589" style="zoom:80%;">
+
+<p>由于对话模型的输出倾向于输出完整的句子，难以直接输出选项，如何<strong>从对话的输出中抽取选项</strong>也成了一个难题。MMBench中使用多个模版匹配选项，对于无法匹配的选项，使用ChatGPT进行抽取。然而这种抽取效率低下， 和人类相比，只取得了87%的对齐率。SEED-Bench则比较不同选项的似然，选择最大似然对应的选项作为最终答案，这种方式仍不够直接，并且需要人为修改不同模型的forward函数。本文采取一种更简单直接的方式，通过<strong>构造带括号”()”的选项</strong>，接着显著地通过控制对话模型输出的起始字符”<strong>Best Option: (</strong>“，即<strong>answer prompt</strong>来指导mllm的选项生成，在本文实验里，这种方式不仅可以100%地保证不同模型输出选项，同时能够提高答案的准确率。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117103831488.png" alt="image-20241117103831488" style="zoom:80%;">
+
+<h2 id="VideoChat2"><a href="#VideoChat2" class="headerlink" title="VideoChat2"></a>VideoChat2</h2><p>作者在MVBench上评估了现有的图像和视频对话模型（见实验部分表2），结果发现即便是最佳的视频对话模型VideoChat，性能与随机猜测相比也相差无几。分析原因可以发现，目前的视频对话模型存在两大缺陷：</p>
+<ul>
+<li><strong>缺乏多样的指令微调数据</strong>：由于视频数据难以标注，开源的指令微调数据仍规模较小；</li>
+<li><strong>缺乏强视频编码器</strong>：目前主流的视频编码方法仍是选强多模态图像编码器CLIP-ViT，在上面进行时序改良，这难以本质地处理时序上的理解。</li>
+</ul>
+<p>为了弥补这些差距，本文开发了一个健壮的视频mllm基线模型VideoChat2。</p>
+<h3 id="指令微调数据"><a href="#指令微调数据" class="headerlink" title="指令微调数据"></a>指令微调数据</h3><p>为了解决缺乏多样指令调优数据的问题，引入了如图3所示的丰富数据，其中包含了来自34个不同来源的2M个样本。效仿VideoChat和VideoLlama，在指令集中包含了图像和视频数据，以改进训练。</p>
+<p>受M3IT的启发，本文以统一的格式重新组织了所有的数据样本，如图3的右下角所示。涉及两个key分别是{“image” or “video”}及{“QA”}。QA中包含instruction，question和answer。M3IT中要求研究人员为每一个数据集设计10组instruction，本文使用ChatGPT来生成指令（根据dataset_description，task_description，instruction_example）来生成。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117105738621.png" alt="image-20241117105738621" style="zoom:80%;">
+
+<p>整个指令调优数据集可以粗略地分为6类：</p>
+<ul>
+<li>conversation：提高多轮对话能力。从LLaVA和VideoChat中收集对话数据；从VideoChatGPT中集成caption数据转为对话格式。</li>
+<li>simple caption：提供基本的视觉描述能力。使用广泛使用的COCO和WebVid，以及来自YouCook2的一级视频字幕。</li>
+<li>detailed caption：丰富视频细节的全面理解能力。利用MiniGPT-4, LLaVA和VideoChat的详细caption数据。</li>
+<li>VQA：提高视觉问答能力。</li>
+<li>reasoning：提高不同的推理能力。</li>
+<li>classification：提高对目标识别和动作识别的鲁棒性。</li>
+</ul>
+<h3 id="渐进式跨模态训练范式"><a href="#渐进式跨模态训练范式" class="headerlink" title="渐进式跨模态训练范式"></a>渐进式跨模态训练范式</h3><p>促进mllm的另一个关键因素是如何有效地弥合视觉和语言表征之间的语义差距。为了解决这个问题，作者采用了如图4所示的渐进式多模态训练范式。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117170157954.png" alt="image-20241117170157954" style="zoom:80%;">
+
+<p><strong>阶段1：视觉-语言对齐</strong></p>
+<p>为了平衡效率和有效性，冻结视觉编码器，<strong>训练灵活的QFormer</strong>。它将冗余的视觉令牌（visual tokens）压缩为更少的查询令牌（query tokens），并<strong>通过多模态损失</strong>（即BLIP2训练的三种损失：视觉文本对比学习（VTC）、视觉文本匹配（VTM）和基于视觉的文本生成（VTG））<strong>将这些查询与文本令牌对齐。</strong>与BLIP2不同，本文选择了预训练过的UMT-L作为视觉编码器，因为它具有强大的时空表示学习能力。此外，训练CC3M和CC12M的15M图像字幕，WebVid-10M的10M视频字幕，以增强视频语言建模。</p>
+<p><strong>阶段2：视觉-语言连接</strong></p>
+<p>在初始对齐之后，将视觉编码器与预先训练过的llm连接起来，以构建视觉-语言理解能力。和BLIP2类似，作者应<strong>用一个线性投影来进一步转换查询标记，并将投影的标记与文本标记连接到LLM中</strong>，用于基于视觉的标题生成（即VTG）。与BLIP2不同的是，视觉编码器在这个阶段是非冻结的，以便更好地与LLM对齐。除了上述第一阶段的训练数据外，这一阶段进一步引入了2M图像caption（COCO、Visual Genome和SBU）和10M视频caption（InternVid），以丰富caption的多样性。</p>
+<p><strong>阶段3：指令微调</strong></p>
+<p>使用前面所述的指令微调数据进行微调。在冻结的LLM上进行lora低轶微调，通过VTG损失与视觉编码器和QFormer一起调整。此外，借鉴InstructBLIP，<strong>作者在QFormer中也插入了instruction</strong>，用于提取与指令相关的视觉token作为LLM的输入。</p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117104639154.png" alt="image-20241117104639154" style="zoom:80%;">
+
+
+
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yang_daxia/article/details/139950072">论文阅读MVBench: A Comprehensive Multi-modal Video Understanding Benchmark-CSDN博客</a></p>
-<p>[<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/669658267">CVPR2024 Highlight] MVBench多模态视频理解能力的全面评测 - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/669658267">CVPR2024 Highlight] MVBench多模态视频理解能力的全面评测 - 知乎</a></p>
 
                 
             </div>
@@ -1258,7 +1305,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">197.3k</span>&nbsp;字
+                class="white-color">198.9k</span>&nbsp;字
             
             
             
