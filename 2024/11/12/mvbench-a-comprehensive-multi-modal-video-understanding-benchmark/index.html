@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
-
+ </script><meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,14 +592,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-11-17
+                    2024-11-22
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.3k
+                    4.4k
                 </div>
                 
 
@@ -747,7 +747,15 @@
 <p>在初始对齐之后，将视觉编码器与预先训练过的llm连接起来，以构建视觉-语言理解能力。和BLIP2类似，作者应<strong>用一个线性投影来进一步转换查询标记，并将投影的标记与文本标记连接到LLM中</strong>，用于基于视觉的标题生成（即VTG）。与BLIP2不同的是，视觉编码器在这个阶段是非冻结的，以便更好地与LLM对齐。除了上述第一阶段的训练数据外，这一阶段进一步引入了2M图像caption（COCO、Visual Genome和SBU）和10M视频caption（InternVid），以丰富caption的多样性。</p>
 <p><strong>阶段3：指令微调</strong></p>
 <p>使用前面所述的指令微调数据进行微调。在冻结的LLM上进行lora低轶微调，通过VTG损失与视觉编码器和QFormer一起调整。此外，借鉴InstructBLIP，<strong>作者在QFormer中也插入了instruction</strong>，用于提取与指令相关的视觉token作为LLM的输入。</p>
-<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117104639154.png" alt="image-20241117104639154" style="zoom:80%;">
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><ul>
+<li>视觉编码器：UMT-L</li>
+<li>大模型：Vicuna-7B</li>
+<li>借鉴BLIP2，使用带有预训练Bert_base的QFormer，阶段1：32个query，阶段2和3：64个query</li>
+<li>训练时：每个视频4帧（？？？）阶段1有10个epoch，阶段2有1个epoch；第3阶段转为8帧视频的3个epoch。</li>
+<li>评估时：输入了16帧的视频，并提供了详细的prompt，以获得更好的结果。</li>
+</ul>
+<p>表2展示了在MVBench上的评估结果，现有的图像和视频MLLM表现不佳。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117104639154.png" alt="image-20241117104639154" style="zoom:80%;">
 
 
 
@@ -1006,51 +1014,49 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/">
+                <a href="/2024/11/18/vue/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="MVBench: A Comprehensive Multi-modal Video Understanding Benchmark">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="Vue">
                         
-                        <span class="card-title">MVBench: A Comprehensive Multi-modal Video Understanding Benchmark</span>
+                        <span class="card-title">Vue</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            多模态大模型视频理解能力基准
+                            前端三件套+Vue简要笔记整理
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-11-12
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-11-18
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E8%AE%BA%E6%96%87/" class="post-category">
-                                    论文
+                            <a href="/categories/%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    前端
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/MLLM/">
-                        <span class="chip bg-color">MLLM</span>
+                    <a href="/tags/%E6%A1%86%E6%9E%B6/">
+                        <span class="chip bg-color">框架</span>
                     </a>
                     
-                    <a href="/tags/%E8%A7%86%E9%A2%91%E7%90%86%E8%A7%A3/">
-                        <span class="chip bg-color">视频理解</span>
+                    <a href="/tags/%E5%89%8D%E7%AB%AF/">
+                        <span class="chip bg-color">前端</span>
                     </a>
                     
                 </div>
@@ -1305,7 +1311,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">198.9k</span>&nbsp;字
+                class="white-color">207.4k</span>&nbsp;字
             
             
             
