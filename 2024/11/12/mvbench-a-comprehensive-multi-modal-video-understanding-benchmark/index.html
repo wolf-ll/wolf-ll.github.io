@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-11-22
+                    2024-11-27
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.4k
+                    5.6k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    15 分
+                    20 分
                 </div>
                 
 
@@ -754,11 +754,43 @@
 <li>训练时：每个视频4帧（？？？）阶段1有10个epoch，阶段2有1个epoch；第3阶段转为8帧视频的3个epoch。</li>
 <li>评估时：输入了16帧的视频，并提供了详细的prompt，以获得更好的结果。</li>
 </ul>
-<p>表2展示了在MVBench上的评估结果，现有的图像和视频MLLM表现不佳。</p>
+<h3 id="MVBench整体评估"><a href="#MVBench整体评估" class="headerlink" title="MVBench整体评估"></a>MVBench整体评估</h3><p>表2展示了在MVBench上的评估结果，现有的图像和视频MLLM表现不佳。VideoChat2在15个任务上取得最佳性能，特别是在动作、物体、场景、属性和姿势识别（action, object, scene, attribute, and pose recognition）等方面表现出色。但也能看到，它在处理移动方向、动作定位、计数等任务上仍有不足。最近的一些图像对话模型，已经开始引入grouding数据增强相关能力，这也是后续视频对话模型可以突破的方向。</p>
+<blockquote>
+<p>值得一提的是，这里的VideoChat2_text，输入为空白视频，即QFormer输出噪声embedding，模型仅靠文本上下文进行输出，结果居然与前述最强模型接近。这个结果也揭示了<strong>目前对话模型，在时序理解任务上，仍有很大的不足</strong>。</p>
+</blockquote>
 <img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241117104639154.png" alt="image-20241117104639154" style="zoom:80%;">
 
+<p>此外，作者还评估了功能强大的GPT-4V。结果表明，GPT-4V取得了令人满意的性能，证明了其时间理解能力，而VideoChat2超过了它，准确率提高了16.9%。这进一步强调了模型在处理更广泛的任务方面的优越性。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127143347889.png" alt="image-20241127143347889" style="zoom:80%;">
 
+<h3 id="更多比较"><a href="#更多比较" class="headerlink" title="更多比较"></a>更多比较</h3><p>仿照Video-chatgpt，本文使用ChatGPT在视频mllm之间进行定量比较。</p>
+<p>（1）<strong>视频对话</strong>：表3显示了在Video-chatgpt中的基准上的结果。与VideoChatGPT相比，我VideoChat2在所有指标上都表现出了卓越的性能，在信息正确性、上下文和时间理解方面都取得了明显的进步。这表明，VideoChat2更<strong>擅长理解空间和时间细节，并提供一致和可靠的反应。</strong></p>
+<p>（2）<strong>零样本视频QA</strong>：表4列出了视频QA数据集（Video question answering via gradually refined attention over appearance and motion. 及 Activitynet-qa: A dataset for understanding complex web videos via question answering.）上的结果，VideoChat2超过了所有其他方法，特别是在理解ActivityNet中的长视频方面。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127114104593.png" alt="image-20241127114104593" style="zoom:80%;">
 
+<p>图5中进一步进行了定性比较，其中VideoChat2提供了一个精确而彻底的响应。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127114508886.png" alt="image-20241127114508886" style="zoom:80%;">
+
+<h3 id="消融实验"><a href="#消融实验" class="headerlink" title="消融实验"></a>消融实验</h3><ul>
+<li><strong>指令微调数据</strong>：随着数据多样性和数量的增加，性能显著提高，其中<strong>视频数据的贡献大于图像数据</strong>（50.5% vs. 42.1%）。考虑到COCO和WebVid的简单caption数据中潜在的冗余性，对它们进行了随机压缩。这只对性能产生很小的影响（50.7% vs. 51.1%），但加速了微调1.7×。</li>
+<li><strong>架构</strong>：（1）<strong>视觉编码器</strong>：表6中，使用本文构建的指令数据集+EVA-CLIP-g获得与原始VideoChat中模型相比6.9%的性能提升（42.4% vs 35.5%）。用UMT-L进行的进一步替换额外提高了6.2%的性能；（2）<strong>LLM</strong>：合并更大和更新的llm在结果中提供了一个最低限度的改进，这表明<strong>MVBench主要依赖于视觉编码器</strong>。值得注意的是，<strong>LoRA不断提高结果，可能是由于它增强了模型指令遵循的能力。</strong></li>
+<li><strong>训练方法</strong>：只微调线性投影层，冻结视觉编码器和QFormer（参考MiniGPT-4），结果不佳（见表7，38.5%）。解冻Qformer，获得额外8.5%的性能提升；解冻视觉编码器获得更多的提升。</li>
+<li><strong>提示设计</strong>：system prompt揭示了任务需求，增强任务完成能力。提取选项时，不同于不稳定的ChatGPT-extracting methods，和更耗时的log-likelihood comparisons，本文使用一种简单有效的answer prompt。表9证明了它能够准确地捕获选项，并提高了跨各种mllm的响应精度。VideoChat2即使没有提示，也能更好地按照指令返回选项。</li>
+</ul>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127113600397.png" alt="image-20241127113600397" style="zoom:80%;">
+
+<p>对于QFormer，在第二第三阶段引入了额外可学习的token，用于和LLM对齐，结果显示<strong>额外引入64个token效果最佳</strong>。并且<strong>在QFormer中插入instruction引导，结果提升明显</strong>，而继续插入question则有副作用。过长的上下文（“指令+问题”）可能很难实现QFormer的信息提取。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127155131928.png" alt="image-20241127155131928" style="zoom:80%;">
+
+<p>对于训练和测试输入，实验表明训练使用8帧，测试使用16帧效果较好，训练开销也较小。但<strong>使用大分辨率，在MVBench上并没有提升，即增加分辨率并不能提高性能；然而，增加帧数可以提高，侧面验证了MVBench更依赖于模型的时序理解能力</strong>。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127161900211.png" alt="image-20241127161900211" style="zoom:80%;">
+
+<h3 id="定性结果"><a href="#定性结果" class="headerlink" title="定性结果"></a>定性结果</h3><img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127162102966.png" alt="image-20241127162102966" style="zoom:80%;">
+
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20241127162127244.png" alt="image-20241127162127244" style="zoom:80%;">
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了MVBench，一个评估mllm的时间理解能力的综合基准。此外，本文针对现有视频对话模型的缺陷，构造了更丰富的指令微调数据，提出了一个健壮的视频MLLM基线模型，VideoChat2，在MVBench上比领先的模型表现超过15%。我们广泛的分析进一步指导了MLLM的时间理解的设计。</p>
+<h2 id="项目配置"><a href="#项目配置" class="headerlink" title="==项目配置=="></a>==项目配置==</h2><p>todo</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yang_daxia/article/details/139950072">论文阅读MVBench: A Comprehensive Multi-modal Video Understanding Benchmark-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/669658267">CVPR2024 Highlight] MVBench多模态视频理解能力的全面评测 - 知乎</a></p>
 
@@ -1311,7 +1343,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">207.4k</span>&nbsp;字
+                class="white-color">208.6k</span>&nbsp;字
             
             
             
