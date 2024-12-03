@@ -1,0 +1,1587 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+ <!--自定义看板娘-->
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <script src="/live2d-widget/autoload.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="多模态架构相关, 后端开发">
+    <meta name="description" content="Java | LeetCode | Algorithm">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>多模态架构相关 | wolf-ll&#39;s blog</title>
+    <link rel="icon" type="image/png" href="/medias/logo.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loaderҳ����ʧ���ý����ķ�ʽ*/
+        -webkit-transition: opacity 1s ease;
+        -moz-transition: opacity 1s ease;
+        -o-transition: opacity 1s ease;
+        transition: opacity 1s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .33s infinite;
+        animation: pacman-balls 1s linear .33s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .66s infinite;
+        animation: pacman-balls 1s linear .66s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .99s infinite;
+        animation: pacman-balls 1s linear .99s infinite
+    }
+
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .5s 0s infinite;
+        animation: rotate_pacman_half_up .5s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .5s 0s infinite;
+        animation: rotate_pacman_half_down .5s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo���ֶ��� */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
+    const loaded = function(){
+       setTimeout(function(){
+            const loader = document.getElementById("loading-container");
+            loader.className="fadeout" ;//ʹ�ý����ķ�������loading page
+            // document.getElementById("body-wrap").style.display="flex";
+            setTimeout(function(){
+                loader.style.display="none";
+            },1000); 
+        },1000);//ǿ����ʾloading page 1s  
+    };
+    loaded();
+})()
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+
+
+
+ <div id="loading-container">
+     <p class="loading-text"></p> 
+     <div class="loading-image">
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div> 
+         <div></div>
+     </div>
+ </div><body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">wolf-ll&#39;s blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">wolf-ll&#39;s blog</div>
+        <div class="logo-desc">
+            
+            Java | LeetCode | Algorithm
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/wolf-ll/wolf-ll.github.io" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/wolf-ll/wolf-ll.github.io" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">多模态架构相关</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/LLM/">
+                                <span class="chip bg-color">LLM</span>
+                            </a>
+                        
+                            <a href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">
+                                <span class="chip bg-color">多模态</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E7%AC%94%E8%AE%B0/" class="post-category">
+                                笔记
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2024-12-02
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2024-12-03
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    3.9k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    14 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="多模态架构相关"><a href="#多模态架构相关" class="headerlink" title="多模态架构相关"></a>多模态架构相关</h1><p>MLLM通常包含以下几个组件：</p>
+<ul>
+<li>一个预训练的<strong>模态编码器</strong>：用于接收视觉/听觉输入等不同模态的输入并编码为模态特征。</li>
+<li>一个输入投影器（<strong>模态接口</strong>）：用于将多模态的特征对齐到文本特征空间，并且和文本特征一起输入到llm。</li>
+<li>一个预训练的<strong>大模型</strong>backbone：利用LLM对对齐后的特征做语义理解、推理和决策，并输出统一的信号。</li>
+<li>可选的<strong>输出投影器</strong>：将语言模型输出的信号进一步转换为其他模态的特征，或者是投影到任务需要的输出范式中。</li>
+<li>可选的<strong>模态生成器</strong>：负责生成其他模态的输出。</li>
+</ul>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203105912970.png?lastModify=1733205528" alt="image-20241203105912970" style="zoom: 80%;">
+
+<h2 id="视觉编码器"><a href="#视觉编码器" class="headerlink" title="视觉编码器"></a>视觉编码器</h2><h3 id="CLIP-VIT"><a href="#CLIP-VIT" class="headerlink" title="CLIP VIT"></a>CLIP VIT</h3><p>CLIP的的核心思想是通过<strong>海量</strong>的<strong>弱监督文本对</strong>对比学习，将图片和文本通过各自的<strong>预训练</strong>模型获得的编码向量在向量空间上<strong>对齐</strong>。不足：clip可以实现图文匹配，但不具有文本生成能力。</p>
+<blockquote>
+<p>这里对提取的文本特征和图像特征进行对比学习。对于一个包含N个文本-图像对的训练batch，将N个文本特征和N个图像特征两两组合，CLIP模型会预测出N^2个可能的文本-图像对的相似度，这里的相似度直接<strong>计算文本特征和图像特征的余弦相似性（cosine similarity）</strong>，即上图所示的矩阵。这里共有N个正样本，即真正属于一对的文本和图像（矩阵中的对角线元素），而剩余的N^2−N个文本-图像对为负样本，那么CLIP的训练目标就是最大化N个正样本的相似度，同时最小化N^2−N个负样本的相似度</p>
+</blockquote>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241021110850956.png" alt="image-20241021110850956" style="zoom: 67%;">
+
+<p>CLIP VIT是在大名鼎鼎的CLIP这项工作中，作者团队使用约<strong>4亿个图像-文本对数据</strong>训练得到的VIT权重，可以说是当前最强的VIT模型之一，<strong>Clip VIT已经成为目前多数多模态模型的首选。</strong></p>
+<h3 id="EVA-CLIP"><a href="#EVA-CLIP" class="headerlink" title="EVA-CLIP"></a>EVA-CLIP</h3><blockquote>
+<p>蒸馏版CLIP，训练消耗更小，速度更快，效果更好。</p>
+</blockquote>
+<p>EVA-CLIP，这是一种基于对比语言图像预训练(CLIP)技术改进的模型，通过引入新的<strong>表示学习、优化和增强技术</strong>，显著<strong>提高了CLIP的训练效率和效果</strong>。EVA-CLIP系列模型在<strong>保持较低训练成本</strong>的同时，实现了与先前具有相似参数数量的CLIP模型相比更高的性能。特别地，文中提到的EVA-02-CLIP-E/14+模型，使用90亿数据样本和5.0B(50亿)参数，在ImageNet-1K的val数据集上取得了82.0%的零样本准确率，而较小的EVA-02-CLIP-L14+模型，尽管仅使用了4.3亿参数和60亿数据样本，也达到了80.4%的准确率。这些结果表明，EVA-CLIP在图像分类任务中，特别是在零样本学习场景下，展现出了卓越的性能。</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241202183416207.png" alt="image-20241202183416207" style="zoom: 67%;">
+
+<h3 id="SigLip"><a href="#SigLip" class="headerlink" title="SigLip"></a>SigLip</h3><p>CLIP 面临<strong>两个技术挑战：</strong>（1）它需要较大的批大小。例如，CLIP使用了 <strong>32K 的批量大小</strong>，这需要大量 GPU;（2）它需要这些 GPU 之间进行大量通信。</p>
+<p>SigLip方法<strong>减少 了CLIP 的批量大小要求</strong>， 是<strong>Sig</strong>moid <strong>Language</strong> Image <strong>Pre</strong> -training 的缩写。SigLIP 的核心思想是使用 Sigmoid运算而不是Softmax<strong>运算</strong>。CLIP 使用 Softmax 函数，因此，给定正对（图像-文本）的损失取决于批量内的每个负对。相比之下，SigLIP 既不对称，也不需要全局归一化因子。因此，每对（正数和负数）的损失都与小批量内的其他对无关。</p>
+<img src="https://i-blog.csdnimg.cn/blog_migrate/b2c95131902ea195a844a5ae763f9153.png" alt="img" style="zoom: 50%;">
+
+<h3 id="NFNet"><a href="#NFNet" class="headerlink" title="NFNet"></a>NFNet</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2102.06171"><strong>High-Performance Large-Scale Image Recognition Without Normalization (ICML 2021)</strong></a></p>
+<p>NFNet（Normalizer-Free ResNets）是DeepMind提出的一种<strong>不需要Batch Normalization的基于ResNet的网络结构</strong>，其核心为一种AGC（adaptive gradient clipping technique，自适应梯度裁剪）技术。最小的NFNet版本达到了EfficientNet-B7的准确率，并且训练速度快了8.7倍，最大版本的模型实现了新的SOTA效果。</p>
+<p><strong>NFNet 视觉大模型：匹敌 ViT 性能的大规模预训练</strong>：</p>
+<blockquote>
+<p>结论：<strong>当能够访问足够大的数据集时，CNN实际上可以与 ViT 竞争。</strong>决定一个视觉骨干模型性能的最重要因素是用于训练的<strong>计算预算</strong> 和<strong>训练的数据量</strong> 。尽管 ViT 在视觉任务上的成功让人印象深刻，但是在本文看来，没有强有力的证据表明预训练的视觉 Transformer 模型的性能在计算预算相当的条件下优于预训练的 ConvNet 模型。</p>
+<p>但不可否认的是，Transformer 模型在特定的上下文中具有实际优势，比如能够在多种模态中使用相似的组件的能力。</p>
+</blockquote>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241202224849112.png" alt="image-20241202224849112" style="zoom:80%;">
+
+<h2 id="视觉token压缩"><a href="#视觉token压缩" class="headerlink" title="视觉token压缩"></a>视觉token压缩</h2><p>为提升MLLM对图像、视频的理解能力，最有效的方式就是提升visual token的个数，随之而来的则是训练、推理耗时的增加。因此，<strong>对视觉token进行压缩以提取最有用的信息</strong>至关重要。</p>
+<p>目前的视觉映射器分以下几种：</p>
+<ol>
+<li><p><strong>Resampler or Q-former</strong>：该方法通过引入可学习的 query 来自适应地来学习相关视觉表示，通过控制可学习 query 的个数来控制视觉 token 产生的数目。</p>
+</li>
+<li><p><strong>基于卷积的视觉映射器</strong>：典型的工作有 C-abstractor、LDPv1/v2， 通过引入卷积操作来<strong>建模局部视觉信息</strong>之间的关系，同时采用<strong>下采样</strong>减少视觉表示的长度。</p>
+</li>
+<li><p><strong>维度变换</strong>：将产生的视觉表示在 sequence 的维度<strong>变换到 channel 维度</strong>，如 PixelShuffle，虽然视觉信息没有减少但结构信息可能会被破坏。在 InternLM-XComposer2-4KHD 与 InternVL 1.5 的研究工作均采用了类似的操作。此外，在研究工作 MM1 中，也对常用的几种 Visual Projector 进行实验验证与性能分析。</p>
+</li>
+</ol>
+<h3 id="Q-Former"><a href="#Q-Former" class="headerlink" title="Q-Former"></a>Q-Former</h3><p>Q-Former由两个transfomer子模块组成，左边为(learnable) query encoder，右边为text encoder &amp; decoder。记视觉模型的image encoder的输出为I。左边网络的(learnable) query为Q，右边网络的输入text为T。注意Q是一个向量集，非单个向量。它可以视为Q-Former的参数。</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241022195840325.png" alt="image-20241022195840325" style="zoom:80%;">
+
+<h3 id="Perceiver-Resampler"><a href="#Perceiver-Resampler" class="headerlink" title="Perceiver Resampler"></a>Perceiver Resampler</h3><p>感知重采样技术（Perceiver Resampler）首次被引入 MLLM 是2022 年 4 月DeepMind 在论文 Flamingo 中提出的，Flamingo采用了感知重采样（<em>Perceiver Resampler</em>）技术和门控交叉注意力技术（Gated Cross-<em>Attention</em>）进行视觉多模态信息和LLM的融合，代表模型：Flamingo、Qwen-VL、MiniCPM-V、LLaVA-UHD</p>
+<ul>
+<li><strong>数据压缩与选择：</strong>图像通常具有很高的维度（例如，像素级别的数据），直接将这些高维数据输入到Transformer中会导致计算负担过重。Perceiver Resampler的主要目标是将这些高维视觉数据压缩到固定数量的紧凑表示，以适应后续的Transformer处理。</li>
+<li><strong>模态对齐：</strong>在多模态任务中（如视觉语言任务），图像和文本往往具有不同的模态特性。Perceiver Resampler通过学习跨模态的映射，将图像数据转换为与文本表示形式相匹配的低维向量。这种转换可以使Transformer更容易处理和对齐不同模态的信息。</li>
+<li><strong>自适应表征学习：</strong>Perceiver Resampler不是简单地对图像进行下采样，而是通过可学习的参数自适应地从输入中提取重要信息。这使得模型能够动态地选择与任务相关的视觉特征。</li>
+</ul>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203024555554.png?lastModify=1733207896" alt="image-20241203024555554" style="zoom: 50%;">
+
+<h3 id="Linear-Projector"><a href="#Linear-Projector" class="headerlink" title="Linear Projector"></a><strong>Linear Projector</strong></h3><p><strong>Linear Projector（线性投影器</strong>）首次被引入 MLLM 是2023年4月 LLaVA1.0 的发布，论文中提出了一种更简单的投影方法，通过线性变换将Modality Encoder编码的特征映射到LLM的表示空间中。代表模型主要有：LLaVA、MiniGPT-4、NEXT-GPT。</p>
+<img src="https://pic3.zhimg.com/v2-f1931fee783c332648242287ccdb39b4_1440w.jpg" alt="img" style="zoom:50%;">
+
+<p>Linear Projector结构比较简单，比Q-Former简单的多，非常易于实现和训练，但是效果上却一点也不弱于Q-Former。</p>
+<h3 id="Multi-Layer-Perception"><a href="#Multi-Layer-Perception" class="headerlink" title="Multi-Layer Perception"></a>Multi-Layer Perception</h3><p><strong>多层感知机（Multi-Layer Perception， MLP）</strong>首次被引入 MLLM 是在2023 年 10 月 LLaVA1.5 中提出的，LLaVA1.5 在对比LLaVA1.0结构上，将视觉特征从线性映射（单个神经元），改进为多层感知机（MLP)。代表模型包括：LLaVA1.5/NeXT、CogVLM、DeepSeek-VL、Yi-VL。</p>
+<img src="https://pic4.zhimg.com/v2-249d50464838d5f6a8340e9a2e567401_1440w.jpg" alt="img" style="zoom:50%;">
+
+<p>多层感知器由多层线性变换和非线性激活函数组成，能够捕捉输入数据的复杂非线性关系。</p>
+<p>最近MLP结构成为了MLLM中模态对齐的主流结构，LLAVA 系列的技术路线被大家更认可，主要原因是：MLP用最简洁的结构在效果上碾压其他一众复杂结构，并且具有更快的收敛速度，对数据量的依赖也少。</p>
+<h2 id="音频编码器"><a href="#音频编码器" class="headerlink" title="音频编码器"></a>音频编码器</h2><h3 id="Whisper"><a href="#Whisper" class="headerlink" title="Whisper"></a>Whisper</h3><p>Whisper是 OpenAI于 2022 年09月开放的一个超大规模的语音识别预训练模型，它使用端到端的方式进行多语言的预训练，在开放域的英语ASR （语音识别）能力上已经实现了与人类相对的水平。</p>
+<p>Whisper 使用标准的 <strong>Transfomer 编码器-解码器架构</strong>对模型进行训练。每条语音数据输入长度为 30 秒，通过 25ms 的汉明窗和 10ms 的步移，在 16000 的采样帧率下，转化为 3000 帧长，80维度的对数梅尔频谱图。并使用两层1维的卷积神经网络和 GELU 激活函数对原始对数梅尔频谱图进行初始的特征提取。</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203152120772.png" alt="image-20241203152120772" style="zoom:67%;">
+
+<h3 id="CLAP"><a href="#CLAP" class="headerlink" title="CLAP"></a>CLAP</h3><p>CLAP（Contrastive Language-Audio Pretraining）是在2023年提出的一种<strong>基于对比学习的预训练方法</strong>，旨在通过结合<strong>音频数据</strong>和相应的<strong>自然语言描述</strong>来学习音频的表示。这种方法的核心思想是利用对比学习范式，将音频和文本映射到一个共享的潜在空间中，并通过训练使得相关的音频-文本对在该空间中更接近，而不相关的对更远离。简单来说，CLAP是参考了CLIP的思路，将图像-文本对迁移至音频-文本对，并完成音频数据预训练的工作。</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203153009849.png" alt="image-20241203153009849" style="zoom: 50%;">
+
+<h3 id="HuBERT"><a href="#HuBERT" class="headerlink" title="HuBERT"></a>HuBERT</h3><p>HuBERT 是 Meta 在 2021 年发表的模型，模型结构类似 Wav2vec 2.0，不同的是训练方法。Wav2vec 2.0 是在训练时将语音特征离散化作为自监督目标，而 HuBERT 则通过在 MFCC 特征或 HuBERT 特征上做 K-means 聚类，得到训练目标。</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203154103891.png" alt="image-20241203154103891" style="zoom:67%;">
+
+<h2 id="早期图文匹配记录"><a href="#早期图文匹配记录" class="headerlink" title="早期图文匹配记录"></a>早期图文匹配记录</h2><ul>
+<li><p>为了与配对文本的embedding序列对齐，图像V也将被表示为embedding向量的序列。将输入表示统一为两种模态的embedding序列。</p>
+</li>
+<li><p>早期做法：图片提取出来的区域特征，最好和文本的token特征在同一个level上。</p>
+</li>
+<li><p>为了生成图像的描述，模型被期望于推断图像中各种对象之间的复杂关系。</p>
+<ul>
+<li><p>因此，许多工作设计了不同的视觉编码器来对这些关系和对象的属性进行建模。</p>
+</li>
+<li><p>ViLBERT[Lu et al.，2019]和LXMERT[Tan和Bansal，2019]等早期工作首先利用Faster RCNN[Ren et al.，2015]从图像中检测对象区域序列，然后将其编码为感兴趣区域（ROI）特征序列。使用ROI feature作为内容信息，将bounding box作为位置信息</p>
+</li>
+<li><p>此外，一些VL-PTM去掉了边界框（bounding box），并将图像编码为像素级网格特征（pixel-level grid features）。例如，pixel-BERT[huang等人，2020]和SOHO[huang等人，2021]放弃了更快的R-CNN，转而支持ResNet，这样视觉编码器就可以将图像作为一个整体来查看，避免了忽略一些关键区域的风险。</p>
+</li>
+<li><p>除了这些方法之外，许多工作都试图遵循ViT的成功[多索维茨基等人，2020年]利用transformer来提取视觉特征。在这个场景中，vl-ptm中的transformer的任务是建模图像中的对象关系。首先将一个图像分割成几个flattened 2D patches。然后将图像patch的embedding按顺序排列，以表示原始图像。</p>
+<ul>
+<li>ALBEF [Li等人，2021a]和SimVLM [Wang等人，2021b]将patch提供给ViT编码器，以提取视觉特征，从而导致了full-transformer VL-PTM的产生。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="文本embedding-图片ROI-embedding"><a href="#文本embedding-图片ROI-embedding" class="headerlink" title="文本embedding + 图片ROI embedding"></a>文本embedding + 图片ROI embedding</h3><ul>
+<li><p>文本序列首先分为tokens，并与“[CLS]”和“[SEP]”token串联，表示为W = &lt;[CLS]，w1，…，wn，[SEP]&gt;。每个令牌wj都将映射到一个词嵌入。</p>
+</li>
+<li><p>此外，在嵌入一词中添加表示位置的 pos embbding 和 嵌入模态类型的seg embbding，以获得wj的最终嵌入。</p>
+</li>
+</ul>
+<p><strong>视觉部分：如何设计一个比较好的视觉embedding，去适应一个语言方面的预训练模型？</strong></p>
+<h4 id="OSCAR"><a href="#OSCAR" class="headerlink" title="OSCAR"></a>OSCAR</h4><p>OSCAR将object tag作为信息进行输入，object是将信息转化为一个文本标签，构建了视觉信息和文本信息之间的桥梁，达到了视觉和文本的一致性。</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203142613732.png" alt="image-20241203142613732" style="zoom:67%;">
+
+<p>问题：</p>
+<p>1.需要额外训练一个roi提取模型，模型准确性影响预训练模型准确性</p>
+<p>2.不同图片roi个数是不确定的，预训练模型需要相对固定roi个数导致信息丢失</p>
+<p>3.roi数据集准备复杂，<strong>目标检测模型得到的都是矩形的目标，其不适合于不规则的物体，导致得到的bounding box中存在噪声。另外，除了bounding box以外，一些背景信息是无法提取出来的，相当于即存在噪声，也存在损失</strong>。对效果产生一些影响。</p>
+<p>4.下游任务不一定适配用roi粒度特征，比如在一个domain预训练的目标检测模型，将其转换到另外的domain中，效果可能有相当大的gap，影响模型的效果。</p>
+<h3 id="文本embedding-图片Grid-embedding"><a href="#文本embedding-图片Grid-embedding" class="headerlink" title="文本embedding + 图片Grid embedding"></a>文本embedding + 图片Grid embedding</h3><p>为了解决region特征表示问题，提出Grid embedding方式表示图像数据。放弃ROI，<strong>转而使用cnn或者resnet抽取Grid Embedding，以便图像编码器可以将图像作为一个整体查看</strong>，避免忽视一些关键区域的风险。</p>
+<h4 id="Pixel-BERT"><a href="#Pixel-BERT" class="headerlink" title="Pixel-BERT"></a>Pixel-BERT</h4><p>Pixel-Bert用cnn抽取图像Grid embbeding</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203142642035.png" alt="image-20241203142642035" style="zoom:67%;">
+
+<h4 id="SOHO"><a href="#SOHO" class="headerlink" title="SOHO"></a>SOHO</h4><p>SOHO用resnet抽取Grid embedding</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203142829471.png" alt="image-20241203142829471" style="zoom: 50%;">
+
+<h3 id="文本embedding-图片Patch-embedding"><a href="#文本embedding-图片Patch-embedding" class="headerlink" title="文本embedding + 图片Patch embedding"></a>文本embedding + 图片Patch embedding</h3><p>随着VIT的兴起，出现了patch based的特征提取，将一张图片分为若干patch，并且使用线性变化的方式对其进行编码。</p>
+<p>图像首先被拆分为拍平为2D patch，然后序列化embdding图像的patch，来表示原始图像特征。模型是端到端表示且用的transformer架构可以并行化计算，所以VIT做patch推理速度会快很多</p>
+<img src="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/image-20241203143210158.png" alt="image-20241203143210158" style="zoom:67%;">
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://waytoagi.feishu.cn/wiki/DPjOwD19iiAcMYkryZicYJMWnTf">‍⁠⁠﻿‍‬‌⁠‌⁠⁠‬⁠﻿⁠‬‍⁠﻿‍‌⁠‍‍﻿﻿‌⁠多模态大模型入门指南-长文慎入【持续更新】 - 飞书云文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/AIGCmagic/article/details/138287524">AI多模态模型架构之模态编码器：图像编码、音频编码、视频编码_多模态编码器-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/AIBigModel/article/details/144150131">多模态视觉token压缩方法详解-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.15389">EVA-CLIP: Improved Training Techniques for CLIP at Scale</a></p>
+<p><a target="_blank" rel="noopener" href="https://l12k1v7ghxm.feishu.cn/wiki/KeVmwU8W2iyWfZkb6iBcbcr6nEg">‍‬‬‌‌‍﻿‬‌⁠⁠‍‍⁠‌‌‌‌‌‌‌﻿‍‌‌‍‍‬‬‌‌3. 多模态架构 - 飞书云文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2212.04356">arxiv.org/pdf/2212.04356</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2004.06165">2004.06165</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2206.04769">2206.04769] CLAP: Learning Audio Concepts From Natural Language Supervision</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.07447">2106.07447] HuBERT: Self-Supervised Speech Representation Learning by Masked Prediction of Hidden Units</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.00849">2004.00849] Pixel-BERT: Aligning Image Pixels with Text by Deep Multi-Modal Transformers</a></p>
+<p><a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2021/html/Huang_Seeing_Out_of_the_Box_End-to-End_Pre-Training_for_Vision-Language_Representation_CVPR_2021_paper.html">CVPR 2021 Open Access Repository</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2108.10904">2108.10904] SimVLM: Simple Visual Language Model Pretraining with Weak Supervision</a></p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">wolf-ll</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://wolf-ll.github.io/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/">http://wolf-ll.github.io/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">wolf-ll</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/LLM/">
+                                    <span class="chip bg-color">LLM</span>
+                                </a>
+                            
+                                <a href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">
+                                    <span class="chip bg-color">多模态</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.jpg" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="card" data-aos="fade-up">
+    <div id="utteranc-container" class="card-content">
+        <script src="https://utteranc.es/client.js"
+                repo="wolf-ll/comments"
+                issue-term="pathname"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
+</div>
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2024/12/02/duo-mo-tai-jia-gou-xiang-guan/">
+                    <div class="card-image">
+                        
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="多模态架构相关">
+                        
+                        <span class="card-title">多模态架构相关</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            多模态模型架构整理，自用
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-12-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E7%AC%94%E8%AE%B0/" class="post-category">
+                                    笔记
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/LLM/">
+                        <span class="chip bg-color">LLM</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/">
+                        <span class="chip bg-color">多模态</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/11/18/vue/">
+                    <div class="card-image">
+                        
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="Vue">
+                        
+                        <span class="card-title">Vue</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            前端三件套+Vue简要笔记整理
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-11-18
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    前端
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%A1%86%E6%9E%B6/">
+                        <span class="chip bg-color">框架</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%89%8D%E7%AB%AF/">
+                        <span class="chip bg-color">前端</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 15px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2024</span>
+            
+            <span id="year">2024</span>
+            <a href="/about" target="_blank">wolf-ll</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">213.5k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2024";
+                    var startMonth = "4";
+                    var startDate = "21";
+                    var startHour = "16";
+                    var startMinute = "35";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/wolf-ll" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:837691088@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=837691088" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 837691088" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+    <a href="https://www.zhihu.com/people/zhi-qi-wei-tuo" class="tooltipped" target="_blank" data-tooltip="关注我的知乎: https://www.zhihu.com/people/zhi-qi-wei-tuo" data-position="top" data-delay="50">
+        <i class="fab fa-zhihu1">知</i>
+    </a>
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+	
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
