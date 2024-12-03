@@ -6,7 +6,7 @@
   <link href="http://wolf-ll.github.io/atom.xml" rel="self"/>
   
   <link href="http://wolf-ll.github.io/"/>
-  <updated>2024-12-03T07:46:45.712Z</updated>
+  <updated>2024-12-03T13:08:25.493Z</updated>
   <id>http://wolf-ll.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ShareGPT4Video: Improving Video Understanding and Generation with Better Captions</title>
+    <link href="http://wolf-ll.github.io/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/"/>
+    <id>http://wolf-ll.github.io/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/</id>
+    <published>2024-12-03T07:53:21.000Z</published>
+    <updated>2024-12-03T13:08:25.493Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="ShareGPT4Video"><a href="#ShareGPT4Video" class="headerlink" title="ShareGPT4Video"></a>ShareGPT4Video</h1><h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>论文推出了ShareGPT4Video系列，旨在通过<strong>密集且精确的标注</strong>促进大型视频语言模型（large video-language models, LVLMs）的<strong>视频理解</strong>和文本到视频模型（text-to-video models, T2VMs）的<strong>视频生成</strong>。该系列包括：</p><p>1）<strong>ShareGPT4Video</strong>，包含4万个GPT4V标注的密集视频字幕，这些视频具有不同长度和来源，通过精心设计的数据过滤和标注策略开发。</p><p>2）<strong>ShareCaptioner-Video</strong>，一个高效且能力强大的<strong>任意视频标注模型</strong>，由其标注了480万个高质量美学视频。</p><p>3）<strong>ShareGPT4Video-8B</strong>，一个简单却卓越的LVLM，在三个前沿视频基准测试中达到了最先进（SOTA）性能。</p><p>为了达成上述目标，不考虑不可扩展且成本高昂的人工标注，作者发现使用GPT4V对视频进行标注，采用简单的多帧或帧连接输入策略，会导致<strong>细节不足，生成的字幕不够详细且会出现时间混淆</strong>的结果。针对这一问题，作者认为设计高质量视频标注策略的挑战在于三个方面：<strong>1) 帧间精确的时间变化识别。2) 帧内详细内容描述。3) 任意长度视频的帧数可扩展性。</strong></p><p>为此，论文精心设计了一种<strong>差分视频标注策略</strong>，该策略稳定、可扩展且高效，适用于生成<strong>任意分辨率、宽高比和长度的视频标注</strong>。基于此，论文构建了ShareGPT4Video，包含4万个高质量视频，涵盖广泛类别，其标注涵盖丰富的<strong>世界知识、物体属性、摄像机运动</strong>，以及关键的、详细且精确的<strong>事件时间描述</strong>。基于ShareGPT4Video，论文进一步开发了ShareCaptioner-Video，一个<strong>能够高效生成任意视频高质量标注的优秀标注器。</strong>本文通过它标注了480万个具有美学吸引力的视频，并在<strong>10秒文本到视频生成任务</strong>中验证了其有效性。对于视频理解，论文验证了ShareGPT4Video在几种当前LVLM架构上的有效性，并展示了论文卓越的新大型视频语言模型 ShareGPT4Video-8B。</p><img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241203171739454.png" alt="image-20241203171739454" style="zoom:67%;"><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>LLM的驱动下，多模态学习中<strong>图文对话</strong>（image-text dialogue）和<strong>文生图</strong>任务（text-to-image generation tasks）已经取得了最新进展。这也激发了向<strong>视频理解</strong>和<strong>生成任务</strong>的转变，允许用户跨视频和语言模式的交互。因此，详细和高保真的视频字幕，连接上述模态，有助于推动该领域的进展。</p><p>尽管视频内容具有丰富的语义和时间信息，但现有数据中视频通常<strong>只配有简短的描述</strong>。这些简短的描述<strong>限制了对视频的深入理解以及视频生成的可控性</strong>。虽然图像-文本对话和文本到图像生成任务中已认识到详细描述的重要性，但在视频理解和生成方面类似的努力仍然不足。</p><p>然而，创建大规模、高质量的视频描述是一项挑战性任务。即使是人类，为长视频生成详细的描述也是<strong>复杂且耗时</strong>的，这阻碍了大规模的标注工作。<strong>当前的开源大规模视觉语言模型（LVLMs）缺乏这种能力，而闭源API尚不支持视频输入。</strong></p><p>另一方面，如果将视频输入<strong>简化为多个帧</strong>，即使是GPT4V也难以提供满意质量的描述。例如，一个直观的想法是向GPT4V提供带有时间戳的多帧视频，并生成描述，但论文发现GPT4V在描述时表现不稳定，有时会<strong>误解帧之间的时间关系</strong>，且<strong>随着视频帧数的增加，其性能进一步下降</strong>。其他解决方案，如将所有帧拼接成一张大图，<strong>对于解决时间问题并无帮助</strong>，且随着帧数的增加，描述的细节会丢失。论文在图11-12中展示了这些问题。</p><p>论文认为，制定有效的视频描述策略的挑战源于三个基本方面：1) <strong>帧间精确的时间变化理解</strong>：时间维度将视频与图像区分开来。不精确的时间描述会显著降低视频描述的质量，并在训练模型时引起混淆。2) <strong>帧内详细内容的描述</strong>：详细描述对于图像与文本模态之间的对齐至关重要，对于视频-文本对齐也同样重要。3) <strong>任意长度视频的帧数可扩展性</strong>：在实际应用中，视频的长度差异很大。理想的描述策略应能适应这种变化，并为任何长度的视频生成适当的描述。</p><p>为此，论文提出了<strong>差分滑动窗口</strong>标注策略 <strong>Differential Sliding-Window Captioning strategy</strong> (DiffSW)，该策略稳定、可扩展且高效，适用于为任意视频生成描述。DiffSW的核心理念是<strong>将  所有帧到描述（all-frames-to-caption）  的任务转化为差分描述任务</strong>。具体而言，本文<strong>为第一帧生成详细字幕</strong>，然后按时间顺序对后续帧应用长度为二的滑动窗口。GPT4V负责基于三个输入（前一帧、其差分字幕和当前帧）识别帧间变化。这包括了照相机运动、对象运动、角色动作和场景转换。获取所有差分字幕后，这些字幕将输入到GPT4生成<strong>整个视频的综合描述</strong>。差分概念使DiffSW能够<strong>集中于帧间的变化</strong>，即<strong>时序变化</strong>。滑动设计确保<strong>了时间顺序的正确性和帧数的不变性</strong>，保证GPT4V不遗漏细节并高效利用API，从而实现稳定、可扩展和高效的字幕质量。此外，差分设计允许通过重用其差分字幕来重新标注带字幕视频的任何子剪辑。</p><p>基于DiffSW，本文构建了<strong>ShareGPT4Video</strong>，包含4万组高质量的视频-字幕对，涵盖广泛类别，由此产生的字幕包含了丰富的世界知识、对象属性、相机运动，以及对事件的详细和精确的时间描述。ShareGPT4Video的视频来自不同来源，采用<strong>基于语义的数据过滤</strong>策略来减轻这些视频之间的内容同质性。然后对视频采用<strong>语义感知的关键帧提取</strong>策略，以减少时间冗余。将DiffSW应用于关键帧，生成高质量的字幕，并通过<strong>层次提示设计</strong>进一步提高了其稳定性和质量。采用<strong>人工质量检查</strong>，以确保视频字幕的质量。</p><p>基于ShareGPT4Video，本文提供了<strong>ShareCaptionor-Video</strong>,，一种特殊的<strong>视频标注器</strong>，能够有效地为广泛的<strong>分辨率、纵横比和持续时间</strong>的视频<strong>生成高质量的字幕</strong>。它能够以较低的成本和令人满意的质量，进一步<strong>扩展高质量的视频字幕数据</strong>，本文作者为480万个视频（总计约3000小时）生成高质量的字幕。</p><p>作者在视频理解和生成任务中进行了广泛的实验，以证明高质量的视频字幕数据集和优越的视频标注器的价值。在视频生成方面，在4.8M视频-字幕对上训练的基于DiT的文本到视频模型在生成10秒高分辨率视频-字幕对内容生成的细粒度控制方面表现良好。为了理解视频，ShareGPT4Video通过替换一小部分训练数据，在多个基准测试上为多个当前lvlm带来了一致的性能提高。本文进一步提出了ShareGPT4Video-8B，一个简单而出色的LVLM，在三个先进而全面的视频基准上达到了SOTA的性能。</p><h2 id="ShareGPT4Video数据集"><a href="#ShareGPT4Video数据集" class="headerlink" title="ShareGPT4Video数据集"></a>ShareGPT4Video数据集</h2><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[<a href="https://arxiv.org/abs/2406.04325">2406.04325] ShareGPT4Video: Improving Video Understanding and Generation with Better Captions</a></p><p>[ShareGPT4Omni/ShareGPT4Video: <a href="https://github.com/ShareGPT4Omni/ShareGPT4Video">NeurIPS 2024] An official implementation of ShareGPT4Video: Improving Video Understanding and Generation with Better Captions</a></p><p><a href="https://zhuanlan.zhihu.com/p/702413750">【LLM】ShareGPT4Video：借助更优质的标题提升视频理解和生成能力 - 知乎</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;ShareGPT4Video&quot;&gt;&lt;a href=&quot;#ShareGPT4Video&quot; class=&quot;headerlink&quot; title=&quot;ShareGPT4Video&quot;&gt;&lt;/a&gt;ShareGPT4Video&lt;/h1&gt;&lt;h2 id=&quot;摘要&quot;&gt;&lt;a href=&quot;#摘要&quot;</summary>
+      
+    
+    
+    
+    <category term="论文" scheme="http://wolf-ll.github.io/categories/%E8%AE%BA%E6%96%87/"/>
+    
+    
+    <category term="MLLM" scheme="http://wolf-ll.github.io/tags/MLLM/"/>
+    
+    <category term="视频理解" scheme="http://wolf-ll.github.io/tags/%E8%A7%86%E9%A2%91%E7%90%86%E8%A7%A3/"/>
+    
+    <category term="字幕生成" scheme="http://wolf-ll.github.io/tags/%E5%AD%97%E5%B9%95%E7%94%9F%E6%88%90/"/>
+    
+  </entry>
   
   <entry>
     <title>多模态架构相关</title>
