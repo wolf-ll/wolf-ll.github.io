@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -596,21 +596,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-12-04
+                    2024-12-10
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    7.2k
+                    8.4k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    25 分
+                    29 分
                 </div>
                 
 
@@ -649,7 +649,7 @@
 <p>为此，论文提出了<strong>差分滑动窗口</strong>标注策略 <strong>Differential Sliding-Window Captioning strategy</strong> (DiffSW)，该策略稳定、可扩展且高效，适用于为任意视频生成描述。DiffSW的核心理念是<strong>将  所有帧到描述（all-frames-to-caption）  的任务转化为差分描述任务</strong>。具体而言，本文<strong>为第一帧生成详细字幕</strong>，然后按时间顺序对后续帧应用长度为二的滑动窗口。GPT4V负责基于三个输入（前一帧、其差分字幕和当前帧）识别帧间变化。这包括了照相机运动、对象运动、角色动作和场景转换。获取所有差分字幕后，这些字幕将输入到GPT4生成<strong>整个视频的综合描述</strong>。差分概念使DiffSW能够<strong>集中于帧间的变化</strong>，即<strong>时序变化</strong>。滑动设计确保<strong>了时间顺序的正确性和帧数的不变性</strong>，保证GPT4V不遗漏细节并高效利用API，从而实现稳定、可扩展和高效的字幕质量。此外，差分设计允许通过重用其差分字幕来重新标注带字幕视频的任何子剪辑。</p>
 <p>基于DiffSW，本文构建了<strong>ShareGPT4Video</strong>，包含4万组高质量的视频-字幕对，涵盖广泛类别，由此产生的字幕包含了丰富的世界知识、对象属性、相机运动，以及对事件的详细和精确的时间描述。ShareGPT4Video的视频来自不同来源，采用<strong>基于语义的数据过滤</strong>策略来减轻这些视频之间的内容同质性。然后对视频采用<strong>语义感知的关键帧提取</strong>策略，以减少时间冗余。将DiffSW应用于关键帧，生成高质量的字幕，并通过<strong>层次提示设计</strong>进一步提高了其稳定性和质量。采用<strong>人工质量检查</strong>，以确保视频字幕的质量。</p>
 <p>基于ShareGPT4Video，本文提供了<strong>ShareCaptionor-Video</strong>,，一种特殊的<strong>视频标注器</strong>，能够有效地为广泛的<strong>分辨率、纵横比和持续时间</strong>的视频<strong>生成高质量的字幕</strong>。它能够以较低的成本和令人满意的质量，进一步<strong>扩展高质量的视频字幕数据</strong>，本文作者为480万个视频（总计约3000小时）生成高质量的字幕。</p>
-<p>作者在视频理解和生成任务中进行了广泛的实验，以证明高质量的视频字幕数据集和优越的视频标注器的价值。在视频生成方面，在4.8M视频-字幕对上训练的基于DiT的文本到视频模型在生成10秒高分辨率视频-字幕对内容生成的细粒度控制方面表现良好。为了理解视频，ShareGPT4Video通过替换一小部分训练数据，在多个基准测试上为多个当前lvlm带来了一致的性能提高。本文进一步提出了ShareGPT4Video-8B，一个简单而出色的LVLM，在三个先进而全面的视频基准上达到了SOTA的性能。</p>
+<p>作者<strong>在视频理解和生成任务中进行了广泛的实验</strong>，以证明高质量的视频字幕数据集和优越的视频标注器的价值。在视频生成方面，在4.8M视频-字幕对上训练的基于DiT的文本到视频模型在生成10秒高分辨率视频-字幕对内容生成的细粒度控制方面表现良好。为了理解视频，ShareGPT4Video通过替换一小部分训练数据，在多个基准测试上为多个当前lvlm带来了一致的性能提高。本文进一步提出了ShareGPT4Video-8B，一个简单而出色的LVLM，在三个先进而全面的视频基准上达到了SOTA的性能。</p>
 <h2 id="ShareGPT4Video数据集"><a href="#ShareGPT4Video数据集" class="headerlink" title="ShareGPT4Video数据集"></a>ShareGPT4Video数据集</h2><p>图2展示了ShareGPT4Video数据集构建的完整pipeline。首先要基于<strong>感官质量与内容复杂性</strong>选择多种不同的视频数据源。随后，使用<strong>基于语义的数据过滤</strong>来防止内容的同质化。然后，应用<strong>语义感知的关键帧提取</strong>来进行<strong>稀疏采样</strong>，以保持显著的语义变化。最后，实现了一个<strong>差分滑动窗口标注策略</strong>，利用GPT-4V来生成<strong>详细</strong>的和<strong>时间上丰富</strong>的描述。</p>
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241203225514426.png" alt="image-20241203225514426" style="zoom: 67%;">
 
@@ -670,7 +670,7 @@
 <h3 id="视频处理"><a href="#视频处理" class="headerlink" title="视频处理"></a>视频处理</h3><p>视频在时间维度上通常是冗余的，而<strong>关键帧采样</strong>是<strong>紧凑地表示视频</strong>的一般思想。然而，传统的<strong>关键帧提取方法（key-frame extraction methods）</strong>通常难以<strong>确保语义的连贯性</strong>，导致缺少<strong>覆盖关键变化和过渡</strong>的关键帧。因此，本文开发了一种语义感知的关键帧提取方法，它可以在减少时间冗余和保持语义连贯性之间取得平衡。</p>
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241204151350827.png" alt="image-20241204151350827" style="zoom:67%;">
 
-<h4 id="语义感知的关键帧提取"><a href="#语义感知的关键帧提取" class="headerlink" title="语义感知的关键帧提取"></a>语义感知的关键帧提取</h4><p>将视频V表示为具有固定2秒间隔的T帧的集合，计算关键帧集合V’的帧集合T’，<strong>该集合足够稀疏但能全面覆盖视频内事件的演变</strong>。论文将CLIP-Large图像编码器的输出CLS token视为<strong>每个帧的全局语义</strong>，并<strong>移除具有高语义相似性的相邻帧</strong>。在实践中，论文<strong>初始化</strong>关键帧集合V’为<strong>V的第一帧</strong>。对于V中的每个帧，论文<strong>计算其与V’中最新关键帧的语义相似度d</strong> 。如果d低于预定义的阈值，论文将该帧视为关键帧并将其添加到V’中。如果不是，则该帧被作为冗余帧跳过。为了完整性，<strong>V的最后一帧总是被添加到V’中</strong>。论文提供了伪代码，如图15所示。</p>
+<h4 id="语义感知的关键帧提取"><a href="#语义感知的关键帧提取" class="headerlink" title="语义感知的关键帧提取"></a>语义感知的关键帧提取</h4><p>将V表示为从固定2秒间隔的视频中采样的T帧集，计算关键帧集合V’，<strong>该集合足够稀疏但能全面覆盖视频内事件的演变</strong>。论文将CLIP-Large图像编码器的输出CLS token视为<strong>每个帧的全局语义</strong>，并<strong>移除具有高语义相似性的相邻帧</strong>。在实践中，论文<strong>初始化</strong>关键帧集合V’为<strong>V的第一帧</strong>。对于V中的每个帧，论文<strong>计算其与V’中最新关键帧的语义相似度d</strong> 。如果d低于预定义的阈值，论文将该帧视为关键帧并将其添加到V’中。如果不是，则该帧被作为冗余帧跳过。为了完整性，<strong>V的最后一帧总是被添加到V’中</strong>。论文提供了伪代码，如图15所示。</p>
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241204152438461.png" alt="image-20241204152438461" style="zoom: 50%;">
 
 <h3 id="字幕生成pipeline"><a href="#字幕生成pipeline" class="headerlink" title="字幕生成pipeline"></a>字幕生成pipeline</h3><p>正如第一节引言中提到的，本文发现如果直接将所有帧输入GPT4V，GPT4V难以稳定生成具有正确时序关系的字幕，并且随着帧数的增加，其性能进一步恶化。另一方面，如果论文将所有帧合并成一张大图，随着帧数的增加，GPT4V会丢失更多细节，如图11-12所示。</p>
@@ -687,7 +687,7 @@
 
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241204170617540.png" alt="image-20241204170617540" style="zoom:50%;">
 
-<h2 id="ShareCaptioner-Video"><a href="#ShareCaptioner-Video" class="headerlink" title="ShareCaptioner-Video"></a>ShareCaptioner-Video</h2><h3 id="模型设计"><a href="#模型设计" class="headerlink" title="模型设计"></a>模型设计</h3><p>论文使用收集的视频字幕数据对IXC2-4KHD 进行微调，从而得到论文的ShareCaptioner-Video。为了灵活使用，论文对数据进行了重新组织，以支持以下功能：</p>
+<h2 id="ShareCaptioner-Video"><a href="#ShareCaptioner-Video" class="headerlink" title="ShareCaptioner-Video"></a>ShareCaptioner-Video</h2><h3 id="模型设计"><a href="#模型设计" class="headerlink" title="模型设计"></a>模型设计</h3><p>论文使用收集的视频字幕数据对<strong>IXC2-4KHD</strong> 进行微调，从而得到论文的ShareCaptioner-Video。为了灵活使用，论文对数据进行了重新组织，以支持以下功能：</p>
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241204172727478.png" alt="image-20241204172727478" style="zoom:67%;">
 
 <ol>
@@ -701,7 +701,7 @@
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241204212139827.png" alt="image-20241204212139827" style="zoom: 50%;">
 
 <h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><h3 id="视频理解"><a href="#视频理解" class="headerlink" title="视频理解"></a>视频理解</h3><h4 id="数据集和基准"><a href="#数据集和基准" class="headerlink" title="数据集和基准"></a>数据集和基准</h4><p>为了全面探索高质量视频字幕数据给LVLMs带来的益处，论文在三个多模态视频基准上对模型进行了全面评估。VideoBench从13个现有数据源（如MSVD-QA，MSRVTT-QA，Activitynet-QA等）中策划了约<strong>15,000个跨10个评估维度的QA对。</strong>MVBench 旨在挑战LVLMs处理视频任务，这些任务不能通过单帧依赖有效解决，其包含了<strong>从11个公共视频测试中派生出的4,000个QA对基准</strong>。TempCompass 特别评估了LVLMs在各种时间方面的微妙性能，如速度、方向和属性变化。它包含<strong>410个视频和7,540个精心收集的指令</strong>，强调时间理解和交互。</p>
-<h4 id="ShareGPT4Video-1"><a href="#ShareGPT4Video-1" class="headerlink" title="ShareGPT4Video"></a>ShareGPT4Video</h4><p><strong>通过ShareGPT4Video提升当前LVLM的性能</strong>。论文验证了ShareGPT4Video收集的高质量视频字幕数据对于提升当前LVLM性能的有效性。为了公平和简化，论文将ShareGPT4Video中与复杂场景相关的28K高质量视频字幕数据（包括Panda-70M 、Ego4D和BDD100K ）整合，<strong>以同等数量替换VideoChatGPT-100K 对话数据中的字幕数据</strong>。然后，论文使用默认的训练设置和超参数训练VideoLLaVA 和LLaMA-VID。如<strong>表1</strong>所示，ShareGPT4Video在不同的LVLM架构和规模上<strong>持续提高了视频与语言模态之间的对齐</strong>。具体而言，集成高质量字幕后，VideoLLaVA-7B在三个全面的多模态视频基准测试上<strong>平均性能提升了1.1</strong>，而LLaMA-VID-7B和LLaMA-VID-13B分别实现了平均2.0和2.3的提升。论文高质量的视频字幕数据特别<strong>有助于LVLM在需要复杂时间理解的基准测试上实现显著的性能提升</strong>，例如TempCompass 。</p>
+<h4 id="ShareGPT4Video-1"><a href="#ShareGPT4Video-1" class="headerlink" title="ShareGPT4Video"></a>ShareGPT4Video</h4><p><strong>通过ShareGPT4Video提升当前LVLM的性能</strong>。论文验证了ShareGPT4Video收集的高质量视频字幕数据对于提升当前LVLM性能的有效性。为了公平和简化，论文将ShareGPT4Video中与复杂场景相关的28K高质量视频字幕数据（包括Panda-70M 、Ego4D和BDD100K ）整合，<strong>以同等数量替换VideoChatGPT-100K 对话数据中的字幕数据</strong>。然后，论文使用默认的训练设置和超参数训练VideoLLaVA 和LLaMA-VID。如<strong>表1</strong>所示，ShareGPT4Video在不同的LVLM架构和规模上<strong>持续提高了视频与语言模态之间的对齐</strong>。具体而言，集成高质量字幕后，VideoLLaVA-7B在三个全面的多模态视频基准测试上<strong>平均性能提升了1.1</strong>，而LLaMA-VID-7B和LLaMA-VID-13B分别实现了平均2.0和2.3的提升。论文证明高质量的视频字幕数据特别<strong>有助于LVLM在需要复杂时间理解的基准测试上实现显著的性能提升</strong>，例如TempCompass 。</p>
 <img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241204215938456.png" alt="image-20241204215938456" style="zoom:67%;">
 
 <h4 id="ShareGPT4Video-8B"><a href="#ShareGPT4Video-8B" class="headerlink" title="ShareGPT4Video-8B"></a>ShareGPT4Video-8B</h4><p>为了获得最终的ShareGPT4Video-8B模型，论文从LLaVA-Next-8B图像多模态模型开始。与之前的LVLM方法一致，论文遵循lG-VLM策略，<strong>从每个视频中均匀采样16帧，并将这些帧排列成4x4的图像网格，以形成训练和推理的输入</strong>。对于训练数据，论文首先从各种<strong>视频到文本数据集</strong>中收集153K的VQA数据来构建论文的基准。这一收集包括来自VideoChatGPT的13K对话数据和140K问答对，其中45K数据点来自CLEVRER ，8K来自EGO-QA ，34K来自NextQA ，53K来自TGIF-Transition 。然后，这些VQA数据与28K视频字幕数据结合，形成一个包含181K样本的综合训练数据集。</p>
@@ -739,9 +739,65 @@
 <h2 id="局限和影响"><a href="#局限和影响" class="headerlink" title="局限和影响"></a>局限和影响</h2><p>局限：虽然本文目前生成高质量视频字幕的pipeline充分利用了视觉和文本信息，但由于GPT4V无法同时合并音频信息，它受到了限制。音频信息在涉及日常人类活动的对话场景中是有益的，一旦GPT4o支持音频输入，作者计划在未来的工作中引入音频信息，以进一步提高字幕的质量。</p>
 <p>社会影响：1)由于大型语言模型涉及到大规模字幕的生成过程，作者没有手动验证每个字幕的社会偏见内容；2)虽然作者利用了来自现有公共数据集的视频数据，但作者不能确保所选的视频不包含人脸。因此，虽然对本文生成的字幕的使用没有限制，但用户在使用视频时必须遵守原始视频源的许可。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>在本研究中，作者的目的是解决大型视频语言模型（LVLMs）和文本到视频模型（T2VMs）<strong>缺乏高质量的视频字幕数据</strong>的挑战。作者开发了ShareGPT4Video，一个高质量的<strong>视频字幕数据集</strong>，和ShareCaptioner-Video，一个在<strong>视频语言多模态</strong>领域的先进和多功能的<strong>模型</strong>。通过采用一系列的策略和设计，本文从高级的图像多模态模型、GPT4V和4.8M字幕数据（由ShareGPT4Video生成）得到了40K详细字幕。这些字幕包括丰富的世界知识、对象属性、相机运动和对事件的详细时间描述。本文广泛的实验验证了提出的数据集和标注器在增强视频理解和生成任务方面的有效性。</p>
+<h2 id="架构相关"><a href="#架构相关" class="headerlink" title="架构相关"></a>架构相关</h2><h3 id="关键帧采样"><a href="#关键帧采样" class="headerlink" title="关键帧采样"></a>关键帧采样</h3><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> os
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">import</span> functional <span class="token keyword">as</span> F
+<span class="token keyword">import</span> cv2
+<span class="token keyword">import</span> math
+<span class="token keyword">from</span> transformers <span class="token keyword">import</span> CLIPFeatureExtractor<span class="token punctuation">,</span>CLIPVisionModel
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+
+
+model_path <span class="token operator">=</span> <span class="token string">'openai/clip-vit-large-patch14-336'</span>
+feature_extractor <span class="token operator">=</span> CLIPFeatureExtractor<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span>
+vision_tower <span class="token operator">=</span> CLIPVisionModel<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>model_path<span class="token punctuation">)</span><span class="token punctuation">.</span>cuda<span class="token punctuation">(</span><span class="token punctuation">)</span>
+vision_tower<span class="token punctuation">.</span>requires_grad_<span class="token punctuation">(</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">calculate_clip_feature_sim_2</span><span class="token punctuation">(</span>image_1<span class="token punctuation">,</span> image_2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    input_1 <span class="token operator">=</span> feature_extractor<span class="token punctuation">(</span>images<span class="token operator">=</span>image_1<span class="token punctuation">,</span> return_tensors<span class="token operator">=</span><span class="token string">"pt"</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+    input_2 <span class="token operator">=</span> feature_extractor<span class="token punctuation">(</span>images<span class="token operator">=</span>image_2<span class="token punctuation">,</span> return_tensors<span class="token operator">=</span><span class="token string">"pt"</span><span class="token punctuation">,</span> padding<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+    image_feature_1 <span class="token operator">=</span> vision_tower<span class="token punctuation">(</span><span class="token operator">**</span>input_1<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token operator">=</span>vision_tower<span class="token punctuation">.</span>device<span class="token punctuation">)</span><span class="token punctuation">,</span> output_hidden_states<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">.</span>hidden_states<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span>
+    image_feature_2 <span class="token operator">=</span> vision_tower<span class="token punctuation">(</span><span class="token operator">**</span>input_2<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token operator">=</span>vision_tower<span class="token punctuation">.</span>device<span class="token punctuation">)</span><span class="token punctuation">,</span> output_hidden_states<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">.</span>hidden_states<span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span>
+    similarity <span class="token operator">=</span> F<span class="token punctuation">.</span>cosine_similarity<span class="token punctuation">(</span>image_feature_1<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token operator">=</span><span class="token string">'cpu'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> image_feature_2<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token operator">=</span><span class="token string">'cpu'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'Sim: </span><span class="token interpolation"><span class="token punctuation">{</span>similarity<span class="token punctuation">}</span></span><span class="token string">'</span></span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> similarity<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>CLIPVisionModel</code> 是 <strong>OpenAI CLIP 模型的视觉部分，用于从图像中提取特征。</strong>它是基于 <strong>Vision Transformer (ViT)</strong> 或其他卷积神经网络架构（例如 ResNet）构建的模型。CLIP 的主要目标是通过视觉和语言的对比学习来使模型同时理解这两种模态。</p>
+<p>在 CLIP 的视觉模型中，图像通过一个深度神经网络进行处理，该网络的目的是将图像嵌入到一个高维空间中，在这个空间里，视觉特征可以与文本特征对齐，从而使得图像和文本可以相互比较。</p>
+<p><code>CLIPVisionModel</code> 内部结构主要由以下几个组件组成：</p>
+<ol>
+<li><strong>输入层</strong>：<ul>
+<li>图像首先会被输入到一个预处理的特征提取器（如 <code>CLIPFeatureExtractor</code>），它会对图像进行缩放、裁剪和标准化等操作，确保图像符合模型的输入要求。</li>
+</ul>
+</li>
+<li><strong>视觉模型（通常是 Vision Transformer）</strong>：<ul>
+<li>CLIP 使用的是 <strong>Vision Transformer (ViT)</strong> 架构。ViT 是一种基于 Transformer 的视觉模型，使用自注意力机制来捕捉图像中的局部和全局信息。</li>
+<li>具体来说，图像首先被分割成固定大小的补丁（patches），每个补丁被视为一个 token，类似于文本中的单词。然后这些补丁经过嵌入、线性变换，形成与文本输入类似的高维特征表示。</li>
+<li>CLIP 中的 Vision Transformer 通常采用 <strong>ViT-B/16</strong>（Base model，16x16 图像补丁）或其他类似的架构。</li>
+</ul>
+</li>
+<li><strong>图像嵌入（Image Embeddings）</strong>：<ul>
+<li>通过 Vision Transformer 处理后，最后的隐藏状态（通常是 <code>[CLS]</code> token 对应的输出）被用作图像的特征向量（embedding）。</li>
+<li>这个特征向量是一个高维的表示，它捕捉了图像的语义信息，并与文本嵌入对齐，可以用来进行图像与文本的匹配和相似度计算。</li>
+</ul>
+</li>
+<li><strong>Transformer 层和多头自注意力机制</strong>：<ul>
+<li>Vision Transformer 通过多层的自注意力机制对图像中的补丁进行建模，能够捕捉图像中复杂的关系和语义信息。每一层的输出会提供一个更加丰富的图像表示。</li>
+</ul>
+</li>
+</ol>
+<h3 id="IG-VLM策略"><a href="#IG-VLM策略" class="headerlink" title="IG-VLM策略"></a>IG-VLM策略</h3><p><strong>An Image Grid Can Be Worth a Video: Zero-shot Video Question Answering Using a VLM</strong></p>
+<blockquote>
+<p>标题:一个图像网格可以抵得上一段视频使用 VLM 进行零镜头视频答题<br>author:Wonkyun Kim, Changin Choi, Wonseok Lee, Wonjong Rhee<br>paper:<a target="_blank" rel="noopener" href="https://arxiv.org/html/2403.18406v1">An Image Grid Can Be Worth a Video: Zero-shot Video Question Answering Using a VLM</a><br>publish:Our code is available at <a href="https://link.zhihu.com/?target=https://github.com/imagegridworth/IG-VLM">https://github.com/imagegridworth/IG-VLM</a><br>date Time:2024-03-27</p>
+</blockquote>
+<p>在最近的大型语言模型（LLM）的复杂推理能力的刺激下，人们设计出了多种连接视频模式的策略。视频语言模型（VideoLMs）是其中一个突出的策略，它利用视频数据训练可学习的界面，将高级视觉编码器与 LLMs 连接起来。最近，出现了另一种策略，即利用视频语言模型（VideoLMs）和 LLMs 等现成的基础模型，在多个阶段实现模态桥接。在本研究中，我们介绍了一种简单而新颖的策略，即<strong>只使用一个视觉语言模型（VLM）</strong>。我们的出发点是一个朴素的观点，即<strong>视频由一系列图像或帧组成，并与时间信息交织在一起</strong>。视频理解的精髓在于<strong>对每一帧图像的时间信息和空间信息进行有效管理</strong>。起初，我们<strong>通过将多个帧按网格布局排列，将视频转换成单一的合成图像。由此产生的单一图像被称为图像网格。这种格式在保持单幅图像外观的同时，有效保留了网格结构中的时间信息。因此，图像网格方法可以直接应用单一的高性能 VLM，而无需任何视频数据训练。</strong>我们对 10 个零样本视频问题解答基准（包括 5 个开放式基准和 5 个多项选择基准）进行了广泛的实验分析，结果表明所提出的图像网格视觉语言模型（IG-VLM）在 10 个基准中的 9 个基准中超越了现有方法。</p>
+<img src="/2024/12/03/sharegpt4video-improving-video-understanding-and-generation-with-better-captions/image-20241209191753822.png" alt="image-20241209191753822" style="zoom:67%;">
+
+
+
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2406.04325">2406.04325] ShareGPT4Video: Improving Video Understanding and Generation with Better Captions</a></p>
 <p>[ShareGPT4Omni/ShareGPT4Video: <a target="_blank" rel="noopener" href="https://github.com/ShareGPT4Omni/ShareGPT4Video">NeurIPS 2024] An official implementation of ShareGPT4Video: Improving Video Understanding and Generation with Better Captions</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/702413750">【LLM】ShareGPT4Video：借助更优质的标题提升视频理解和生成能力 - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jiqizhixin.com/articles/2024-06-20-4">ShareGPT4V作者团队又一力作！百万高质量视频-字幕数据助力社区提升多模态大模型视频理解及生成能力 | 机器之心</a></p>
 
                 
             </div>
@@ -1302,7 +1358,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">220.7k</span>&nbsp;字
+                class="white-color">221.9k</span>&nbsp;字
             
             
             

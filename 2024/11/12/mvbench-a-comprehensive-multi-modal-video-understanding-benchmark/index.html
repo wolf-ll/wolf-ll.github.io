@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,7 +592,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-12-03
+                    2024-12-05
                 </div>
                 
 
@@ -751,7 +751,7 @@
 <li>视觉编码器：UMT-L</li>
 <li>大模型：Vicuna-7B</li>
 <li>借鉴BLIP2，使用带有预训练Bert_base的QFormer，阶段1：32个query，阶段2和3：64个query</li>
-<li>训练时：每个视频4帧（？？？）阶段1有10个epoch，阶段2有1个epoch；第3阶段转为8帧视频的3个epoch。</li>
+<li>训练时：每个视频4帧，阶段1有10个epoch，阶段2有1个epoch；第3阶段转为8帧视频的3个epoch。</li>
 <li>评估时：输入了16帧的视频，并提供了详细的prompt，以获得更好的结果。</li>
 </ul>
 <h3 id="MVBench整体评估"><a href="#MVBench整体评估" class="headerlink" title="MVBench整体评估"></a>MVBench整体评估</h3><p>表2展示了在MVBench上的评估结果，现有的图像和视频MLLM表现不佳。VideoChat2在15个任务上取得最佳性能，特别是在动作、物体、场景、属性和姿势识别（action, object, scene, attribute, and pose recognition）等方面表现出色。但也能看到，它在处理移动方向、动作定位、计数等任务上仍有不足。最近的一些图像对话模型，已经开始引入grouding数据增强相关能力，这也是后续视频对话模型可以突破的方向。</p>
@@ -881,7 +881,9 @@ conda config <span class="token parameter variable">--set</span> show_channel_ur
 base_dir <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>dirname<span class="token punctuation">(</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>dirname<span class="token punctuation">(</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>abspath<span class="token punctuation">(</span>__file__<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 sys<span class="token punctuation">.</span>path<span class="token punctuation">.</span>append<span class="token punctuation">(</span>base_dir<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-
+<h4 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h4><p><a target="_blank" rel="noopener" href="https://github.com/salesforce/LAVIS/blob/main/lavis/datasets/download_scripts/DownloadConceptualCaptions/download_data_cc3m.py">LAVIS/lavis/datasets/download_scripts/DownloadConceptualCaptions/download_data_cc3m.py at main · salesforce/LAVIS</a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.salesforce.com/LAVIS//latest/getting_started.html#auto-downloading-and-loading-datasets">Dataset Zoo — LAVIS documentation</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rom1504/img2dataset/blob/main/dataset_examples/cc3m.md">img2dataset/dataset_examples/cc3m.md at main · rom1504/img2dataset</a></p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yang_daxia/article/details/139950072">论文阅读MVBench: A Comprehensive Multi-modal Video Understanding Benchmark-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/669658267">CVPR2024 Highlight] MVBench多模态视频理解能力的全面评测 - 知乎</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/OpenGVLab/Ask-Anything/tree/main/video_chat2">Ask-Anything/video_chat2 at main · OpenGVLab/Ask-Anything</a></p>
@@ -1438,7 +1440,7 @@ sys<span class="token punctuation">.</span>path<span class="token punctuation">.
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">220.7k</span>&nbsp;字
+                class="white-color">221.9k</span>&nbsp;字
             
             
             
