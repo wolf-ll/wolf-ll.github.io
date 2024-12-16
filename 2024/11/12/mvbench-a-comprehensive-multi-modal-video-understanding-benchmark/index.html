@@ -8,7 +8,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="MVBench: A Comprehensive Multi-modal Video Understanding Benchmark, 后端开发">
+    <meta name="keywords" content="MVBench, 后端开发">
     <meta name="description" content="Java | LeetCode | Algorithm">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -20,7 +20,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>MVBench: A Comprehensive Multi-modal Video Understanding Benchmark | wolf-ll&#39;s blog</title>
+    <title>MVBench | wolf-ll&#39;s blog</title>
     <link rel="icon" type="image/png" href="/medias/logo.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
-
+ </script><meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -440,7 +440,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">MVBench: A Comprehensive Multi-modal Video Understanding Benchmark</h1>
+                    <h1 class="description center-align post-title">MVBench</h1>
                 </div>
             </div>
         </div>
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-12-05
+                    2024-12-16
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    6.6k
+                    7k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    24 分
+                    26 分
                 </div>
                 
 
@@ -880,6 +880,34 @@ conda config <span class="token parameter variable">--set</span> show_channel_ur
  <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> sys <span class="token punctuation">,</span> os
 base_dir <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>dirname<span class="token punctuation">(</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>dirname<span class="token punctuation">(</span>os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>abspath<span class="token punctuation">(</span>__file__<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 sys<span class="token punctuation">.</span>path<span class="token punctuation">.</span>append<span class="token punctuation">(</span>base_dir<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>apt-get install报错文件尺寸不符：apt-get换国内镜像源<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40765537/article/details/105936653">Ubuntu中apt-get命令以及修改apt-get镜像源-CSDN博客</a></li>
+</ul>
+</li>
+<li>libcusparse.so.11: cannot open shared object file: No such file or dir报错：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42727728/article/details/123857908">【最快解决方案】安装torch-geometric报错 libcusparse.so.11: cannot open shared object file: No such file or dir_oserror: libcusparse.so.11: cannot open shared obj-CSDN博客</a><ul>
+<li>先<code>locate libcusparse.so.11</code>找一下服务器有没有对应文件，有的话直接复制到这个博客中说的路径下（发现bailey机器上libcusparse.so.11只有20kb，有一个libcusparse.so.11.7.4.91文件200+mb，把这俩一起复制过去也不行，最后用的llama项目虚拟环境下200+m的后缀11的文件替换就行了</li>
+</ul>
+</li>
+<li>Failed to load image Python extension: libtorch_cuda_cu.so<ul>
+<li>pytorch和torchvision的版本问题</li>
+</ul>
+</li>
+<li><strong>ERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: 1) local_rank: 0 (pid: 3938937) of binary:</strong> <ul>
+<li>本来以为是PyTorch 的 CUDA 版本与系统上的 CUDA 版本不兼容的问题。从原来的<code>torch==1.13.1+cu117</code>换成<code>torch==1.12.0+cu113</code>，但问题依然存在。（系统cuda为11.5）</li>
+</ul>
+</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">pip <span class="token function">install</span> <span class="token assign-left variable">torch</span><span class="token operator">==</span><span class="token number">1.12</span>.0+cu113 <span class="token assign-left variable">torchvision</span><span class="token operator">==</span><span class="token number">0.13</span>.0+cu113 <span class="token assign-left variable">torchaudio</span><span class="token operator">==</span><span class="token number">0.12</span>.0 --extra-index-url https://download.pytorch.org/whl/cu113<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li>而且torch降低为1.12以后，与peft冲突（peft 0.4.0 requires torch&gt;=1.13.0），且bitsandbytes和cuda版本又会不匹配</li>
+<li>最后torch又装回1.13.1了，cuda11.7（各种版本下载对应：<a target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">Previous PyTorch Versions | PyTorch</a>）</li>
+</ul>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">pip <span class="token function">install</span> <span class="token assign-left variable">torch</span><span class="token operator">==</span><span class="token number">1.13</span>.1+cu117 <span class="token assign-left variable">torchvision</span><span class="token operator">==</span><span class="token number">0.14</span>.1+cu117 <span class="token assign-left variable">torchaudio</span><span class="token operator">==</span><span class="token number">0.13</span>.1 --extra-index-url https://download.pytorch.org/whl/cu117<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
 
 <h4 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h4><p><a target="_blank" rel="noopener" href="https://github.com/salesforce/LAVIS/blob/main/lavis/datasets/download_scripts/DownloadConceptualCaptions/download_data_cc3m.py">LAVIS/lavis/datasets/download_scripts/DownloadConceptualCaptions/download_data_cc3m.py at main · salesforce/LAVIS</a></p>
 <p><a target="_blank" rel="noopener" href="https://opensource.salesforce.com/LAVIS//latest/getting_started.html#auto-downloading-and-loading-datasets">Dataset Zoo — LAVIS documentation</a></p>
@@ -1202,9 +1230,9 @@ sys<span class="token punctuation">.</span>path<span class="token punctuation">.
                 <a href="/2024/10/13/timechat-a-time-sensitive-multimodal-large-language-model/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="TimeChat: A Time-sensitive Multimodal Large Language Model">
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="TimeChat">
                         
-                        <span class="card-title">TimeChat: A Time-sensitive Multimodal Large Language Model</span>
+                        <span class="card-title">TimeChat</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1440,7 +1468,7 @@ sys<span class="token punctuation">.</span>path<span class="token punctuation">.
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">221.9k</span>&nbsp;字
+                class="white-color">228.2k</span>&nbsp;字
             
             
             
