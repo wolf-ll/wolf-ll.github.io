@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2024-12-13
+                    2024-12-20
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    13.5k
+                    16.7k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    59 分
+                    72 分
                 </div>
                 
 
@@ -2048,8 +2048,8 @@ const app = new Vue({
 &lt;/body&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <ul>
-<li>computed计算属性<br>作用：封装了一段对于<strong>数据</strong>的处理，求得一个<strong>结果</strong><br>缓存特性：计算属性会对计算出来的<strong>结果缓存</strong>，再次使用直接读取缓存，依赖项变化了，会<strong>自动</strong>重新计算 -&gt; 并<strong>再次缓存</strong></li>
-<li>methods方法：<br>作用：给实例提供一个<strong>方法</strong>，调用以处理<strong>业务逻辑</strong></li>
+<li><strong>computed计算属性</strong><br>作用：封装了一段对于<strong>数据</strong>的处理，求得一个<strong>结果</strong><br>缓存特性：计算属性会对计算出来的<strong>结果缓存</strong>，再次使用直接读取缓存，依赖项变化了，会<strong>自动</strong>重新计算 -&gt; 并<strong>再次缓存</strong></li>
+<li><strong>methods方法：</strong><br>作用：给实例提供一个<strong>方法</strong>，调用以处理<strong>业务逻辑</strong></li>
 </ul>
 <h4 id="watch侦听器（监视器）"><a href="#watch侦听器（监视器）" class="headerlink" title="watch侦听器（监视器）"></a>watch侦听器（监视器）</h4><p><strong>监视数据变化</strong>，执行一些业务逻辑或异步操作</p>
 <pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token literal-property property">data</span><span class="token operator">:</span> <span class="token punctuation">{</span> 
@@ -2466,6 +2466,442 @@ i {
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
 <p><strong>注意：</strong>$nextTick 内的函数体 一定是<strong>箭头函数</strong>，这样才能让函数内部的this指向Vue实例</p>
+<h3 id="单页应用"><a href="#单页应用" class="headerlink" title="单页应用"></a>单页应用</h3><p>单页应用程序：SPA【Single Page Application】是指所有的功能都在<strong>一个html页面</strong>上实现</p>
+<p>单页应用网站： 网易云音乐  <a target="_blank" rel="noopener" href="https://music.163.com/">https://music.163.com/</a></p>
+<p>多页应用网站：京东  <a target="_blank" rel="noopener" href="https://jd.com/">https://jd.com/</a></p>
+<img src="/2024/11/18/vue/1682441912977.png" alt="68244191297" style="zoom:67%;">
+
+<p>单页应用类网站：系统类网站 / 内部网站 / 文档类网站 / 移动端站点</p>
+<p>多页应用类网站：公司官网 / 电商类网站 </p>
+<h3 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h3><p>单页面应用程序，之所以开发效率高，性能好，用户体验好</p>
+<p>最大的原因就是：<strong>页面按需更新</strong>。比如当点击【发现音乐】和【关注】时，<strong>只是更新下面部分内容</strong>，对于头部是不更新的</p>
+<img src="/2024/11/18/vue/1682442699775.png?lastModify=1734415679" alt="68244269977" style="zoom: 80%;">
+
+<p>Vue中的路由：<strong>路径和组件</strong>的<strong>映射</strong>关系</p>
+<ol>
+<li><p>下载 VueRouter 模块到当前工程，版本3.6.5</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">yarn</span> <span class="token function">add</span> vue-router@3.6.5<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p>main.js中引入VueRouter</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">import VueRouter from 'vue-router'<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p>安装注册</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">Vue.use(VueRouter)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p>创建路由对象</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">const router = new VueRouter({
+	routes:[...]
+})<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>注入，将路由对象注入到new Vue实例中，建立关联</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">new Vue({
+&nbsp; render: h =&gt; h(App),
+&nbsp; router:router
+}).$mount('#app')
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ol>
+<p>当我们配置完以上5步之后 就可以看到浏览器地址栏中的路由 变成了 /#/的形式。表示项目的路由已经被Vue-Router管理了</p>
+<img src="/2024/11/18/vue/1682479207453-1734415794558.png" alt="68247920745" style="zoom:67%;">
+
+<p>配置导航，配置路由出口(路径匹配的组件显示的位置)</p>
+<p>App.vue</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;div class="footer_wrap"&gt;
+&nbsp; &lt;a href="#/find"&gt;发现音乐&lt;/a&gt;
+&nbsp; &lt;a href="#/my"&gt;我的音乐&lt;/a&gt;
+&nbsp; &lt;a href="#/friend"&gt;朋友&lt;/a&gt;
+&lt;/div&gt;
+&lt;div class="top"&gt;
+&nbsp; &lt;router-view&gt;&lt;/router-view&gt;
+&lt;/div&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="前端框架"><a href="#前端框架" class="headerlink" title="前端框架"></a>前端框架</h2><p>经典（以此为准）：<a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin">PanJiaChen/vue-element-admin: <span class="github-emoji"><span>🎉</span><img src="https://github.githubassets.com/images/icons/emoji/unicode/1f389.png?v8" aria-hidden="true" onerror="this.parent.classList.add('github-emoji-fallback')"></span> A magical vue admin https://panjiachen.github.io/vue-element-admin</a></p>
+<p>文档：<a target="_blank" rel="noopener" href="https://panjiachen.github.io/vue-element-admin-site/zh/guide/#%E5%8A%9F%E8%83%BD">介绍 | vue-element-admin</a></p>
+<p>新：<a target="_blank" rel="noopener" href="https://github.com/vbenjs/vue-vben-admin">vbenjs/vue-vben-admin: A modern vue admin panel built with Vue3, Shadcn UI, Vite, TypeScript, and Monorepo. It’s fast!</a></p>
+<p>文档：<a target="_blank" rel="noopener" href="https://doc.vben.pro/guide/introduction/vben.html#%E9%A1%B5%E9%9D%A2%E5%8E%86%E5%8F%B2">关于 Vben Admin | Vben Admin</a></p>
+<h3 id="启动解析"><a href="#启动解析" class="headerlink" title="启动解析"></a>启动解析</h3><h4 id="1-main-js入口"><a href="#1-main-js入口" class="headerlink" title="1.main.js入口"></a>1.main.js入口</h4><p>示例结构：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'vue'</span><span class="token punctuation">;</span>        <span class="token comment">// 引入 Vue</span>
+<span class="token keyword">import</span> App <span class="token keyword">from</span> <span class="token string">'./App'</span><span class="token punctuation">;</span>   <span class="token comment">// 引入根组件</span>
+<span class="token keyword">import</span> router <span class="token keyword">from</span> <span class="token string">'./router'</span><span class="token punctuation">;</span> <span class="token comment">// 引入路由（如果有）</span>
+
+Vue<span class="token punctuation">.</span>config<span class="token punctuation">.</span>productionTip <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span> <span class="token comment">// 禁用生产模式下的提示</span>
+
+<span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">el</span><span class="token operator">:</span> <span class="token string">'#app'</span><span class="token punctuation">,</span>   <span class="token comment">// 将 Vue 实例挂载到 id 为 'app' 的 DOM 元素上</span>
+  <span class="token function-variable function">render</span><span class="token operator">:</span> <span class="token parameter">h</span> <span class="token operator">=&gt;</span> <span class="token function">h</span><span class="token punctuation">(</span>App<span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment">// 渲染根组件 App</span>
+  router<span class="token punctuation">,</span>               <span class="token comment">// 路由配置（如果有）</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="2-App-vue"><a href="#2-App-vue" class="headerlink" title="2.App.vue"></a>2.App.vue</h4><p>在 Vue 项目中，<code>App.vue</code> 是根组件。它通过 <code>&lt;router-view /&gt;</code> 渲染页面内容。</p>
+<blockquote>
+<p>Vue Router 是 Vue 官方的客户端路由解决方案。</p>
+<p>客户端路由的作用是在单页应用 (SPA) 中将浏览器的 URL 和用户看到的内容绑定起来。当用户在应用中浏览不同页面时，URL 会随之更新，但页面不需要从服务器重新加载。</p>
+<p>Vue Router 基于 Vue 的组件系统构建，你可以通过配置<strong>路由</strong>来告诉 Vue Router <strong>为每个 URL 路径显示哪些组件</strong>。</p>
+</blockquote>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;div id="app"&gt;
+    &lt;router-view /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: 'App'
+}
+&lt;/script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="3-router"><a href="#3-router" class="headerlink" title="3.router"></a>3.router</h4><p>Vue Router 管理应用中的路由和页面导航。路由配置文件<code>router/index.js</code>示例：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Router <span class="token keyword">from</span> <span class="token string">'vue-router'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Home <span class="token keyword">from</span> <span class="token string">'@/views/Home.vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> About <span class="token keyword">from</span> <span class="token string">'@/views/About.vue'</span><span class="token punctuation">;</span>
+
+Vue<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Router<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">new</span> <span class="token class-name">Router</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">routes</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token literal-property property">path</span><span class="token operator">:</span> <span class="token string">'/'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'Home'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">component</span><span class="token operator">:</span> Home
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token literal-property property">path</span><span class="token operator">:</span> <span class="token string">'/about'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'About'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">component</span><span class="token operator">:</span> About
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>实际页面内容的渲染</strong></p>
+<ol>
+<li><strong>加载根组件（<code>App.vue</code>）</strong>：<ul>
+<li>当 Vue 应用启动时，<code>App.vue</code> 会被加载并渲染，其中包含了 <code>&lt;router-view /&gt;</code>。</li>
+</ul>
+</li>
+<li><strong>匹配路由</strong>：<ul>
+<li>根据 URL 路径，Vue Router 会匹配到相应的路由。</li>
+<li>比如，当用户访问 <code>http://localhost:8080/</code> 时，Vue Router 会匹配到 <code>/</code> 路径，并加载 <code>Home.vue</code> 组件。</li>
+</ul>
+</li>
+<li><strong>渲染对应的组件</strong>：<ul>
+<li>Vue Router 会将匹配到的组件（例如 <code>Home.vue</code> 或 <code>About.vue</code>）插入到 <code>App.vue</code> 中的 <code>&lt;router-view /&gt;</code> 部分。</li>
+<li>最终，用户在页面上看到的就是 <code>Home.vue</code> 或 <code>About.vue</code> 组件的内容。</li>
+</ul>
+</li>
+</ol>
+<h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><h4 id="Layout"><a href="#Layout" class="headerlink" title="Layout"></a>Layout</h4><p>页面整体布局是一个产品最外层的框架结构，往往会包含导航、侧边栏、面包屑以及内容等。 </p>
+<p><strong>vue-router 路由嵌套</strong>：Vue Router 的路由嵌套机制允许在一个路由组件中嵌套显示另一个路由组件。通常在布局（如 <code>Layout</code>）中，使用嵌套路由来组织子页面或功能模块。这种嵌套机制通过 <code>&lt;router-view /&gt;</code> 占位符来渲染子路由组件。</p>
+<p> <strong>一般情况下，你增加或者修改页面只会影响 <code>app-main</code>这个主体区域。其它配置在 <code>layout</code> 中的内容如：侧边栏或者导航栏都是不会随着你主体页面变化而变化的。</strong></p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">/foo                                  /bar
++------------------+                  +-----------------+
+| layout           |                  | layout          |
+| +--------------+ |                  | +-------------+ |
+| | foo.vue      | |  +------------&gt;  | | bar.vue     | |
+| |              | |                  | |             | |
+| +--------------+ |                  | +-------------+ |
++------------------+                  +-----------------+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>当然你也可以一个项目里面使用多个不同的 <code>layout</code>，只要在你想作用的路由父级上引用它就可以了。</p>
+<p><strong>父路由和子路由</strong>：</p>
+<ul>
+<li><strong>父路由</strong>：是定义在路由配置中，包含子路由的路由。通常，父路由配置会有一个 <code>&lt;router-view /&gt;</code> 占位符，用于渲染子路由。</li>
+<li><strong>子路由</strong>：是嵌套在父路由下的路由，子路由通过 <code>children</code> 属性来定义。</li>
+</ul>
+<p><strong>路由渲染顺序</strong>：</p>
+<ul>
+<li><p>当用户访问某个路径时，Vue Router 会根据路径匹配到父路由，再匹配到子路由。</p>
+</li>
+<li><p>父路由组件渲染时，会渲染一个 <code>&lt;router-view /&gt;</code> 作为占位符，子路由组件会被插入到这个占位符中。</p>
+</li>
+</ul>
+<p><strong>1. 路由配置 (<code>router/index.js</code>)</strong></p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">javascript复制代码<span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Router <span class="token keyword">from</span> <span class="token string">'vue-router'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Layout <span class="token keyword">from</span> <span class="token string">'@/layouts/Layout'</span><span class="token punctuation">;</span>    <span class="token comment">// 引入 Layout 布局组件</span>
+<span class="token keyword">import</span> Dashboard <span class="token keyword">from</span> <span class="token string">'@/views/dashboard/index'</span><span class="token punctuation">;</span>  <span class="token comment">// 引入 Dashboard 子页面</span>
+<span class="token keyword">import</span> Profile <span class="token keyword">from</span> <span class="token string">'@/views/profile/index'</span><span class="token punctuation">;</span>      <span class="token comment">// 引入 Profile 子页面</span>
+
+Vue<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Router<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">new</span> <span class="token class-name">Router</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">routes</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token literal-property property">path</span><span class="token operator">:</span> <span class="token string">'/'</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">component</span><span class="token operator">:</span> Layout<span class="token punctuation">,</span>  <span class="token comment">// 父路由使用 Layout 布局组件</span>
+      <span class="token literal-property property">redirect</span><span class="token operator">:</span> <span class="token string">'/dashboard'</span><span class="token punctuation">,</span>  <span class="token comment">// 默认重定向到 /dashboard</span>
+      <span class="token literal-property property">children</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token literal-property property">path</span><span class="token operator">:</span> <span class="token string">'dashboard'</span><span class="token punctuation">,</span>  <span class="token comment">// 子路由的路径为 'dashboard'</span>
+          <span class="token literal-property property">component</span><span class="token operator">:</span> Dashboard<span class="token punctuation">,</span>  <span class="token comment">// 子路由渲染 Dashboard 组件</span>
+          <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'Dashboard'</span><span class="token punctuation">,</span>  <span class="token comment">// 子路由的名称</span>
+          <span class="token literal-property property">meta</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token literal-property property">title</span><span class="token operator">:</span> <span class="token string">'Dashboard'</span><span class="token punctuation">,</span> <span class="token literal-property property">icon</span><span class="token operator">:</span> <span class="token string">'dashboard'</span> <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span>
+          <span class="token literal-property property">path</span><span class="token operator">:</span> <span class="token string">'profile'</span><span class="token punctuation">,</span>  <span class="token comment">// 另一个子路由的路径为 'profile'</span>
+          <span class="token literal-property property">component</span><span class="token operator">:</span> Profile<span class="token punctuation">,</span>  <span class="token comment">// 子路由渲染 Profile 组件</span>
+          <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'Profile'</span><span class="token punctuation">,</span>
+          <span class="token literal-property property">meta</span><span class="token operator">:</span> <span class="token punctuation">{</span> <span class="token literal-property property">title</span><span class="token operator">:</span> <span class="token string">'Profile'</span><span class="token punctuation">,</span> <span class="token literal-property property">icon</span><span class="token operator">:</span> <span class="token string">'user'</span> <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>2. 父路由布局组件 (<code>Layout.vue</code>)</strong></p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">vue复制代码&lt;template&gt;
+  &lt;div class="layout"&gt;
+    &lt;!-- 侧边栏组件 --&gt;
+    &lt;Sidebar /&gt;
+
+    &lt;!-- 主体内容区域 --&gt;
+    &lt;div class="main-content"&gt;
+      &lt;!-- 导航栏组件 --&gt;
+      &lt;Navbar /&gt;
+
+      &lt;!-- 子路由渲染区 --&gt;
+      &lt;router-view /&gt;  &lt;!-- 这个 &lt;router-view /&gt; 会渲染子路由组件 (如 Dashboard 或 Profile) --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import Sidebar from '@/components/Sidebar';
+import Navbar from '@/components/Navbar';
+
+export default {
+  name: 'Layout',
+  components: {
+    Sidebar,
+    Navbar
+  }
+}
+&lt;/script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>3. 子路由组件 (<code>Dashboard.vue</code> 和 <code>Profile.vue</code>)</strong></p>
+<p><strong>Dashboard.vue</strong></p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">vue复制代码&lt;template&gt;
+  &lt;div class="dashboard"&gt;
+    &lt;h1&gt;Dashboard&lt;/h1&gt;
+    &lt;p&gt;欢迎来到 Dashboard 页面&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: 'Dashboard'
+}
+&lt;/script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>Profile.vue</strong></p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">vue复制代码&lt;template&gt;
+  &lt;div class="profile"&gt;
+    &lt;h1&gt;Profile&lt;/h1&gt;
+    &lt;p&gt;这是用户的个人资料页面&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: 'Profile'
+}
+&lt;/script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="实际layout代码"><a href="#实际layout代码" class="headerlink" title="实际layout代码"></a>实际layout代码</h5><p><a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin/tree/master/src/layout">@/layout</a>  layout下index.vue</p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;div :class="classObj" class="app-wrapper"&gt;
+    &lt;div v-if="device==='mobile'&amp;&amp;sidebar.opened" class="drawer-bg" @click="handleClickOutside" /&gt;
+    &lt;sidebar class="sidebar-container" /&gt;
+    &lt;div :class="{hasTagsView:needTagsView}" class="main-container"&gt;
+      &lt;div :class="{'fixed-header':fixedHeader}"&gt;
+        &lt;navbar /&gt;
+        &lt;tags-view v-if="needTagsView" /&gt;
+      &lt;/div&gt;
+      &lt;!-- 子组件app-main里面定义了子路由router-view  -- 子路由渲染区 --&gt;
+      &lt;app-main /&gt;
+      &lt;right-panel v-if="showSettings"&gt;
+        &lt;settings /&gt;
+      &lt;/right-panel&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import RightPanel from '@/components/RightPanel'
+import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
+import ResizeMixin from './mixin/ResizeHandler'
+import { mapState } from 'vuex'
+
+export default {
+  name: 'Layout',
+  // 引入并注册子组件，作为layout的一部分进行渲染
+  components: {
+    AppMain,
+    Navbar,
+    RightPanel,
+    Settings,
+    Sidebar,
+    TagsView
+  },
+  // 使用的 mixins，提供了组件间复用的功能
+  mixins: [ResizeMixin],
+  // 计算属性
+  computed: {
+    // 使用 mapState 辅助函数映射 Vuex store 中的状态到当前组件的计算属性
+    ...mapState({
+      // 获取 Vuex store 中的 sidebar 状态，表示侧边栏的开关
+      sidebar: state =&gt; state.app.sidebar,
+      device: state =&gt; state.app.device,
+      showSettings: state =&gt; state.settings.showSettings,
+      needTagsView: state =&gt; state.settings.tagsView,
+      fixedHeader: state =&gt; state.settings.fixedHeader
+    }),
+    // 计算类名对象，返回一个动态的 class 对象
+    classObj() {
+      return {
+        // 根据 sidebar 的状态动态切换类名
+        hideSidebar: !this.sidebar.opened, // 侧边栏关闭时，应用 'hideSidebar' 类
+        openSidebar: this.sidebar.opened, // 侧边栏打开时，应用 'openSidebar' 类
+        withoutAnimation: this.sidebar.withoutAnimation, // 判断是否禁用动画
+        mobile: this.device === 'mobile'
+      }
+    }
+  },
+  methods: {
+    // 处理点击外部区域的事件，用来关闭侧边栏
+    handleClickOutside() {
+      // 使用 Vuex 的 action 来关闭侧边栏
+      this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+    }
+  }
+}
+&lt;/script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>**<code>&lt;router-view /&gt;</code>**：<code>Layout</code> 组件本身并不直接渲染内容，而是作为页面的框架，提供固定的布局部分（如侧边栏、导航栏等）。它通过 <code>&lt;router-view /&gt;</code> 来渲染子路由的内容。此处没有直接放置 <code>&lt;router-view /&gt;</code>，而是放置了 <code>AppMain</code> 组件，<code>AppMain</code> 组件会在其中继续嵌套一个 <code>&lt;router-view /&gt;</code>，从而实现多层嵌套。</p>
+</li>
+<li><p><strong><code>AppMain</code> 组件</strong>：<code>Layout</code> 渲染了 <code>AppMain</code> 组件，<code>AppMain</code> 内部还通过 <code>&lt;router-view /&gt;</code> 渲染子路由内容（例如 <code>Dashboard</code> 或 <code>Profile</code>）。</p>
+</li>
+</ul>
+<h4 id="app-main"><a href="#app-main" class="headerlink" title="app-main"></a>app-main</h4><p><a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin/blob/master/src/layout/components/AppMain.vue">@/layout/components/AppMain</a></p>
+<pre class="line-numbers language-vue" data-language="vue"><code class="language-vue">&lt;template&gt;
+  &lt;!-- 主内容区域 --&gt;
+  &lt;section class="app-main"&gt;
+    &lt;!-- 过渡动画：fade-transform --&gt;
+    &lt;transition name="fade-transform" mode="out-in"&gt;
+      &lt;!-- keep-alive 用于缓存视图，以避免重新加载组件 --&gt;
+      &lt;keep-alive :include="cachedViews"&gt;
+        &lt;!-- 渲染路由的子组件，key 用于控制视图的缓存和刷新 --&gt;
+        &lt;router-view :key="key" /&gt;
+      &lt;/keep-alive&gt;
+    &lt;/transition&gt;
+  &lt;/section&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  name: 'AppMain',
+  computed: {
+    // 计算属性：获取要缓存的视图列表
+    cachedViews() {
+      // 从 Vuex 存储中获取缓存视图的列表
+      return this.$store.state.tagsView.cachedViews
+    },
+    // 计算属性：返回当前路由的路径
+    key() {
+      // 使用当前路由的路径作为唯一的 key 来控制视图缓存和刷新
+      return this.$route.path
+    }
+  }
+}
+&lt;/script&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><code>transition</code>：使用 Vue 的过渡系统，为路由切换添加过渡动画。</p>
+</li>
+<li><p><code>&lt;keep-alive&gt;</code>标签：Vue 的内置组件，用于缓存页面组件，以避免频繁的销毁和重新创建。</p>
+<ul>
+<li><code>:include="cachedViews"</code>：指定要缓存的组件列表。<code>cachedViews</code> 是一个计算属性，从 Vuex 获取已缓存的视图。</li>
+<li>这样配置后，只有在 <code>cachedViews</code> 中列出的视图才会被缓存，从而提升性能，避免频繁地销毁和创建页面组件。</li>
+</ul>
+</li>
+<li><p><code>key</code>计算属性：返回当前路由的路径。</p>
+<ul>
+<li>这个 <code>key</code> 属性用于在每次路由切换时更新 <code>&lt;router-view&gt;</code>，确保组件在路由变化时重新渲染。</li>
+<li>通过使用路由的 <code>path</code> 作为 <code>key</code>，可以让 Vue 在切换路由时正确地处理组件的缓存与更新。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Vuex-store"><a href="#Vuex-store" class="headerlink" title="Vuex store"></a>Vuex store</h3><p><strong>Vuex store</strong> 是 Vue.js 官方提供的一个状态管理库，用于管理应用中的<strong>共享状态</strong>。在 Vue.js 中，状态通常指的是数据（如<strong>用户信息、产品列表、界面设置</strong>等），而这些状态需要在应用的多个组件之间共享和管理。Vuex 通过<strong>集中式的存储和管理这些状态</strong>，使得不同组件之间的数据流变得更加清晰和可维护。</p>
+<p>Vuex store 中的状态是<strong>响应式</strong>的，任何使用到这些状态的组件都会在<strong>状态变化时自动更新</strong>。</p>
+<p>Vuex store 基于以下几个核心概念：</p>
+<ul>
+<li><strong>State（状态）</strong>：用于存储应用的共享数据，Vuex 中的状态就类似于一个全局的数据源。</li>
+<li><strong>Getters（获取器）</strong>：类似于计算属性（computed），用于从 Vuex store 中派生出数据。Getters 用来获取或过滤状态中的数据。</li>
+<li><strong>Mutations（突变）</strong>：用来同步修改 Vuex store 中的状态。所有对状态的改变必须通过 mutation 来进行。</li>
+<li><strong>Actions（动作）</strong>：用于处理异步操作和业务逻辑，它们会提交 mutations 来改变状态。</li>
+<li><strong>Modules（模块）</strong>：Vuex 支持将 store 分割成多个模块，每个模块拥有自己的 state、mutations、actions 和 getters，以便组织大型应用的状态。</li>
+</ul>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// store.js</span>
+<span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Vuex <span class="token keyword">from</span> <span class="token string">'vuex'</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 安装 Vuex 插件</span>
+Vue<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>Vuex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> store <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Vuex<span class="token punctuation">.</span>Store</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token comment">// 状态 (store 中的数据)</span>
+  <span class="token literal-property property">state</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">counter</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">user</span><span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token comment">// 获取器 (计算属性，派生数据)</span>
+  <span class="token literal-property property">getters</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token function-variable function">counterDouble</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">state</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> state<span class="token punctuation">.</span>counter <span class="token operator">*</span> <span class="token number">2</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">userName</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">state</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> state<span class="token punctuation">.</span>user <span class="token operator">?</span> state<span class="token punctuation">.</span>user<span class="token punctuation">.</span>name <span class="token operator">:</span> <span class="token string">'Guest'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token comment">// 突变 (同步修改状态)</span>
+  <span class="token literal-property property">mutations</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token function">increment</span><span class="token punctuation">(</span><span class="token parameter">state</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      state<span class="token punctuation">.</span>counter<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token function">setUser</span><span class="token punctuation">(</span><span class="token parameter">state<span class="token punctuation">,</span> user</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      state<span class="token punctuation">.</span>user <span class="token operator">=</span> user<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token comment">// 动作 (可以进行异步操作)</span>
+  <span class="token literal-property property">actions</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token function">fetchUser</span><span class="token punctuation">(</span><span class="token parameter"><span class="token punctuation">{</span> commit <span class="token punctuation">}</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 模拟异步获取用户数据</span>
+      <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> user <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">'John Doe'</span><span class="token punctuation">,</span> <span class="token literal-property property">age</span><span class="token operator">:</span> <span class="token number">30</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+        <span class="token function">commit</span><span class="token punctuation">(</span><span class="token string">'setUser'</span><span class="token punctuation">,</span> user<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 提交 mutation</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+
+  <span class="token comment">// 模块 (支持模块化管理状态)</span>
+  <span class="token literal-property property">modules</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 可以定义多个子模块来管理不同的 state</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> store<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>配置store：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> App <span class="token keyword">from</span> <span class="token string">'./App.vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> store <span class="token keyword">from</span> <span class="token string">'./store'</span><span class="token punctuation">;</span>  <span class="token comment">// 引入 Vuex store</span>
+
+<span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token function-variable function">render</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">h</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">h</span><span class="token punctuation">(</span>App<span class="token punctuation">)</span><span class="token punctuation">,</span>
+  store<span class="token punctuation">,</span>  <span class="token comment">// 将 Vuex store 注入到 Vue 实例</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">$mount</span><span class="token punctuation">(</span><span class="token string">'#app'</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>w3school：<a target="_blank" rel="noopener" href="https://www.w3school.com.cn/html/index.asp">HTML 教程</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_58667485/article/details/133761371">前端三件套复习笔记_js前端三件套-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/kiddkid/article/details/136520569">前端三件套简要笔记_后端转前端 html js css怎么学习-CSDN博客</a></p>
@@ -2473,6 +2909,8 @@ i {
 <p>vue：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1HV4y1a7n4/?spm_id_from=333.1007.top_right_bar_window_history.content.click">https://www.bilibili.com/video/BV1HV4y1a7n4/?spm_id_from=333.1007.top_right_bar_window_history.content.click</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_55666248/article/details/143028853">黑马Vue2+Vue3笔记_vue学习笔记黑马-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_70675152/article/details/135439211?spm=1001.2014.3001.5502">VUE学习笔记（黑马2023版 第四天）_vue 黑马2023版 源码-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/PanJiaChen/vue-element-admin">PanJiaChen/vue-element-admin: <span class="github-emoji"><span>🎉</span><img src="https://github.githubassets.com/images/icons/emoji/unicode/1f389.png?v8" aria-hidden="true" onerror="this.parent.classList.add('github-emoji-fallback')"></span> A magical vue admin https://panjiachen.github.io/vue-element-admin</a></p>
+<p><a target="_blank" rel="noopener" href="https://panjiachen.github.io/vue-element-admin-site/zh/guide/#%E5%8A%9F%E8%83%BD">介绍 | vue-element-admin</a></p>
 
                 
             </div>
@@ -3014,7 +3452,7 @@ i {
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2024</span>
+                <span id="year">2024-2025</span>
             
             <span id="year">2024</span>
             <a href="/about" target="_blank">wolf-ll</a>
@@ -3023,7 +3461,7 @@ i {
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">228.2k</span>&nbsp;字
+                class="white-color">233.8k</span>&nbsp;字
             
             
             
