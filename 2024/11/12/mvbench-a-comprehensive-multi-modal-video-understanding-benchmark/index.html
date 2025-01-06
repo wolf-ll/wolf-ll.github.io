@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2025-01-03
+                    2025-01-06
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    8k
+                    8.9k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    31 分
+                    36 分
                 </div>
                 
 
@@ -821,8 +821,6 @@
 <li>EgoQA（<a target="_blank" rel="noopener" href="https://ego4d-data.org/">Egocentric 4D Perception (EGO4D)</a>）：一些以自我为中心的QA是从Ego4D数据中生成的。</li>
 </ul>
 <p>对于所有数据集，任务指令都是使用GPT-4自动生成的。</p>
-<h2 id="模型相关"><a href="#模型相关" class="headerlink" title="模型相关"></a>模型相关</h2><h3 id="阶段1-视觉语言对齐"><a href="#阶段1-视觉语言对齐" class="headerlink" title="阶段1-视觉语言对齐"></a>阶段1-视觉语言对齐</h3><p>冻结视觉编码器，训练QFormer。</p>
-<p>// todo</p>
 <h2 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h2><h3 id="conda配置"><a href="#conda配置" class="headerlink" title="conda配置"></a>conda配置</h3><ul>
 <li>git clone拷贝远程仓库超时：设置全局代理，clash打开允许局域网接入。注意代理ip是本机电脑ip，不是服务器ip。</li>
 </ul>
@@ -981,9 +979,168 @@ sys<span class="token punctuation">.</span>path<span class="token punctuation">.
 <p>—- 最好别用这个下，开了多线程电脑会卡，内存可能不够</p>
 <p><a target="_blank" rel="noopener" href="https://opensource.salesforce.com/LAVIS//latest/getting_started.html#auto-downloading-and-loading-datasets">Dataset Zoo — LAVIS documentation</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/rom1504/img2dataset/blob/main/dataset_examples/cc3m.md">img2dataset/dataset_examples/cc3m.md at main · rom1504/img2dataset</a></p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yang_daxia/article/details/139950072">论文阅读MVBench: A Comprehensive Multi-modal Video Understanding Benchmark-CSDN博客</a></p>
+<h4 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h4><p>dataset/init.py</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">get_media_type</span><span class="token punctuation">(</span>dataset_config<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>dataset_config<span class="token punctuation">)</span> <span class="token operator">&gt;=</span> <span class="token number">3</span> <span class="token keyword">and</span> dataset_config<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token string">"video"</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"video"</span>	<span class="token comment"># 视频数据集，由标注+源数据+类型标记video构成</span>
+    <span class="token keyword">elif</span> <span class="token builtin">len</span><span class="token punctuation">(</span>dataset_config<span class="token punctuation">)</span> <span class="token operator">&gt;=</span> <span class="token number">3</span> <span class="token keyword">and</span> dataset_config<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token string">"text"</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"text"</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> <span class="token string">"image"</span>	<span class="token comment"># 图像数据，list里只有标注+源数据</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>dataset config.json</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token property">"train_file"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">[</span>
+      <span class="token string">"annotation/anno_pretrain/webvid_10m_train.json"</span><span class="token punctuation">,</span>
+      <span class="token string">"annotation/videos_images/webvid_10m"</span><span class="token punctuation">,</span>
+      <span class="token string">"video"</span>	
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">[</span>
+      <span class="token string">"annotation/anno_pretrain/cc3m_train.json"</span><span class="token punctuation">,</span>
+      <span class="token string">"annotation/videos_images/cc3m"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"test_file"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"msrvtt_1k_test"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"annotation/anno_pretrain/msrvtt_test1k.json"</span><span class="token punctuation">,</span>
+      <span class="token string">"annotation/videos_images/MSRVTT_Videos"</span><span class="token punctuation">,</span>
+      <span class="token string">"video"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"test_types"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">"msrvtt_1k_test"</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>pt_dataset.py</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">PTImgTrainDataset</span><span class="token punctuation">(</span>ImageVideoBaseDataset<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    media_type <span class="token operator">=</span> <span class="token string">"image"</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> ann_file<span class="token punctuation">,</span> transform<span class="token punctuation">,</span> pre_text<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>ann_file<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">3</span> <span class="token keyword">and</span> ann_file<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token string">"video"</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>media_type <span class="token operator">=</span> <span class="token string">"video"</span>  
+            self<span class="token punctuation">.</span>media_name <span class="token operator">=</span> <span class="token string">"key"</span>		<span class="token comment"># 自己做的数据集，json文件里面对应图名称的是key</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>media_type <span class="token operator">=</span> <span class="token string">"image"</span>
+            self<span class="token punctuation">.</span>media_name <span class="token operator">=</span> <span class="token string">"key"</span>
+        self<span class="token punctuation">.</span>label_file<span class="token punctuation">,</span> self<span class="token punctuation">.</span>data_root <span class="token operator">=</span> ann_file<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">2</span><span class="token punctuation">]</span>
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"=========label file : </span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>label_file<span class="token punctuation">}</span></span><span class="token string">, data root : </span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>data_root<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+        <span class="token comment"># 对于第一阶段训练， =========label file : annotation/anno_pretrain/cc3m_train.json, data root : annotation/videos_images/cc3m     =========label file : annotation/anno_pretrain/webvid_10m_train.json, data root : annotation/videos_images/webvid_10m</span>
+
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">'Load json file'</span><span class="token punctuation">)</span>
+        <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>label_file<span class="token punctuation">,</span> <span class="token string">'r'</span><span class="token punctuation">)</span> <span class="token keyword">as</span> f<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>anno <span class="token operator">=</span> json<span class="token punctuation">.</span>load<span class="token punctuation">(</span>f<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>num_examples <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>anno<span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>transform <span class="token operator">=</span> transform
+        self<span class="token punctuation">.</span>pre_text <span class="token operator">=</span> pre_text
+        logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Pre-process text: </span><span class="token interpolation"><span class="token punctuation">{</span>pre_text<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">get_anno</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>	<span class="token comment"># 针对自己做的数据集做一些特定处理</span>
+        <span class="token keyword">if</span> <span class="token string">"cc3m"</span> <span class="token keyword">in</span> self<span class="token punctuation">.</span>label_file<span class="token punctuation">:</span>
+            filename <span class="token operator">=</span> self<span class="token punctuation">.</span>anno<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">[</span>self<span class="token punctuation">.</span>media_name<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">".jpg"</span>
+        <span class="token keyword">elif</span> <span class="token string">"webvid"</span> <span class="token keyword">in</span> self<span class="token punctuation">.</span>label_file<span class="token punctuation">:</span>
+            filename <span class="token operator">=</span> self<span class="token punctuation">.</span>anno<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">[</span>self<span class="token punctuation">.</span>media_name<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">".mp4"</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            filename <span class="token operator">=</span> self<span class="token punctuation">.</span>anno<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">[</span>self<span class="token punctuation">.</span>media_name<span class="token punctuation">]</span>
+        caption <span class="token operator">=</span> self<span class="token punctuation">.</span>anno<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token string">"caption"</span><span class="token punctuation">]</span>
+        anno <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"image"</span><span class="token punctuation">:</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data_root<span class="token punctuation">,</span> filename<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"caption"</span><span class="token punctuation">:</span> caption<span class="token punctuation">}</span>
+        <span class="token keyword">return</span> anno<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>evaluate text-encoder修改（原来是None）：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># tasks/retrieval_utils</span>
+text_encoder <span class="token operator">=</span> model<span class="token punctuation">.</span>get_text_encoder<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># models/videochat2_qformer.py</span>
+<span class="token keyword">def</span> <span class="token function">get_text_encoder</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">return</span> build_bert<span class="token punctuation">(</span>self<span class="token punctuation">.</span>config<span class="token punctuation">,</span> <span class="token boolean">False</span><span class="token punctuation">,</span> <span class="token boolean">False</span><span class="token punctuation">)</span>
+
+<span class="token comment"># models/bert/builder.py</span>
+<span class="token keyword">def</span> <span class="token function">build_bert</span><span class="token punctuation">(</span>model_config<span class="token punctuation">,</span> pretrain<span class="token punctuation">,</span> checkpoint<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""build text encoder.
+
+    Args:
+        model_config (dict): model config.
+        pretrain (bool): Whether to do pretrain or finetuning.
+        checkpoint (bool): whether to do gradient_checkpointing.
+
+    Returns: TODO
+
+    """</span>
+    bert_config <span class="token operator">=</span> BertConfig<span class="token punctuation">.</span>from_json_file<span class="token punctuation">(</span>model_config<span class="token punctuation">.</span>text_encoder<span class="token punctuation">.</span>config<span class="token punctuation">)</span>
+    bert_config<span class="token punctuation">.</span>encoder_width <span class="token operator">=</span> model_config<span class="token punctuation">.</span>vision_encoder<span class="token punctuation">.</span>d_model
+    bert_config<span class="token punctuation">.</span>gradient_checkpointing <span class="token operator">=</span> checkpoint
+    bert_config<span class="token punctuation">.</span>fusion_layer <span class="token operator">=</span> model_config<span class="token punctuation">.</span>text_encoder<span class="token punctuation">.</span>fusion_layer
+
+    <span class="token keyword">if</span> <span class="token keyword">not</span> model_config<span class="token punctuation">.</span>multimodal<span class="token punctuation">.</span>enable<span class="token punctuation">:</span>
+        bert_config<span class="token punctuation">.</span>fusion_layer <span class="token operator">=</span> bert_config<span class="token punctuation">.</span>num_hidden_layers
+
+    <span class="token keyword">if</span> pretrain<span class="token punctuation">:</span>
+        text_encoder<span class="token punctuation">,</span> loading_info <span class="token operator">=</span> BertForMaskedLM<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>
+            model_config<span class="token punctuation">.</span>text_encoder<span class="token punctuation">.</span>pretrained<span class="token punctuation">,</span>
+            config<span class="token operator">=</span>bert_config<span class="token punctuation">,</span>
+            output_loading_info<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+        <span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        text_encoder<span class="token punctuation">,</span> loading_info <span class="token operator">=</span> BertModel<span class="token punctuation">.</span>from_pretrained<span class="token punctuation">(</span>
+            model_config<span class="token punctuation">.</span>text_encoder<span class="token punctuation">.</span>pretrained<span class="token punctuation">,</span>
+            config<span class="token operator">=</span>bert_config<span class="token punctuation">,</span>
+            add_pooling_layer<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">,</span>
+            output_loading_info<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
+        <span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> text_encoder
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="张量设备"><a href="#张量设备" class="headerlink" title="张量设备"></a>张量设备</h5><p><strong>训练时</strong></p>
+<p>output = text_encoder( …………)  执行这个操作时报错  Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:1! (when checking argument for argument mat1 in method wrapper_addmm)</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20250105172608783.png" alt="image-20250105172608783" style="zoom: 50%;">
+
+<p><strong>evaluate时</strong></p>
+<p>RuntimeError: indices should be either on cpu or on the same device as the indexed tensor (cpu)</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20250106130038364.png" alt="image-20250106130038364" style="zoom:50%;">
+
+<h5 id="数据维度"><a href="#数据维度" class="headerlink" title="数据维度"></a>数据维度</h5><p>clip计算相似分数时报错：</p>
+<pre class="line-numbers language-cmd" data-language="cmd"><code class="language-cmd">
+Traceback (most recent call last):
+  File "/home/bailey/Code/wyf/Ask-Anything/video_chat2/tasks/train_qformer.py", line 302, in &lt;module&gt;
+    main(cfg)
+  File "/home/bailey/Code/wyf/Ask-Anything/video_chat2/tasks/train_qformer.py", line 232, in main
+    res = evaluation_wrapper(
+  File "/home/bailey/anaconda3/envs/videochat2/lib/python3.9/site-packages/torch/autograd/grad_mode.py", line 27, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/bailey/Code/wyf/Ask-Anything/video_chat2/tasks/retrieval_utils.py", line 75, in evaluation_wrapper
+    i2t_x, t2i_x, i2t_emb, t2i_emb = evaluation(
+  File "/home/bailey/anaconda3/envs/videochat2/lib/python3.9/site-packages/torch/autograd/grad_mode.py", line 27, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/bailey/Code/wyf/Ask-Anything/video_chat2/tasks/retrieval_utils.py", line 258, in evaluation
+    score = model.itm_head(itm_embeds)[:, 1]
+  File "/home/bailey/anaconda3/envs/videochat2/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/bailey/anaconda3/envs/videochat2/lib/python3.9/site-packages/torch/nn/modules/linear.py", line 114, in forward
+    return F.linear(input, self.weight, self.bias)
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (128x768 and 1536x2)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>具体来说，**<code>itm_embeds</code>** 的形状为 <code>(128, 768)</code>，而 <strong><code>itm_head</code></strong> 的权重矩阵的形状为 <code>(1536, 2)</code>，这两者的维度不匹配，无法进行矩阵乘法。</p>
+<p>在videochat2_qformer里面可以看到，配置vtm_cat_text_cls=true，会使得矩阵形状变成2倍。因此在配置文件里把这个改成false即可。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20250106002754122.png" alt="image-20250106002754122" style="zoom:50%;">
+
+<h4 id="阶段一训练结果"><a href="#阶段一训练结果" class="headerlink" title="阶段一训练结果"></a>阶段一训练结果</h4><p>原始数据量：（本机路径D:\AMLLM-Video\annotation）</p>
+<ul>
+<li><p>图像cc3m  20184张</p>
+</li>
+<li><p>视频MSRVTT 10000个</p>
+</li>
+<li><p>视频webvid  1809个</p>
+</li>
+</ul>
+<p>训练用cc3m和webvid，测试用了MSRVTT中的1000条数据。</p>
+<img src="/2024/11/12/mvbench-a-comprehensive-multi-modal-video-understanding-benchmark/image-20250106150125960.png" alt="image-20250106150125960" style="zoom:67%;">
+
+<h3 id="阶段2训练"><a href="#阶段2训练" class="headerlink" title="阶段2训练"></a>阶段2训练</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yang_daxia/article/details/139950072">论文阅读MVBench: A Comprehensive Multi-modal Video Understanding Benchmark-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/669658267">CVPR2024 Highlight] MVBench多模态视频理解能力的全面评测 - 知乎</a></p>
-<p><a target="_blank" rel="noopener" href="https://github.com/OpenGVLab/Ask-Anything/tree/main/video_chat2">Ask-Anything/video_chat2 at main · OpenGVLab/Ask-Anything</a></p>
+<p>代码： <a target="_blank" rel="noopener" href="https://github.com/OpenGVLab/Ask-Anything/tree/main/video_chat2">Ask-Anything/video_chat2 at main · OpenGVLab/Ask-Anything</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/260034241">『技术随手学』解决CondaHTTPError: HTTP 000 CONNECTION 问题 - 知乎</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/kekechengxiao/article/details/134491661">import torchModuleNotFoundError: No module named ‘torch‘_import torch 找不到模块-CSDN博客</a></p>
 <p>conda中使用pip的问题：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_44856695/article/details/131378398">如何在conda环境中正确地使用pip_在conda构建的虚拟环境下可以进行pip操作吗-CSDN博客</a></p>
@@ -992,6 +1149,8 @@ sys<span class="token punctuation">.</span>path<span class="token punctuation">.
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42730750/article/details/119249193">Pycharm远程连接服务器进行代码的运行与调试_remote sdk is saved in idesetting-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_47187147/article/details/140004137">OSError: Can‘t load tokenizer for ‘bert-base-uncased‘. If you were trying to load it from_oserror: can’t load tokenizer for ‘bert-base-uncas-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://huggingface.co/google-bert/bert-base-uncased/tree/main">google-bert/bert-base-uncased at main</a></p>
+<p>[<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_57972634/article/details/143758599">实验日志·已解决] 如何下载 + 加载本地的BERT预训练模型 （OSError: Can‘t load tokenizer for ‘bert-base-uncased‘.）_本地加载bert-base包-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_56438555/article/details/144110166">（超全方法）尝试解决问题：torch.cuda.OutOfMemoryError: CUDA out of memory._torch.outofmemoryerror: cuda out of memory.-CSDN博客</a></p>
 
                 
             </div>
@@ -1542,7 +1701,7 @@ sys<span class="token punctuation">.</span>path<span class="token punctuation">.
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">233.8k</span>&nbsp;字
+                class="white-color">234.4k</span>&nbsp;字
             
             
             
