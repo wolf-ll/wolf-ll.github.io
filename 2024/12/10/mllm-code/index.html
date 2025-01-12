@@ -8,7 +8,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="MLLM Code, 后端开发">
+    <meta name="keywords" content="MLLM Dataset&amp;Code, 后端开发">
     <meta name="description" content="Java | LeetCode | Algorithm">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -20,7 +20,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>MLLM Code | wolf-ll&#39;s blog</title>
+    <title>MLLM Dataset&amp;Code | wolf-ll&#39;s blog</title>
     <link rel="icon" type="image/png" href="/medias/logo.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
-
+ </script><meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -440,7 +440,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">MLLM Code</h1>
+                    <h1 class="description center-align post-title">MLLM Dataset&amp;Code</h1>
                 </div>
             </div>
         </div>
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2025-01-05
+                    2025-01-08
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    2.3k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    9 分
+                    10 分
                 </div>
                 
 
@@ -629,7 +629,7 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="MLLM-Code"><a href="#MLLM-Code" class="headerlink" title="MLLM Code"></a>MLLM Code</h1><h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><h3 id="编码器训练"><a href="#编码器训练" class="headerlink" title="编码器训练"></a>编码器训练</h3><h4 id="CC3M"><a href="#CC3M" class="headerlink" title="CC3M"></a>CC3M</h4><p>图像caption数据集（共 3318333 张图像），每张图配一个单句字幕。</p>
+                <h1 id="MLLM-Dataset-Code"><a href="#MLLM-Dataset-Code" class="headerlink" title="MLLM Dataset&amp;Code"></a>MLLM Dataset&amp;Code</h1><h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><h3 id="CC3M"><a href="#CC3M" class="headerlink" title="CC3M"></a>CC3M</h3><p>图像caption数据集（共 3318333 张图像），每张图配一个单句字幕。</p>
 <p>huggingface<strong>已处理的版本</strong>（<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/pixparse/cc3m-wds/tree/main">pixparse/cc3m-wds at main</a>），使用：</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> datasets <span class="token keyword">import</span> load_dataset
 
@@ -658,7 +658,7 @@ ds <span class="token operator">=</span> load_dataset<span class="token punctuat
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>数据集目前放在<code>Ask-Anything/video_chat2/annotation/videos_images/cc3m</code>路径下。</p>
-<h4 id="WebVid-10M"><a href="#WebVid-10M" class="headerlink" title="WebVid-10M"></a>WebVid-10M</h4><p>视频caption，缺点是<strong>有水印</strong>。论文使用基本都会做预处理。</p>
+<h3 id="WebVid-10M"><a href="#WebVid-10M" class="headerlink" title="WebVid-10M"></a>WebVid-10M</h3><p>视频caption，缺点是<strong>有水印</strong>。论文使用基本都会做预处理。</p>
 <p>CSV文件：</p>
 <ul>
 <li>huggingface：<a target="_blank" rel="noopener" href="https://huggingface.co/datasets/TempoFunk/webvid-10M">TempoFunk/webvid-10M · Datasets at Hugging Face</a></li>
@@ -692,21 +692,40 @@ video2dataset <span class="token parameter variable">--url_list</span><span clas
     <span class="token property">"yt_meta_dict"</span><span class="token operator">:</span> <span class="token null keyword">null</span>
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h4 id="MSR-VTT"><a href="#MSR-VTT" class="headerlink" title="MSR-VTT"></a>MSR-VTT</h4><p>MSR-VTT是一个通用的视频字幕数据集，包括10000个视频片段，每个视频剪辑持续约15秒。标准情况下通常使用6153个片段进行训练，497个片段用于验证，2090个片段用于测试。（压缩包6g）</p>
+<h3 id="MSR-VTT"><a href="#MSR-VTT" class="headerlink" title="MSR-VTT"></a>MSR-VTT</h3><p>MSR-VTT是一个通用的视频字幕数据集，包括10000个视频片段，每个视频剪辑持续约15秒。标准情况下通常使用6153个片段进行训练，497个片段用于验证，2090个片段用于测试。（压缩包6g）</p>
 <p>数据集：<a target="_blank" rel="noopener" href="https://github.com/yangbang18/CARE/blob/master/README_DATA.md">CARE/README_DATA.md at master · yangbang18/CARE</a></p>
 <p>下载： <a target="_blank" rel="noopener" href="https://github.com/jpthu17/EMCL?tab=readme-ov-file">NeurIPS 2022 Spotlight] Expectation-Maximization Contrastive Learning for Compact Video-and-Language Representations</a>（这个版本提供了csv，但标注json是category不是caption，服务器的caption忘了从哪下载的了）</p>
 <p>caption格式：</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">{</span><span class="token property">"video"</span><span class="token operator">:</span> <span class="token string">"video9770.mp4"</span><span class="token punctuation">,</span> <span class="token property">"caption"</span><span class="token operator">:</span> <span class="token string">"a person is connecting something to system"</span><span class="token punctuation">,</span> <span class="token property">"duration"</span><span class="token operator">:</span> <span class="token number">10.8</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token property">"video"</span><span class="token operator">:</span> <span class="token string">"video9771.mp4"</span><span class="token punctuation">,</span> <span class="token property">"caption"</span><span class="token operator">:</span> <span class="token string">"a little girl does gymnastics"</span><span class="token punctuation">,</span> <span class="token property">"duration"</span><span class="token operator">:</span> <span class="token number">13.78</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<h3 id="连接器训练"><a href="#连接器训练" class="headerlink" title="连接器训练"></a>连接器训练</h3><h4 id="COCO"><a href="#COCO" class="headerlink" title="COCO"></a>COCO</h4><ul>
+<h3 id="COCO"><a href="#COCO" class="headerlink" title="COCO"></a>COCO</h3><ul>
 <li>COCO数据集包含20万个图像；</li>
 <li>80个类别中有超过50万个目标标注,它是最广泛公开的目标检测数据库；</li>
 </ul>
 <p>下载：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41847324/article/details/86224628">COCO数据集的下载、介绍及如何使用（数据载入及数据增广，含代码）_coco数据集下载-CSDN博客</a></p>
+<p>数据路径：D:\东南\智慧城市\数据集</p>
 <p>标注数据格式：</p>
 <pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">{</span><span class="token property">"info"</span><span class="token operator">:</span> <span class="token punctuation">{</span><span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"COCO 2017 Dataset"</span><span class="token punctuation">,</span><span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"http://cocodataset.org"</span><span class="token punctuation">,</span><span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"1.0"</span><span class="token punctuation">,</span><span class="token property">"year"</span><span class="token operator">:</span> <span class="token number">2017</span><span class="token punctuation">,</span><span class="token property">"contributor"</span><span class="token operator">:</span> <span class="token string">"COCO Consortium"</span><span class="token punctuation">,</span><span class="token property">"date_created"</span><span class="token operator">:</span> <span class="token string">"2017/09/01"</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token property">"licenses"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"http://creativecommons.org/licenses/by-nc-sa/2.0/"</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span><span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Attribution-NonCommercial-ShareAlike License"</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">{</span><span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"http://creativecommons.org/licenses/by-nc/2.0/"</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span><span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Attribution-NonCommercial License"</span><span class="token punctuation">}</span><span class="token punctuation">,</span>…………<span class="token punctuation">]</span><span class="token punctuation">,</span>
  <span class="token property">"images"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token property">"license"</span><span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span><span class="token property">"file_name"</span><span class="token operator">:</span> <span class="token string">"000000391895.jpg"</span><span class="token punctuation">,</span><span class="token property">"coco_url"</span><span class="token operator">:</span> <span class="token string">"http://images.cocodataset.org/train2017/000000391895.jpg"</span><span class="token punctuation">,</span><span class="token property">"height"</span><span class="token operator">:</span> <span class="token number">360</span><span class="token punctuation">,</span><span class="token property">"width"</span><span class="token operator">:</span> <span class="token number">640</span><span class="token punctuation">,</span><span class="token property">"date_captured"</span><span class="token operator">:</span> <span class="token string">"2013-11-14 11:18:45"</span><span class="token punctuation">,</span><span class="token property">"flickr_url"</span><span class="token operator">:</span> <span class="token string">"http://farm9.staticflickr.com/8186/8119368305_4e622c8349_z.jpg"</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">391895</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">{</span><span class="token property">"license"</span><span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span><span class="token property">"file_name"</span><span class="token operator">:</span> <span class="token string">"000000522418.jpg"</span><span class="token punctuation">,</span><span class="token property">"coco_url"</span><span class="token operator">:</span> <span class="token string">"http://images.cocodataset.org/train2017/000000522418.jpg"</span><span class="token punctuation">,</span><span class="token property">"height"</span><span class="token operator">:</span> <span class="token number">480</span><span class="token punctuation">,</span><span class="token property">"width"</span><span class="token operator">:</span> <span class="token number">640</span><span class="token punctuation">,</span><span class="token property">"date_captured"</span><span class="token operator">:</span> <span class="token string">"2013-11-14 11:38:44"</span><span class="token punctuation">,</span><span class="token property">"flickr_url"</span><span class="token operator">:</span> <span class="token string">"http://farm1.staticflickr.com/1/127244861_ab0c0381e7_z.jpg"</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">522418</span><span class="token punctuation">}</span><span class="token punctuation">,</span>…………<span class="token punctuation">]</span><span class="token punctuation">,</span>
  <span class="token property">"annotations"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">{</span><span class="token property">"image_id"</span><span class="token operator">:</span> <span class="token number">203564</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">37</span><span class="token punctuation">,</span><span class="token property">"caption"</span><span class="token operator">:</span> <span class="token string">"A bicycle replica with a clock as the front wheel."</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">{</span><span class="token property">"image_id"</span><span class="token operator">:</span> <span class="token number">322141</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">49</span><span class="token punctuation">,</span><span class="token property">"caption"</span><span class="token operator">:</span> <span class="token string">"A room with blue walls and a white sink and door."</span><span class="token punctuation">}</span><span class="token punctuation">,</span><span class="token punctuation">{</span><span class="token property">"image_id"</span><span class="token operator">:</span> <span class="token number">16977</span><span class="token punctuation">,</span><span class="token property">"id"</span><span class="token operator">:</span> <span class="token number">89</span><span class="token punctuation">,</span><span class="token property">"caption"</span><span class="token operator">:</span> <span class="token string">"A car that seems to be parked illegally behind a legally parked car"</span><span class="token punctuation">}</span><span class="token punctuation">,</span>…………<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="InternVID"><a href="#InternVID" class="headerlink" title="InternVID"></a>InternVID</h3><p>github：<a target="_blank" rel="noopener" href="https://github.com/OpenGVLab/InternVideo/blob/main/Data/InternVid/README_CN.md">InternVideo/Data/InternVid/README_CN.md at main · OpenGVLab/InternVideo</a></p>
+<p>数据路径：<a target="_blank" rel="noopener" href="https://opendatalab.com/shepshep/InternVid">数据集-OpenDataLab</a></p>
+<p>InternVid是一个大规模的以视频为中心的多模态数据集，可用于学习强大且可迁移的视频-文本表示，用于多模态理解和生成。InternVid数据集包含超过700万个视频，总时长近76万小时，共有2.34亿个视频片段，伴随着总计41亿个单词的详细描述。</p>
+<p>作为本次发布的一部分，我们提供了数据集的一个子集InternVid-10M-FLT，包含<a target="_blank" rel="noopener" href="https://opendatalab.com/datasets/#">1000万个视频片段</a>。相关视频对应的Youtube ID和对应的文本描述详见caption.jsonl,对应的处理后的视频片段下载详见<a target="_blank" rel="noopener" href="https://opendatalab.com/datasets/#">链接</a>,另外还包括了使用<a target="_blank" rel="noopener" href="https://opendatalab.com/datasets/#">UMT</a>计算对应视频片段和文本的相关度UMT-SIM（已归一化*）和美学评分Aesthetic_Score（使用LAION<a target="_blank" rel="noopener" href="https://opendatalab.com/datasets/#">美学评估模型</a>），其对应的示例如下：</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">{</span><span class="token property">"YoutubeID"</span><span class="token operator">:</span> <span class="token string">"HdYoyzCSWyw"</span><span class="token punctuation">,</span> <span class="token property">"Start_timestamp"</span><span class="token operator">:</span> <span class="token string">"00:03:10.567"</span><span class="token punctuation">,</span> <span class="token property">"End_timestamp"</span><span class="token operator">:</span> <span class="token string">"00:03:11.200"</span><span class="token punctuation">,</span> <span class="token property">"Caption"</span><span class="token operator">:</span> <span class="token string">"woman using a computer mouse and keyboard"</span><span class="token punctuation">,</span> <span class="token property">"Aesthetic_Score"</span><span class="token operator">:</span> <span class="token number">4.58984375</span><span class="token punctuation">,</span> <span class="token property">"UMT_Score"</span><span class="token operator">:</span> <span class="token number">0.39794921875</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token property">"YoutubeID"</span><span class="token operator">:</span> <span class="token string">"qJrOyggIB-w"</span><span class="token punctuation">,</span> <span class="token property">"Start_timestamp"</span><span class="token operator">:</span> <span class="token string">"00:07:33.689"</span><span class="token punctuation">,</span> <span class="token property">"End_timestamp"</span><span class="token operator">:</span> <span class="token string">"00:07:51.085"</span><span class="token punctuation">,</span> <span class="token property">"Caption"</span><span class="token operator">:</span> <span class="token string">"a screen shot of heroes of the storm with people in action"</span><span class="token punctuation">,</span> <span class="token property">"Aesthetic_Score"</span><span class="token operator">:</span> <span class="token number">4.29296875</span><span class="token punctuation">,</span> <span class="token property">"UMT_Score"</span><span class="token operator">:</span> <span class="token number">0.4501953125</span><span class="token punctuation">}</span>
+<span class="token punctuation">{</span><span class="token property">"YoutubeID"</span><span class="token operator">:</span> <span class="token string">"pDq9UzfCtGw"</span><span class="token punctuation">,</span> <span class="token property">"Start_timestamp"</span><span class="token operator">:</span> <span class="token string">"00:08:14.520"</span><span class="token punctuation">,</span> <span class="token property">"End_timestamp"</span><span class="token operator">:</span> <span class="token string">"00:08:37.120"</span><span class="token punctuation">,</span> <span class="token property">"Caption"</span><span class="token operator">:</span> <span class="token string">"in october, 2019, in lviv, there was a conference about the legal information technology"</span><span class="token punctuation">,</span> <span class="token property">"Aesthetic_Score"</span><span class="token operator">:</span> <span class="token number">4.28515625</span><span class="token punctuation">,</span> <span class="token property">"UMT_Score"</span><span class="token operator">:</span> <span class="token number">0.375732421875</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>注意：之前发布的UMT-SIM实际由OpenAI的CLIP-L计算得到。</p>
+<p>pytube数据集下载：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43854103/article/details/134884707">InternVid数据集的下载指南-CSDN博客</a></p>
+<p>403 forbidden：<a target="_blank" rel="noopener" href="https://github.com/pytube/pytube/issues/1570">it showing streaming data error · Issue #1570 · pytube/pytube</a></p>
+<img src="/2024/12/10/mllm-code/image-20250107151235469.png" alt="image-20250107151235469" style="zoom:67%;">
+
+<p>400 bad request：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/78160027/how-to-solve-http-error-400-bad-request-in-pytube">python - How to solve HTTP Error 400: Bad Request in PyTube? - Stack Overflow</a></p>
+<img src="/2024/12/10/mllm-code/image-20250107151321921.png" alt="image-20250107151321921" style="zoom:67%;">
+
+
 
 
 
@@ -764,6 +783,7 @@ video2dataset <span class="token parameter variable">--url_list</span><span clas
 </li>
 </ul>
 <p>COCO数据集：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41185868/article/details/82939959">Dataset之COCO数据集：COCO数据集的简介、下载、使用方法之详细攻略-CSDN博客</a></p>
+<p>InternVID数据集：<a target="_blank" rel="noopener" href="https://opendatalab.com/shepshep/InternVid">数据集-OpenDataLab</a></p>
 <p>Video-LLaVA训练：<a target="_blank" rel="noopener" href="https://github.com/PKU-YuanGroup/Video-LLaVA/blob/main/TRAIN_AND_VALIDATE.md">Video-LLaVA/TRAIN_AND_VALIDATE.md at main · PKU-YuanGroup/Video-LLaVA</a></p>
 <p>IXC2-4KHD：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/692049805">MLLM-算法推荐-2024.4.12] InternLM-XComposer2-4KHD 处理高分辨率有一手 - 知乎</a></p>
 <p>pycharm连接服务器（核心是deployment ssh配置+mapping填对）：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42730750/article/details/119249193">Pycharm远程连接服务器进行代码的运行与调试_remote sdk is saved in idesetting-CSDN博客</a></p>
@@ -1020,29 +1040,28 @@ video2dataset <span class="token parameter variable">--url_list</span><span clas
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/12/10/mllm-code/">
+                <a href="/2025/01/08/mllm-papers-review/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="MLLM Code">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="MLLM Papers Review">
                         
-                        <span class="card-title">MLLM Code</span>
+                        <span class="card-title">MLLM Papers Review</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            记录mllm相关代码
+                            mllm相关论文复盘整理
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-12-10
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2025-01-08
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -1055,7 +1074,6 @@ video2dataset <span class="token parameter variable">--url_list</span><span clas
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
@@ -1063,8 +1081,8 @@ video2dataset <span class="token parameter variable">--url_list</span><span clas
                         <span class="chip bg-color">MLLM</span>
                     </a>
                     
-                    <a href="/tags/%E4%BB%A3%E7%A0%81/">
-                        <span class="chip bg-color">代码</span>
+                    <a href="/tags/%E8%AE%BA%E6%96%87/">
+                        <span class="chip bg-color">论文</span>
                     </a>
                     
                 </div>
@@ -1323,7 +1341,7 @@ video2dataset <span class="token parameter variable">--url_list</span><span clas
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">234.4k</span>&nbsp;字
+                class="white-color">234.8k</span>&nbsp;字
             
             
             
