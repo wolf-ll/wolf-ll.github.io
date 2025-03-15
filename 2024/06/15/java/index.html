@@ -588,21 +588,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2025-03-09
+                    2025-03-14
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    59.3k
+                    62.8k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    220 分
+                    233 分
                 </div>
                 
 
@@ -3464,13 +3464,39 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <li>悲观锁通常多用于写比较多的情况（多写场景，竞争激烈），这样可以<strong>避免频繁失败和重试影响性能</strong>，悲观锁的<strong>开销是固定的</strong>。不过，如果乐观锁解决了频繁失败和重试这个问题的话（比如<code>LongAdder</code>），也是可以考虑使用乐观锁的，要视实际情况而定。</li>
 <li>乐观锁通常多用于写比较少的情况（多读场景，竞争较少），这样可以<strong>避免频繁加锁影响性能</strong>。不过，乐观锁主要针对的对象是单个共享变量（参考<code>java.util.concurrent.atomic</code>包下面的原子变量类）。</li>
 </ul>
-<h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><p>CAS 的全称是 <strong>Compare And Swap（比较与交换）</strong> ，用于实现乐观锁，被广泛应用于各大框架中。CAS 的思想很简单，就是<strong>用一个预期值和要更新的变量值进行比较，两值相等才会进行更新。</strong></p>
-<p>CAS 是一个原子操作，底层依赖于一条 CPU 的原子指令。</p>
+<h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><p>CAS 的全称是 <strong>Compare And Swap（比较与交换）</strong> ，用于<strong>实现乐观锁</strong>，被广泛应用于各大框架中。CAS 的思想很简单，就是<strong>用一个预期值和要更新的变量值进行比较，两值相等才会进行更新。</strong></p>
+<p>CAS 是一个原子操作，底层依赖于一条 CPU 的原子指令：</p>
+<ul>
+<li>在Java中，通过 <code>sun.misc.Unsafe</code> 类调用本地（Native）方法实现。</li>
+<li>示例：<code>Unsafe.compareAndSwapInt()</code>、<code>Unsafe.compareAndSwapObject()</code>。</li>
+</ul>
 <p>CAS 涉及到三个操作数：<strong>V</strong>：要更新的变量值(Var)；<strong>E</strong>：预期值(Expected)；<strong>N</strong>：拟写入的新值(New)</p>
 <p>当且仅当 V 的值等于 E 时，CAS 通过原子方式用新值 N 来更新 V 的值。如果不等，说明已经有其它线程更新了 V，则当前线程放弃更新。（和版本号机制思想一致）</p>
+<p><code>Unsafe#getAndAddInt</code>源码：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 原子地获取并增加整数值</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">int</span> <span class="token function">getAndAddInt</span><span class="token punctuation">(</span><span class="token class-name">Object</span> o<span class="token punctuation">,</span> <span class="token keyword">long</span> offset<span class="token punctuation">,</span> <span class="token keyword">int</span> delta<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">int</span> v<span class="token punctuation">;</span>
+    <span class="token keyword">do</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 以 volatile 方式获取对象 o 在内存偏移量 offset 处的整数值</span>
+        v <span class="token operator">=</span> <span class="token function">getIntVolatile</span><span class="token punctuation">(</span>o<span class="token punctuation">,</span> offset<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">compareAndSwapInt</span><span class="token punctuation">(</span>o<span class="token punctuation">,</span> offset<span class="token punctuation">,</span> v<span class="token punctuation">,</span> v <span class="token operator">+</span> delta<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 返回旧值</span>
+    <span class="token keyword">return</span> v<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以看到，<code>getAndAddInt</code> 使用了 <code>do-while</code> 循环：在<code>compareAndSwapInt</code>操作失败时，会不断重试直到成功。也就是说，<code>getAndAddInt</code>方法会通过 <code>compareAndSwapInt</code> 方法来尝试更新 <code>value</code> 的值，如果更新失败（当前值在此期间被其他线程修改），它会重新获取当前值并再次尝试更新，直到操作成功。</p>
+<p>由于 CAS 操作可能会因为并发冲突而失败，因此通常会与<code>while</code>循环搭配使用，在失败后不断重试，直到操作成功。这就是 <strong>自旋锁机制</strong>。</p>
 <p>问题：如果一个变量 V 初次读取的时候是 A 值，并且在准备赋值的时候检查到它仍然是 A 值，那我们就能说明它的值没有被其他线程修改过了吗？很明显是不能的，因为在这段时间它的值可能被改为其他值，然后又改回 A，那 CAS 操作就会误认为它从来没有被修改过。这个问题被称为 CAS 操作的 <strong>“ABA”问题。</strong></p>
 <p>解决方案：在变量前面追加上<strong>版本号或者时间戳</strong>。<code>AtomicStampedReference</code> 类的 <code>compareAndSet()</code> 方法就是首先检查当前<strong>引用</strong>是否等于预期引用，并且当前<strong>标志</strong>是否等于预期标志，如果<strong>全部相等</strong>，则以原子方式将该引用和该标志的值设置为给定的更新值。</p>
 <p>另一个问题：<strong>循环时间长开销大</strong>。CAS 经常会用到自旋操作来进行重试，也就是不成功就一直循环执行直到成功。如果长时间不成功，会给 CPU 带来非常大的执行开销。如果 JVM 能支持处理器提供的 pause 指令那么效率会有一定的提升。</p>
+<h4 id="Atomic原子类"><a href="#Atomic原子类" class="headerlink" title="Atomic原子类"></a>Atomic原子类</h4><p>Java 中的 <code>Atomic</code> 原子类是一组基于 <strong>CAS（Compare and Swap）</strong> 实现的无锁线程安全工具类，位于 <code>java.util.concurrent.atomic</code> 包中。它们提供了一种高效的方式来操作共享变量，避免了传统锁机制带来的性能开销。</p>
+<ul>
+<li>所有操作都是原子的，确保多线程环境下的数据一致性。</li>
+</ul>
+<ul>
+<li>直接操作内存，通过硬件指令保证原子性。</li>
+<li>支持多种数据类型包括基本类型（如 int、long）、数组类型和引用类型（如对象）。</li>
+</ul>
 <h3 id="JUC-常用的类"><a href="#JUC-常用的类" class="headerlink" title="JUC 常用的类"></a>JUC 常用的类</h3><ol>
 <li><code>java.util.concurrent</code>这是 JUC 最核心的包，包含了大量用于并发编程的类和接口，主要有以下几类：</li>
 </ol>
@@ -3514,13 +3540,37 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 </ul>
 <h4 id="并发工具"><a href="#并发工具" class="headerlink" title="并发工具"></a>并发工具</h4><p> <strong>CountDownLatch</strong></p>
 <ul>
-<li><strong>功能</strong>：<code>CountDownLatch</code> 是一个同步辅助类，允许一个或多个线程等待其他线程完成操作。它使用一个计数器来实现，初始化时设置计数器的值，当某个线程完成操作后，调用 <code>countDown()</code> 方法将计数器减 1，当计数器的值变为 0 时，等待的线程将被唤醒继续执行。</li>
+<li><strong>功能</strong>：<code>CountDownLatch</code> 是一个同步辅助类，<strong>允许一个或多个线程等待其他线程完成操作</strong>。它使用一个计数器来实现，初始化时设置计数器的值，当某个线程完成操作后，调用 <code>countDown()</code> 方法将计数器减 1，当计数器的值变为 0 时，等待的线程将被唤醒继续执行。<code>CountDownLatch</code> 是一次性的，计数器的值只能在构造方法中初始化一次，之后没有任何机制再次对其设置值，当 <code>CountDownLatch</code> 使用完毕后，它不能再次被使用。</li>
+<li><code>CountDownLatch</code> 是共享锁的一种实现,它默认构造 AQS 的 <code>state</code> 值为 <code>count</code>。当线程使用 <code>countDown()</code> 方法时,其实使用了<code>tryReleaseShared</code>方法以 CAS 的操作来减少 <code>state</code>,直至 <code>state</code> 为 0 。当调用 <code>await()</code> 方法的时候，如果 <code>state</code> 不为 0，那就证明任务还没有执行完毕，<code>await()</code> 方法就会一直阻塞，也就是说 <code>await()</code> 方法之后的语句不会被执行。<strong>直到<code>count</code> 个线程调用了<code>countDown()</code>使 state 值被减为 0，或者调用<code>await()</code>的线程被中断，该线程才会从阻塞中被唤醒，<code>await()</code> 方法之后的语句得到执行。</strong></li>
 <li><strong>使用场景</strong>：适用于一个或多个线程需要等待其他一组线程完成任务后再继续执行的场景，比如主线程等待多个子线程完成数据加载或计算任务。</li>
 </ul>
 <p> <strong>CyclicBarrier</strong></p>
 <ul>
 <li><strong>功能</strong>：<code>CyclicBarrier</code> 也是一个同步辅助类，它允许一组线程在某个屏障点等待，直到所有线程都到达该屏障点后，再一起继续执行后续操作。与 <code>CountDownLatch</code> 不同的是，<code>CyclicBarrier</code> 的计数器可以重置，因此可以重复使用。</li>
 <li><strong>使用场景</strong>：在并行计算中，当多个线程需要协同工作，在某个阶段等待所有线程都完成部分任务后，再进行下一步计算时，<code>CyclicBarrier</code> 非常有用。</li>
+</ul>
+<p><strong>Semaphore</strong></p>
+<ul>
+<li><strong>功能</strong>：<code>Semaphore</code> 是一个计数信号量，用于<strong>控制同时访问某个资源的线程数量</strong>。它有一个初始值，表示可用的资源数量。线程在访问资源前需要先获取信号量，如果信号量的值大于 0，则获取成功，信号量的值减 1；如果信号量的值为 0，则线程会被阻塞，直到有其他线程释放信号量。</li>
+<li><code>Semaphore</code> 是共享锁的一种实现，它默认构造 AQS 的 <code>state</code> 值为 <code>permits</code>，你可以将 <code>permits</code> 的值理解为<strong>许可证的数量</strong>，只有拿到许可证的线程才能执行。</li>
+<li><strong>使用场景</strong>：常用于限制对有限资源的访问，如数据库连接池、线程池的最大并发数控制等。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 初始共享资源数量</span>
+<span class="token keyword">final</span> <span class="token class-name">Semaphore</span> semaphore <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Semaphore</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 获取1个许可</span>
+semaphore<span class="token punctuation">.</span><span class="token function">acquire</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 释放1个许可</span>
+semaphore<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>Semaphore</code> 有两种模式：<strong>公平模式：</strong> 调用 <code>acquire()</code> 方法的顺序就是获取许可证的顺序，遵循 FIFO；<strong>非公平模式：</strong> 抢占式的。</p>
+<p><strong>Future 和 Callable</strong></p>
+<ul>
+<li><p><code>Callable</code> 是一个泛型接口，类似于 <code>Runnable</code>，但 <code>Callable</code> 可以有返回值并且可以抛出异常。</p>
+</li>
+<li><p><code>Future</code> 是一个接口，用于获取 <code>Callable</code> 任务的执行结果或取消任务的执行。<code>FutureTask</code> 类实现了 <code>RunnableFuture</code> 接口（继承自 <code>Runnable</code> 和 <code>Future</code>），既可以作为 <code>Runnable</code> 被线程执行，又可以作为 <code>Future</code> 获取 <code>Callable</code> 任务的执行结果。</p>
+</li>
+<li><p><strong>使用场景</strong>：在需要异步执行任务并获取任务执行结果的场景中，如异步计算、异步数据加载等。</p>
+</li>
 </ul>
 <h3 id="Synchronized"><a href="#Synchronized" class="headerlink" title="Synchronized"></a>Synchronized</h3><p><code>synchronized</code> 是 Java 中的一个<strong>关键字</strong>，翻译成中文是同步的意思，主要解决的是<strong>多个线程之间访问资源的同步性</strong>，可以保证<strong>被它修饰的方法或者代码块在任意时刻只能有一个线程执行。</strong></p>
 <p>在 Java 6以前，<code>synchronized</code> 属于 <strong>重量级锁</strong>，效率低下。它的实现依赖于操作系统的互斥量（Mutex），线程在获取锁和释放锁时需要进行<strong>用户态和内核态的切换</strong>，这种切换的开销非常大，导致性能较低。（也就是挂起或唤醒线程进行线程上下文切换时，<strong>都需要从用户态转换成内核态</strong>）</p>
@@ -3531,6 +3581,8 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <li><strong>锁粗化</strong>：锁粗化是指将多个连续的加锁、解锁操作合并为一个更大范围的加锁、解锁操作。例如，在一个循环中多次对同一个对象加锁和解锁，JVM 会将锁的范围扩大到循环外部，减少锁的竞争和同步开销。</li>
 <li><strong>锁消除</strong>：锁消除是指 JVM 在编译时，通过逃逸分析技术，发现某些代码块中的锁是不必要的，就会将这些锁消除。例如，在方法内部创建的对象，并且该对象不会被其他线程访问，那么对该对象的加锁操作就是不必要的，JVM 会将其消除。</li>
 </ul>
+<img src="https://cdn.xiaolincoding.com//picgo/1721808326210-cce43537-20e7-4b7d-bed3-737dc7904d9a.png" alt="image.png" style="zoom: 33%;">
+
 <h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 修饰实例方法，给当前对象实例加锁，进入同步代码前要获得 当前对象实例的锁 。</span>
 <span class="token keyword">synchronized</span> <span class="token keyword">void</span> <span class="token function">method</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment">//业务代码</span>
@@ -3573,7 +3625,7 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <p><strong>非公平锁</strong>：锁被释放之后，后申请的线程可能会先获取到锁，是随机或者按照其他优先级排序的。<strong>性能更好</strong>，但可能会导致某些线程永远无法获取到锁。</p>
 <ul>
 <li>非公平锁比公平锁效率高的原因主要在于<strong>减少了线程切换和同步操作的次数</strong>。</li>
-<li>当线程在运行期间直接抢占到锁资源时，不需要进行“执行现场保存和恢复”的操作，从而能够更快地执行业务代码。相比之下，如果一个就绪态的线程想要获得锁资源，首先需要恢复现场，之后争抢锁（可能成功也可能失败），这个过程浪费了大量的CPU资源，只有在获取锁成功后才能继续执行业务代码。因此，非公平锁在效率上优于公平锁，主要原因就在于是否需要进行现场恢复和不同态之间的切换。<strong>非公平锁减少了线程挂起的几率</strong>，后来的线程有一定几率逃离被挂起的开销。</li>
+<li>当线程在运行期间直接抢占到锁资源时，不需要进行“执行<strong>现场保存和恢复</strong>”的操作，从而能够更快地执行业务代码。相比之下，如果一个就绪态的线程想要获得锁资源，首先需要恢复现场，之后争抢锁（可能成功也可能失败），这个过程浪费了大量的CPU资源，只有在获取锁成功后才能继续执行业务代码。因此，非公平锁在效率上优于公平锁，主要原因就在于是否需要进行现场恢复和不同态之间的切换。<strong>非公平锁减少了线程挂起的几率</strong>，后来的线程有一定几率逃离被挂起的开销。</li>
 </ul>
 <h3 id="synchronized-vs-ReentrantLock"><a href="#synchronized-vs-ReentrantLock" class="headerlink" title="synchronized vs ReentrantLock"></a>synchronized vs ReentrantLock</h3><ul>
 <li>两者都是可重入锁。<strong>可重入锁</strong> 也叫<strong>递归锁</strong>，指的是<strong>线程可以再次获取自己的内部锁</strong>。比如一个线程获得了某个对象的锁，此时这个对象锁还没有释放，当其再次想要获取这个对象的锁的时候还是可以获取的，<strong>如果是不可重入锁的话，就会造成死锁。</strong><ul>
@@ -3701,7 +3753,7 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <p><strong>ThreadLocal的set()方法</strong></p>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Thread</span> <span class="token keyword">implements</span> <span class="token class-name">Runnable</span> <span class="token punctuation">{</span>
     <span class="token comment">//......</span>
-    <span class="token comment">//与此线程有关的ThreadLocal值。由ThreadLocal类维护</span>
+    <span class="token comment">//与此线程有关的ThreadLocal值。由ThreadLocal类维护。存储线程本地变量</span>
     <span class="token class-name">ThreadLocal<span class="token punctuation">.</span>ThreadLocalMap</span> threadLocals <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
 
     <span class="token comment">//与此线程有关的InheritableThreadLocal值。由InheritableThreadLocal类维护</span>
@@ -3710,6 +3762,23 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><code>Thread</code> 类中有一个 <code>threadLocals</code> 和 一个 <code>inheritableThreadLocals</code> 变量，它们都是 <code>ThreadLocalMap</code> 类型的变量,我们可以把 <code>ThreadLocalMap</code> 理解为<code>ThreadLocal</code> 类实现的定制化的 <code>HashMap</code>。默认情况下这两个变量都是 null，只有当前线程<strong>调用 <code>ThreadLocal</code> 类的 <code>set</code>或<code>get</code>方法</strong>时才创建它们，实际上调用这两个方法的时候，我们调用的是<code>ThreadLocalMap</code>类对应的 <code>get()</code>、<code>set()</code>方法。</p>
+<p><strong><code>ThreadLocalMap</code> 的结构</strong></p>
+<p><code>ThreadLocalMap</code> 是 <code>ThreadLocal</code> 的静态内部类，本质是一个<strong>自定义哈希表</strong>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">ThreadLocalMap</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Entry 继承自 WeakReference，键是 ThreadLocal 实例</span>
+    <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">Entry</span> <span class="token keyword">extends</span> <span class="token class-name">WeakReference</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ThreadLocal</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> <span class="token punctuation">{</span>
+        <span class="token class-name">Object</span> value<span class="token punctuation">;</span>  <span class="token comment">// 实际存储的值</span>
+        <span class="token class-name">Entry</span><span class="token punctuation">(</span><span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span> k<span class="token punctuation">,</span> <span class="token class-name">Object</span> v<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">super</span><span class="token punctuation">(</span>k<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 键是弱引用</span>
+            value <span class="token operator">=</span> v<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token class-name">Entry</span><span class="token punctuation">[</span><span class="token punctuation">]</span> table<span class="token punctuation">;</span>  <span class="token comment">// 哈希表数组</span>
+    <span class="token keyword">private</span> <span class="token keyword">int</span> size<span class="token punctuation">;</span>       <span class="token comment">// 元素数量</span>
+    <span class="token keyword">private</span> <span class="token keyword">int</span> threshold<span class="token punctuation">;</span>  <span class="token comment">// 扩容阈值</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">set</span><span class="token punctuation">(</span><span class="token class-name">T</span> value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment">//1、获取当前线程</span>
     <span class="token class-name">Thread</span> t <span class="token operator">=</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -3723,13 +3792,128 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
         <span class="token function">createMap</span><span class="token punctuation">(</span>t<span class="token punctuation">,</span> value<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>ThreadLocal set赋值的时候首先会获取当前线程thread,并获取thread线程中的ThreadLocalMap属性。如果map属性不为空，则直接更新value值，如果map为空，则实例化threadLocalMap,并将value值初始化。</p>
-<p><strong>每个<code>Thread</code>中都具备一个<code>ThreadLocalMap</code>，而<code>ThreadLocalMap</code>可以存储以<code>ThreadLocal</code>为 key ，Object 对象为 value 的键值对。</strong>比如在同一个线程中声明了两个 <code>ThreadLocal</code> 对象的话， <code>Thread</code>内部都是使用仅有的那个<code>ThreadLocalMap</code> 存放数据的，<code>ThreadLocalMap</code>的 key 就是 <code>ThreadLocal</code>对象，value 就是 <code>ThreadLocal</code> 对象调用<code>set</code>方法设置的值。</p>
+<p>ThreadLocal set赋值的时候首先会获取当前线程thread，并获取thread线程中的ThreadLocalMap属性。如果map属性不为空，则直接更新value值，如果map为空，则实例化threadLocalMap，并将value值初始化。</p>
+<p><strong>每个<code>Thread</code>中都具备一个<code>ThreadLocalMap</code>，而<code>ThreadLocalMap</code>可以存储以<code>ThreadLocal</code>为 key ，Object 对象为 value 的键值对。</strong>比如在同一个线程中声明了两个 <code>ThreadLocal</code> 对象的话， <code>Thread</code>内部都是使用仅有的那个<code>ThreadLocalMap</code> 存放数据的，<code>ThreadLocalMap</code>的 <strong>key 就是 <code>ThreadLocal</code>对象</strong>，value 就是 <code>ThreadLocal</code> 对象调用<code>set</code>方法设置的值。</p>
 <img src="/2024/06/15/java/threadlocal-data-structure.png" alt="ThreadLocal 数据结构" style="zoom:80%;">
 
 <h4 id="ThreadLocal-内存泄露问题是怎么导致的"><a href="#ThreadLocal-内存泄露问题是怎么导致的" class="headerlink" title="ThreadLocal 内存泄露问题是怎么导致的"></a>ThreadLocal 内存泄露问题是怎么导致的</h4><p><code>ThreadLocalMap</code> 中使用的 <strong>key 为 <code>ThreadLocal</code> 的弱引用，而 value 是强引用。</strong>所以，如果 <code>ThreadLocal</code> 没有被外部强引用的情况下，在垃圾回收的时候，key 会被清理掉，而 value 不会被清理掉。</p>
 <p>这样一来，<code>ThreadLocalMap</code> 中就会出现 key 为 null 的 Entry。假如我们不做任何措施的话，value 永远无法被 GC 回收，这个时候就可能会产生内存泄露。<code>ThreadLocalMap</code> 实现中已经考虑了这种情况，在调用 <code>set()</code>、<code>get()</code>、<code>remove()</code> 方法的时候，会清理掉 key 为 null 的记录。使用完 <code>ThreadLocal</code>方法后最好手动调用<code>remove()</code>方法</p>
+<h3 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h3><p>AQS 的全称为 <code>AbstractQueuedSynchronizer</code> ，翻译过来的意思就是抽象队列同步器。这个类在 <code>java.util.concurrent.locks</code> 包下面。<strong>AQS 就是一个抽象类，主要用来构建锁和同步器。</strong>使用 AQS 能简单且高效地构造出应用广泛的大量的同步器，比如我们提到的 <code>ReentrantLock</code>，<code>Semaphore</code>，其他的诸如 <code>ReentrantReadWriteLock</code>，<code>SynchronousQueue</code>等等皆是基于 AQS 的。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">AbstractQueuedSynchronizer</span> <span class="token keyword">extends</span> <span class="token class-name">AbstractOwnableSynchronizer</span> <span class="token keyword">implements</span> <span class="token class-name"><span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span>Serializable</span> <span class="token punctuation">{</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>AQS 解决了开发者在实现同步器时的复杂性问题。它提供了一个通用框架，用于实现各种同步器，例如 <strong>可重入锁</strong>（<code>ReentrantLock</code>）、<strong>信号量</strong>（<code>Semaphore</code>）和 <strong>倒计时器</strong>（<code>CountDownLatch</code>）。通过封装底层的线程同步机制，AQS 将复杂的线程管理逻辑隐藏起来，使开发者只需专注于具体的同步逻辑。</p>
+<h4 id="原理-3"><a href="#原理-3" class="headerlink" title="原理"></a>原理</h4><p>AQS 提供了一种通用的机制来实现阻塞锁和相关的同步器，其核心思想是通过一个 <strong>FIFO 队列</strong> 和一个 <strong>状态变量</strong> 来管理线程的阻塞和唤醒。如果被请求的共享资源空闲，那么就将当前请求资源的线程设置为<strong>有效的工作线程</strong>，将共享资源设置为<strong>锁定状态</strong>；如果共享资源被占用，就需要一定的<strong>阻塞等待唤醒机制</strong>来保证锁分配。这个机制主要用的是<strong>CLH队列的变体</strong>实现的，将暂时获取不到锁的线程加入到队列中。<br>CLH:Craig、Landin and Hagersten队列，是单向链表，AQS中的队列是CLH变体的<strong>虚拟双向队列(FIFO）</strong>（虚拟的双向队列即不存在队列实例，仅存在结点之间的关联关系），AQS是通过<strong>将每条请求共享资源的线程封装成一个节点</strong>来实现锁的分配。</p>
+<p>CLH 锁通过引入一个队列来组织并发竞争的线程，对自旋锁进行了改进：</p>
+<ul>
+<li>每个线程会作为一个节点加入到队列中，并通过<strong>自旋监控前一个线程节点的状态</strong>，而不是直接竞争共享变量。</li>
+<li>线程按顺序排队，确保公平性，从而避免了 “饥饿” 问题。</li>
+</ul>
+<p>AQS（AbstractQueuedSynchronizer）在 CLH 锁的基础上进一步优化，形成了其内部的 <strong>CLH 队列变体</strong>。主要改进点有以下两方面：</p>
+<ul>
+<li><p><strong>自旋 + 阻塞：</strong> CLH 锁使用纯自旋方式等待锁的释放，但<strong>大量的自旋操作会占用过多的 CPU 资源</strong>。AQS 引入了 自旋 + 阻塞 的混合机制： 如果线程获取锁失败，会先<strong>短暂自旋尝试获取锁</strong>；如果仍然失败，则线程会<strong>进入阻塞状态</strong>，等待被唤醒，从而减少 CPU 的浪费。</p>
+</li>
+<li><p><strong>单向队列改为双向队列</strong>：CLH 锁使用单向队列，节点只知道前驱节点的状态，而当某个节点释放锁时，需要通过队列唤醒后续节点。AQS 将队列改为 <strong>双向队列</strong>，新增了 <code>next</code> 指针，使得节点不仅知道前驱节点，也可以<strong>直接唤醒后继节点</strong>，从而<strong>简化了队列操作</strong>，提高了唤醒效率。</p>
+</li>
+</ul>
+<img src="https://oss.javaguide.cn/github/javaguide/java/concurrent/clh-queue-state.png" alt="CLH 变体队列" style="zoom: 67%;">
+
+<p><strong>核心组件：</strong></p>
+<ol>
+<li><strong>状态变量（state）</strong>：表示<strong>共享资源的状态</strong>，可以是锁的持有次数、信号量的许可数等。通过 <code>getState()</code>、<code>setState()</code> 和 <code>compareAndSetState()</code> 方法操作。<ul>
+<li>这里state的具体含义，会根据具体实现类的不同而不同：比如在Semapore里，他表示剩余许可证的数量；在CountDownLatch里，它表示还需要倒数的数量；在ReentrantLock中，state用来表示”锁”的占有情况，包括可重入计数，当state的值为O的时候，标识该Lock不被任何线程所占有。</li>
+<li><strong>state是volatile修饰的</strong>，并被并发修改，所以修改state的方法都需要保证线程安全，比如getState、setState以及compareAndSetState操作来读取和更新这个状态。这些方法都依赖于unsafe类。</li>
+</ul>
+</li>
+<li><strong>FIFO 队列</strong>：一个双向链表，用于存储等待获取资源的线程。每个节点（<code>Node</code>）包含线程（<code>thread</code>）、等待状态（<code>waitStatus</code>）和前驱/后继指针。<ul>
+<li>这个队列用来存放“等待的线程，AQS就是“排队管理器”，当多个线程争用同一把锁时，必须有排队机制将那些没能拿到锁的线程串在一起。当锁释放时，锁管理器就会挑选一个合适的线程来占有这个刚刚释放的锁。</li>
+</ul>
+</li>
+<li><strong>节点状态（waitStatus）</strong>：<code>CANCELLED</code>（1）：线程已取消。<code>SIGNAL</code>（-1）：当前节点的后继节点需要被唤醒。<code>CONDITION</code>（-2）：节点在条件队列中等待。<code>PROPAGATE</code>（-3）：共享模式下，释放资源时需要传播给后续节点。<ul>
+<li>在 AQS 中，一个节点加入队列之后，初始状态为 <code>0</code> 。</li>
+<li>当有新的节点加入队列，此时新节点的前继节点状态就会由 <code>0</code> 更新为 <code>SIGNAL</code> ，表示前继节点释放锁之后，需要对新节点进行唤醒操作。</li>
+<li>如果一个节点在队列中等待获取锁锁时，因为某种原因失败了，该节点的状态就会变为 <code>CANCELLED</code> ，表明取消获取锁，这种状态的节点是异常的，无法被唤醒，也无法唤醒后继节点。</li>
+</ul>
+</li>
+</ol>
+<p><strong>同步状态的获取和释放</strong></p>
+<ul>
+<li>独占模式<ul>
+<li><code>acquire(int arg)</code>：尝试以独占模式获取同步状态，如果获取失败则将当前线程加入到队列中等待。</li>
+<li><code>release(int arg)</code>：尝试以独占模式释放同步状态，如果释放成功则唤醒队列中的后继节点。</li>
+</ul>
+</li>
+<li>共享模式<ul>
+<li><code>acquireShared(int arg)</code>：尝试以共享模式获取同步状态，如果获取失败则将当前线程加入到队列中等待。</li>
+<li><code>releaseShared(int arg)</code>：尝试以共享模式释放同步状态，如果释放成功则唤醒队列中的后继节点。</li>
+</ul>
+</li>
+</ul>
+<p>基于 AQS 可以实现自定义的同步器， AQS 提供了 5 个模板方法（<strong>模板方法模式</strong>）。如果需要自定义同步器一般的方式是这样（模板方法模式很经典的一个应用）：</p>
+<ol>
+<li>自定义的同步器继承 <code>AbstractQueuedSynchronizer</code> 。</li>
+<li>重写 AQS 暴露的模板方法。</li>
+</ol>
+<p><strong>AQS 使用了模板方法模式，自定义同步器时需要重写下面几个 AQS 提供的钩子方法：</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">//独占方式。尝试获取资源，成功则返回true，失败则返回false。</span>
+<span class="token keyword">protected</span> <span class="token keyword">boolean</span> <span class="token function">tryAcquire</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>
+<span class="token comment">//独占方式。尝试释放资源，成功则返回true，失败则返回false。</span>
+<span class="token keyword">protected</span> <span class="token keyword">boolean</span> <span class="token function">tryRelease</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>
+<span class="token comment">//共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。</span>
+<span class="token keyword">protected</span> <span class="token keyword">int</span> <span class="token function">tryAcquireShared</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>
+<span class="token comment">//共享方式。尝试释放资源，成功则返回true，失败则返回false。</span>
+<span class="token keyword">protected</span> <span class="token keyword">boolean</span> <span class="token function">tryReleaseShared</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>
+<span class="token comment">//该线程是否正在独占资源。只有用到condition才需要去实现它。</span>
+<span class="token keyword">protected</span> <span class="token keyword">boolean</span> <span class="token function">isHeldExclusively</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>什么是钩子方法呢？</strong> 钩子方法是一种被声明在抽象类中的方法，一般使用 <code>protected</code> 关键字修饰，它可以是空方法（由子类实现），也可以是默认实现的方法。模板设计模式通过钩子方法控制固定步骤的实现。</p>
+<p>获取资源：</p>
+<ul>
+<li><strong>acquire(int)<strong>：acquire是一种</strong>以独占方式获取资源</strong>，如果获取到资源，线程直接返回，否则进入等待队列，直到获取到资源为止，且整个过程忽略中断的影响。该方法是独占模式下线程获取共享资源的顶层入口。获取到资源后，线程就可以去执行其临界区代码了。</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// AQS</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">acquire</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">tryAcquire</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span>
+        <span class="token function">acquireQueued</span><span class="token punctuation">(</span><span class="token function">addWaiter</span><span class="token punctuation">(</span><span class="token class-name">Node</span><span class="token punctuation">.</span><span class="token constant">EXCLUSIVE</span><span class="token punctuation">)</span><span class="token punctuation">,</span> arg<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token function">selfInterrupt</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><code>tryAcquire()</code> ：尝试获取锁（模板方法），<code>AQS</code> 不提供具体实现，由子类实现。</p>
+</li>
+<li><p><code>addWaiter()</code> ：如果获取锁失败，会将当前线程封装为 Node 节点加入到 AQS 的 CLH 变体队列中等待获取锁。</p>
+</li>
+<li><p><code>acquireQueued()</code> ：CAS对线程进行<strong>阻塞、唤醒</strong>，并调用 <code>tryAcquire()</code> 方法让队列中的线程尝试获取锁。</p>
+</li>
+</ul>
+<p>在 <code>AQS</code> 中，当前节点的唤醒需要依赖于上一个节点。如果上一个节点取消获取锁，它的状态就会变为 <code>CANCELLED</code> ，<code>CANCELLED</code> 状态的节点没有获取到锁，也就无法执行解锁操作对当前节点进行唤醒。因此<strong>在阻塞当前线程之前，需要跳过 <code>CANCELLED</code> 状态的节点。</strong></p>
+<p>shouldParkAfterFailedAcquire(Node pred, Node node)：调整前驱节点的waitStatus为SIGNAL，确保后续唤醒。</p>
+<p>关于selfInterrupt：</p>
+<ul>
+<li>当 <code>if</code> 判断为 <code>true</code> 时，需要 <code>tryAcquire()</code> 返回 <code>false</code> ，并且 <code>acquireQueued()</code> 返回 <code>true</code> 。</li>
+<li>其中 <code>acquireQueued()</code> 方法返回的是线程被唤醒之后的 <strong>中断状态</strong> ，通过执行 <code>Thread.interrupted()</code> 来返回。该方法在返回中断状态的同时，会清除线程的中断状态。</li>
+<li>因此如果 <code>if</code> 判断为 <code>true</code> ，表明线程的中断状态为 <code>true</code> ，但是调用 <code>Thread.interrupted()</code> 之后，线程的中断状态被清除为 <code>false</code>，因此需要重新执行 <code>selfInterrupt()</code> 来重新设置线程的中断状态。</li>
+</ul>
+<blockquote>
+<p>调用自定义同步器的tryAcquire()尝试直接去获取资源，如果成功则直接返回；<br>没成功，则addWaiter()将该线程加入等待队列的尾部，并标记为独占模式；<br>acquireQueued()使线程在等待队列中休息，有机会时（轮到自己，会被unpark()）会去尝试获取资源。获取到资源后才返回。如果<strong>在整个等待过程中被中断过，则返回true</strong>（在true的情况下，才会执行selfInterrupt()），否则返回false。<br>如果线程在等待过程中被中断过，它是不响应的。只是获取资源后才再进行自我中断selfInterrupt()，将中断补上。</p>
+</blockquote>
+<p>释放资源：</p>
+<p>AQS 中以独占模式释放资源的入口方法是 <code>release()</code> ，主要做两件事：尝试释放锁和唤醒后继节点。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// AQS</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">release</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 1、尝试释放锁 -- 计算释放锁之后的 state 值，为0表明完全释放</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">tryRelease</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Node</span> h <span class="token operator">=</span> head<span class="token punctuation">;</span>
+        <span class="token comment">// 2、唤醒后继节点</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>h <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> h<span class="token punctuation">.</span>waitStatus <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+            <span class="token function">unparkSuccessor</span><span class="token punctuation">(</span>h<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><p>线程池就是管理一系列线程的资源池。当有任务要处理时，直接从线程池中获取线程来处理，处理完之后线程并不会立即被销毁，而是等待下一个任务。</p>
+<p>核心参数，拒绝策略，任务提交流程，线程创建时机，销毁时机，线程池关闭</p>
 <h3 id="为什么要用线程池"><a href="#为什么要用线程池" class="headerlink" title="为什么要用线程池"></a>为什么要用线程池</h3><p><strong>线程池</strong>提供了一种限制和管理资源（包括执行一个任务）的方式。 每个<strong>线程池</strong>还维护一些基本统计信息，例如已完成任务的数量。</p>
 <p><strong>使用线程池的好处</strong>：</p>
 <ul>
@@ -3773,7 +3957,7 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <ul>
 <li>execute用于提交不需要返回值的任务。</li>
 <li>submit用于提交需要返回值的任务。</li>
-<li>shutdown平缓关闭线程池，不再接受新任务，已提交任务继续执行。</li>
+<li>shutdown平缓关闭线程池，不再接受新任务，<strong>已提交任务继续执行。</strong></li>
 <li>shutdownNow试图停止所有正在执行的活动任务，暂停处理正在等待的任务，并返回等待执行的任务列表。</li>
 </ul>
 <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 实际项目中使用ThreadPoolExecutor的示例</span>
@@ -3801,12 +3985,13 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <h3 id="线程池的拒绝策略"><a href="#线程池的拒绝策略" class="headerlink" title="线程池的拒绝策略"></a>线程池的拒绝策略</h3><p>如果<strong>当前同时运行的线程数量达到最大线程数量并且队列也已经被放满了任务时</strong>，<code>ThreadPoolExecutor</code> 定义一些策略:</p>
 <ul>
 <li><code>ThreadPoolExecutor.AbortPolicy</code>：抛出 <code>RejectedExecutionException</code>来拒绝新任务的处理。</li>
-<li><code>ThreadPoolExecutor.CallerRunsPolicy</code>：调用执行自己的线程运行任务，也就是<strong>直接在调用<code>execute</code>方法的线程中运行(<code>run</code>)被拒绝的任务</strong>，如果执行程序已关闭，则会丢弃该任务。因此这种策略会<strong>降低对于新任务提交速度</strong>，影响程序的整体性能。如果你的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。<ul>
-<li>将任务回退给调用者，使用调用者的线程来执行任务。</li>
+<li><code>ThreadPoolExecutor.CallerRunsPolicy</code>：调用执行自己的线程运行任务，也就是<strong>直接在调用<code>execute</code>方法的线程中运行(<code>run</code>)被拒绝的任务，如果执行程序已关闭，则会丢弃该任务</strong>。因此这种策略会<strong>降低对于新任务提交速度</strong>，影响程序的整体性能。如果你的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。<ul>
+<li>将任务回退给调用者，使用调用者的线程来执行任务。除非线程池被停止或任务队列已有空缺。</li>
 </ul>
 </li>
-<li><code>ThreadPoolExecutor.DiscardPolicy</code>：不处理新任务，直接丢弃掉。</li>
-<li><code>ThreadPoolExecutor.DiscardOldestPolicy</code>：此策略将丢弃最早的未处理的任务请求。</li>
+<li><code>ThreadPoolExecutor.DiscardPolicy</code>：不做任何处理，直接丢弃掉，静默拒绝新任务。</li>
+<li><code>ThreadPoolExecutor.DiscardOldestPolicy</code>：丢弃最早的未处理的任务请求，然后执行当前任务。</li>
+<li>自定义拒绝策略：实现RejectedExecutionHandler接口来自定义拒绝策略。</li>
 </ul>
 <p>如果不允许丢弃任务，只能选择CallerRunsPolicy，<strong>问题</strong>：如果走到<code>CallerRunsPolicy</code>的任务是个非常耗时的任务，且处理提交任务的线程是主线程，可能会<strong>导致主线程阻塞，影响程序的正常运行。</strong></p>
 <p><strong>解决思路</strong></p>
@@ -3820,6 +4005,89 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <li><code>Redis</code>缓存任务。</li>
 <li>将任务提交到消息队列中。</li>
 </ol>
+<h3 id="线程池种类"><a href="#线程池种类" class="headerlink" title="线程池种类"></a>线程池种类</h3><p><strong>1. 固定大小的线程池（FixedThreadPool）</strong></p>
+<ul>
+<li><p>核心线程数（corePoolSize）和最大线程数（maximumPoolSize）相等。</p>
+</li>
+<li><p>使用<strong>无界队列</strong>（<code>LinkedBlockingQueue</code>）存储任务。</p>
+</li>
+<li><p><strong>线程池中的线程数量固定，不会动态增加或减少。</strong></p>
+</li>
+<li><p>适合任务数量稳定且需要限制并发线程数的场景。例如：Web 服务器的请求处理。</p>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ExecutorService</span> fixedThreadPool <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newFixedThreadPool</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 10 个线程</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<p><strong>2. 缓存线程池（CachedThreadPool）</strong></p>
+<ul>
+<li><p>核心线程数为 0，最大线程数为 <code>Integer.MAX_VALUE</code>。（<strong>线程数量不固定</strong></p>
+</li>
+<li><p>使用<strong>直接传递队列</strong>（<code>SynchronousQueue</code>），<strong>任务不会排队，直接交给线程执行。</strong></p>
+</li>
+<li><p>空闲线程的存活时间为 60 秒，超过时间后会被回收。</p>
+</li>
+<li><p>适合任务数量不确定且任务处理时间短的场景。例如：短时异步任务处理。</p>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ExecutorService</span> cachedThreadPool <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newCachedThreadPool</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<p><strong>3. 单线程线程池（SingleThreadExecutor）</strong></p>
+<ul>
+<li><p>核心线程数和最大线程数均为 1。</p>
+</li>
+<li><p>使用<strong>无界队列</strong>（<code>LinkedBlockingQueue</code>）存储任务。</p>
+</li>
+<li><p><strong>保证所有任务按顺序执行。</strong></p>
+</li>
+<li><p>适合需要顺序执行任务的场景。例如：日志记录、任务调度。</p>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ExecutorService</span> singleThreadPool <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newSingleThreadExecutor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<p><strong>4. 定时任务线程池（ScheduledThreadPool）</strong></p>
+<ul>
+<li><p>核心线程数由用户指定，最大线程数为 <code>Integer.MAX_VALUE</code>。</p>
+</li>
+<li><p>使用<strong>延迟队列</strong>（<code>DelayedWorkQueue</code>）存储任务。</p>
+</li>
+<li><p>支持定时任务和周期性任务。</p>
+</li>
+<li><p>适合需要定时执行或周期性执行任务的场景。例如：定时数据同步、心跳检测。</p>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ScheduledExecutorService</span> scheduledThreadPool <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newScheduledThreadPool</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 延迟 10 秒后执行任务</span>
+scheduledThreadPool<span class="token punctuation">.</span><span class="token function">schedule</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-&gt;</span> <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Task executed"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">SECONDS</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 延迟 10 秒后，每隔 5 秒执行一次任务</span>
+scheduledThreadPool<span class="token punctuation">.</span><span class="token function">scheduleAtFixedRate</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-&gt;</span> <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Task executed"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span><span class="token punctuation">.</span><span class="token constant">SECONDS</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<p><strong>5.单线程定时任务线程池（SingleThreadScheduledExecutor）</strong></p>
+<p>用于在单个线程中调度定时任务或周期性任务。</p>
+<p><strong>6. 工作窃取线程池（WorkStealingPool）</strong></p>
+<ul>
+<li><p>基于 ForkJoinPool 实现。</p>
+</li>
+<li><p>线程池中的线程可以窃取其他线程的任务，充分利用 CPU 资源。</p>
+</li>
+<li><p>默认线程数为 CPU 核心数。</p>
+</li>
+<li><p>适合任务可以拆分为子任务的场景。例如：并行计算、分治算法。</p>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">ExecutorService</span> workStealingPool <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newWorkStealingPool</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<p><strong>7. 自定义线程池（ThreadPoolExecutor）</strong></p>
+<ul>
+<li>通过 <code>ThreadPoolExecutor</code> 类自定义线程池参数。</li>
+<li>可以灵活设置核心线程数、最大线程数、队列类型、线程存活时间、拒绝策略等。</li>
+</ul>
 <h3 id="线程池常用阻塞队列"><a href="#线程池常用阻塞队列" class="headerlink" title="线程池常用阻塞队列"></a>线程池常用阻塞队列</h3><p>不同的线程池会选用不同的阻塞队列，我们可以结合内置线程池来分析。</p>
 <ul>
 <li>容量为 <code>Integer.MAX_VALUE</code> 的 <code>LinkedBlockingQueue</code><strong>（无界队列）</strong>：<code>FixedThreadPool</code>（可重用固定线程数的线程池） 和 <code>SingleThreadExector</code> 。<code>FixedThreadPool</code>最多只能创建核心线程数的线程（核心线程数和最大线程数相等），<code>SingleThreadExector</code>只能创建一个线程（核心线程数和最大线程数都是 1），二者的<strong>任务队列永远不会被放满。</strong></li>
@@ -3827,56 +4095,18 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 <li><code>CachedThreadPool</code> 的<code>corePoolSize</code> 被设置为空（0），<code>maximumPoolSize</code>被设置为 <code>Integer.MAX.VALUE</code>，即它是无界的，这也就意味着如果主线程提交任务的速度高于 <code>maximumPool</code> 中线程处理任务的速度时，<code>CachedThreadPool</code> 会不断创建新的线程。极端情况下，这样会导致耗尽 cpu 和内存资源。</li>
 </ul>
 </li>
-<li><code>DelayedWorkQueue</code><strong>（延迟阻塞队列）</strong>：<code>ScheduledThreadPool</code> 和 <code>SingleThreadScheduledExecutor</code> 。<code>DelayedWorkQueue</code> 的内部元素并不是按照放入的时间排序，而是会按照延迟的时间长短对任务进行排序，内部采用的是“堆”的数据结构，可以保证<strong>每次出队的任务都是当前队列中执行时间最靠前的</strong>。<code>DelayedWorkQueue</code> <strong>添加元素满了之后会自动扩容</strong>原来容量的 1/2，即永远不会阻塞，最大扩容可达 <code>Integer.MAX_VALUE</code>，所以最多只能创建核心线程数的线程。</li>
+<li><code>DelayedWorkQueue</code><strong>（延迟阻塞队列）</strong>：<code>ScheduledThreadPool</code> 和 <code>SingleThreadScheduledExecutor</code> 。<code>DelayedWorkQueue</code> 的内部元素并不是按照放入的时间排序，而是会<strong>按照延迟的时间长短对任务进行排序</strong>，内部采用的是“堆”的数据结构，可以保证<strong>每次出队的任务都是当前队列中执行时间最靠前的</strong>。<code>DelayedWorkQueue</code> <strong>添加元素满了之后会自动扩容</strong>原来容量的 1/2，即永远不会阻塞，最大扩容可达 <code>Integer.MAX_VALUE</code>，所以最多只能创建核心线程数的线程。</li>
 </ul>
 <p>对比：Java 中常用的阻塞队列实现类有以下几种：</p>
 <ol>
 <li><code>ArrayBlockingQueue</code>：使用<strong>数组</strong>实现的有界阻塞队列。<strong>在创建时需要指定容量大小</strong>，并支持公平和非公平两种方式的锁访问机制。</li>
-<li><code>LinkedBlockingQueue</code>：使用<strong>单向链表</strong>实现的可选有界阻塞队列。在创建时可以指定容量大小，如果<strong>不指定则默认为<code>Integer.MAX_VALUE</code><strong>。和<code>ArrayBlockingQueue</code>不同的是， 它仅支持</strong>非公平</strong>的锁访问机制。</li>
+<li><code>LinkedBlockingQueue</code>：使用<strong>单向链表</strong>实现的<strong>可选有界</strong>阻塞队列。在创建时可以指定容量大小，如果<strong>不指定则默认为<code>Integer.MAX_VALUE</code><strong>。和<code>ArrayBlockingQueue</code>不同的是， 它仅支持</strong>非公平</strong>的锁访问机制。</li>
 <li><code>PriorityBlockingQueue</code>：支持优先级排序的<strong>无界</strong>阻塞队列。元素必须实现<code>Comparable</code>接口或者在构造函数中传入<code>Comparator</code>对象，并且不能插入 null 元素。</li>
 <li><code>SynchronousQueue</code>：<strong>同步队列</strong>，是一种不存储元素的阻塞队列。每个插入操作都必须等待对应的删除操作，反之删除操作也必须等待插入操作。因此，<code>SynchronousQueue</code>通常用于线程之间的直接传递数据。</li>
 <li><code>DelayQueue</code>：<strong>延迟队列</strong>，其中的元素只有到了其指定的延迟时间，才能够从队列中出队。</li>
 </ol>
-<h3 id="线程池处理任务的流程"><a href="#线程池处理任务的流程" class="headerlink" title="线程池处理任务的流程"></a>线程池处理任务的流程</h3><img src="/2024/06/15/java/thread-pool-principle.png" alt="图解线程池实现原理" style="zoom:80%;">
-
-<ul>
-<li>如果当前运行的线程数小于核心线程数，那么就会<strong>新建一个线程</strong>来执行任务。<ul>
-<li>当提交一个新任务到线程池时，如果线程池中的线程数量小于核心线程数，即使其他工作线程是空闲的，也会创建一个新线程来处理该任务。</li>
-</ul>
-</li>
-<li>如果当前运行的线程数等于或大于核心线程数，但是小于最大线程数，那么就把该任务放入到任务队列里等待执行。</li>
-<li>如果向任务队列投放任务失败（任务队列已经满了），但是当前运行的线程数是小于最大线程数的，就<strong>新建一个线程</strong>来执行任务。</li>
-<li>如果当前运行的线程数已经等同于最大线程数了，新建线程将会使当前运行的线程超出最大线程数，那么当前任务会被拒绝，拒绝策略会调用<code>RejectedExecutionHandler.rejectedExecution()</code>方法。</li>
-</ul>
-<h3 id="线程异常后，销毁还是复用"><a href="#线程异常后，销毁还是复用" class="headerlink" title="线程异常后，销毁还是复用"></a>线程异常后，销毁还是复用</h3><p><strong>使用<code>execute()</code>提交任务</strong>：当任务通过<code>execute()</code>提交到线程池并在执行过程中抛出异常时，如果这个异常没有在任务内被捕获，那么该异常会导致当前线程终止，并且异常会被打印到控制台或日志文件中。线程池会检测到这种线程终止，并创建一个新线程来替换它，从而保持配置的线程数不变。</p>
-<p><strong>使用<code>submit()</code>提交任务</strong>：对于通过<code>submit()</code>提交的任务，如果在任务执行中发生异常，这个异常不会直接打印出来。相反，异常会被封装在由<code>submit()</code>返回的<code>Future</code>对象中。当调用<code>Future.get()</code>方法时，可以捕获到一个<code>ExecutionException</code>。在这种情况下，线程不会因为异常而终止，它会继续存在于线程池中，准备执行后续的任务。</p>
-<h3 id="execute和submit区别"><a href="#execute和submit区别" class="headerlink" title="execute和submit区别"></a>execute和submit区别</h3><p>1、<strong>返回结果</strong>：submit()方法可以接受并<strong>返回Future对象，用于表示异步任务的结果</strong>。你可以通过Future对象获取任务的执行结果，或者等待任务执行完成。而execute()方法没有返回值，无法获取任务的执行结果。<br>2、<strong>异常处理</strong>：submit()方法能够处理任务执行过程中抛出的异常。你可以通过调用Future对象的get()方法来获取任务执行过程中的异常，或者通过捕获ExecutionException异常来处理异常情况。而execute()方法无法处理任务执行过程中的异常，异常会被传播到线程池的未捕获异常处理器(UncaughtExceptionHandler)。<br>3、<strong>方法重载</strong>：submit()方法有多种重载形式，可以接受<strong>Runnable、Callable和其他可执行任务作为参数</strong>。它们的返回值类型分别为Future、Future和Future，其中T为Callable返回结果的类型。这使得submit()方法更加灵活，可以处理不同类型的任务。而<strong>execute()方法只接受Runnable类型的任务作为参数</strong>，没有方法重载的选项。</p>
-<h3 id="Runnable与Callable"><a href="#Runnable与Callable" class="headerlink" title="Runnable与Callable"></a>Runnable与Callable</h3><ul>
-<li>Callable规定的方法是 call(), Runnable规定的方法是 run()。</li>
-<li>Callable的任务执行后可返回值，而 Runnable的任务是不能返回值。</li>
-<li>call方法可以抛出异常， run方法不可以。</li>
-<li>运行 Callable任务可以拿到一个 Future对象</li>
-</ul>
-<h3 id="shutdown-VS-shutdownNow"><a href="#shutdown-VS-shutdownNow" class="headerlink" title="shutdown()  VS  shutdownNow()"></a>shutdown()  VS  shutdownNow()</h3><ul>
-<li><strong><code>shutdown（）</code></strong> :关闭线程池，线程池的状态变为 <code>SHUTDOWN</code>。线程池不再接受新任务了，但是队列里的任务得执行完毕。</li>
-<li><strong><code>shutdownNow（）</code></strong> :关闭线程池，线程池的状态变为 <code>STOP</code>。线程池会终止当前正在运行的任务，并停止处理排队的任务并返回正在等待执行的 List。</li>
-</ul>
-<h3 id="isTerminated-VS-isShutdown"><a href="#isTerminated-VS-isShutdown" class="headerlink" title="isTerminated()  VS  isShutdown()"></a>isTerminated()  VS  isShutdown()</h3><ul>
-<li><strong><code>isShutDown</code></strong> 当调用 <code>shutdown()</code> 方法后返回为 true。</li>
-<li><strong><code>isTerminated</code></strong> 当调用 <code>shutdown()</code> 方法后，并且所有提交的任务完成后返回为 true</li>
-</ul>
-<h3 id="设定线程池大小"><a href="#设定线程池大小" class="headerlink" title="设定线程池大小"></a>设定线程池大小</h3><ul>
-<li>如果我们设置的线程池数量太小的话，如果同一时间有大量任务/请求需要处理，可能会导致大量的请求/任务在任务队列中排队等待执行，甚至会出现<strong>任务队列满了之后任务/请求无法处理</strong>的情况，或者<strong>大量任务堆积在任务队列导致 OOM</strong>。这样很明显是有问题的，CPU 根本没有得到充分利用。</li>
-<li>如果我们设置线程数量太大，<strong>大量线程可能会同时在争取 CPU 资源</strong>，这样会导致大量的上下文切换，从而增加线程的执行时间，影响了整体执行效率。</li>
-</ul>
-<p>有一个简单并且适用面比较广的公式：</p>
-<ul>
-<li><strong>CPU 密集型任务(N+1)：</strong> 这种任务消耗的主要是 CPU 资源，可以将线程数设置为 N（CPU 核心数）+1。比 CPU 核心数多出来的一个线程是为了防止线程偶发的缺页中断，或者其它原因导致的任务暂停而带来的影响。一旦任务暂停，CPU 就会处于空闲状态，而在这种情况下多出来的一个线程就可以充分利用 CPU 的空闲时间。</li>
-<li><strong>I/O 密集型任务(2N)：</strong> 这种任务应用起来，系统会用大部分的时间来处理 I/O 交互，而线程在处理 I/O 的时间段内不会占用 CPU 来处理，这时就可以将 CPU 交出给其它线程使用。因此在 I/O 密集型任务的应用中，我们可以多配置一些线程，具体的计算方法是 2N。</li>
-</ul>
-<p>CPU 密集型简单理解就是利用 CPU 计算能力的任务比如你在内存中对大量数据进行排序。但凡涉及到网络读取，文件读取这类都是 IO 密集型，这类任务的特点是 CPU 计算耗费时间相比于等待 IO 操作完成的时间来说很少，大部分时间都花在了等待 IO 操作完成上。</p>
-<h3 id="优先级任务线程池"><a href="#优先级任务线程池" class="headerlink" title="优先级任务线程池"></a>优先级任务线程池</h3><p>假如我们需要实现一个优先级任务线程池的话，那可以考虑使用 <code>PriorityBlockingQueue</code> （<strong>优先级阻塞队列</strong>）作为任务队列（<code>ThreadPoolExecutor</code> 的构造函数有一个 <code>workQueue</code> 参数可以传入任务队列）。</p>
-<p><code>PriorityBlockingQueue</code> 是一个支持优先级的无界阻塞队列，可以看作是线程安全的 <code>PriorityQueue</code>，两者底层都是使用小顶堆形式的二叉堆，即值最小的元素优先出队。不过，<code>PriorityQueue</code> 不支持阻塞操作。</p>
+<p>假如我们需要实现一个优先级任务线程池的话，那可以考虑使用 <code>PriorityBlockingQueue</code> （<strong>优先级阻塞队列</strong>）作为任务队列（<code>ThreadPoolExecutor</code> 的构造函数有一个 <code>workQueue</code> 参数可以传入任务队列）。</p>
+<h4 id="优先级任务队列"><a href="#优先级任务队列" class="headerlink" title="优先级任务队列"></a>优先级任务队列</h4><p><code>PriorityBlockingQueue</code> 是一个支持优先级的无界阻塞队列，可以看作是线程安全的 <code>PriorityQueue</code>，两者底层都是使用小顶堆形式的二叉堆，即值最小的元素优先出队。不过，<code>PriorityQueue</code> 不支持阻塞操作。</p>
 <p>要想让 <code>PriorityBlockingQueue</code> 实现对任务的排序，<strong>传入其中的任务必须是具备排序能力</strong>的，方式有两种：</p>
 <ol>
 <li>提交到线程池的任务实现 <code>Comparable</code> 接口，并重写 <code>compareTo</code> 方法来指定任务之间的优先级比较规则。</li>
@@ -3894,71 +4124,135 @@ table <span class="token operator">=</span> newTab<span class="token punctuation
 </li>
 <li>由于需要对队列中的元素进行<strong>排序操作以及保证线程安全</strong>（并发控制采用的是可重入锁 <code>ReentrantLock</code>），因此会降低性能。</li>
 </ul>
+<h3 id="线程池处理任务的流程"><a href="#线程池处理任务的流程" class="headerlink" title="线程池处理任务的流程"></a>线程池处理任务的流程</h3><img src="/2024/06/15/java/thread-pool-principle.png" alt="图解线程池实现原理" style="zoom:80%;">
+
+<ul>
+<li>如果当前运行的线程数小于核心线程数，那么就会<strong>新建一个线程</strong>来执行任务。<ul>
+<li>当提交一个新任务到线程池时，如果线程池中的线程数量小于核心线程数，<strong>即使其他工作线程是空闲的，也会创建一个新线程来处理该任务。</strong></li>
+</ul>
+</li>
+<li>如果当前运行的线程数等于或大于核心线程数，但是小于最大线程数，那么就把该任务放入到任务队列里等待执行。</li>
+<li>如果向任务队列投放任务失败（<strong>任务队列已经满了</strong>），但是当前运行的线程数是小于最大线程数的，就<strong>创建一个新线程来执行当前提交的任务</strong>。</li>
+<li>如果当前运行的线程数已经等同于最大线程数了，新建线程将会使当前运行的线程超出最大线程数，那么当前任务会被拒绝，拒绝策略会调用<code>RejectedExecutionHandler.rejectedExecution()</code>方法。</li>
+</ul>
+<h3 id="线程异常后，销毁还是复用"><a href="#线程异常后，销毁还是复用" class="headerlink" title="线程异常后，销毁还是复用"></a>线程异常后，销毁还是复用</h3><p><strong>使用<code>execute()</code>提交任务</strong>：当任务通过<code>execute()</code>提交到线程池并在执行过程中抛出异常时，如果这个异常没有在任务内被捕获，那么<strong>该异常会导致当前线程终止</strong>，并且异常会被打印到控制台或日志文件中。<strong>线程池会检测到这种线程终止，并创建一个新线程来替换它</strong>，从而保持配置的线程数不变。</p>
+<p><strong>使用<code>submit()</code>提交任务</strong>：对于通过<code>submit()</code>提交的任务，如果在任务执行中发生异常，<strong>这个异常不会直接打印出来</strong>。相反，异常会被<strong>封装在由<code>submit()</code>返回的<code>Future</code>对象</strong>中。当调用<code>Future.get()</code>方法时，可以捕获到一个<code>ExecutionException</code>。在这种情况下，<strong>线程不会因为异常而终止</strong>，它会继续存在于线程池中，准备执行后续的任务。</p>
+<h3 id="execute和submit区别"><a href="#execute和submit区别" class="headerlink" title="execute和submit区别"></a>execute和submit区别</h3><p>1、<strong>返回结果</strong>：submit()方法可以接受并<strong>返回Future对象，用于表示异步任务的结果</strong>。你可以通过Future对象获取任务的执行结果，或者等待任务执行完成。而execute()方法没有返回值，无法获取任务的执行结果。<br>2、<strong>异常处理</strong>：submit()方法能够处理任务执行过程中抛出的异常。你可以通过调用Future对象的get()方法来获取任务执行过程中的异常，或者通过捕获ExecutionException异常来处理异常情况。而execute()方法无法处理任务执行过程中的异常，异常会被传播到线程池的未捕获异常处理器(UncaughtExceptionHandler)。<br>3、<strong>方法重载</strong>：submit()方法有多种重载形式，可以接受<strong>Runnable、Callable和其他可执行任务作为参数</strong>。它们的返回值类型分别为Future、Future和Future，其中T为Callable返回结果的类型。这使得submit()方法更加灵活，可以处理不同类型的任务。而<strong>execute()方法只接受Runnable类型的任务作为参数</strong>，没有方法重载的选项。</p>
+<h3 id="Runnable与Callable"><a href="#Runnable与Callable" class="headerlink" title="Runnable与Callable"></a>Runnable与Callable</h3><ul>
+<li>Callable规定的方法是 call(), Runnable规定的方法是 run()。</li>
+<li>Callable的任务执行后可返回值，而 Runnable的任务是不能返回值。</li>
+<li>call方法可以抛出异常， run方法不可以。</li>
+<li>运行 Callable任务可以拿到一个 Future对象</li>
+</ul>
+<h3 id="shutdown-VS-shutdownNow"><a href="#shutdown-VS-shutdownNow" class="headerlink" title="shutdown()  VS  shutdownNow()"></a>shutdown()  VS  shutdownNow()</h3><ul>
+<li><strong><code>shutdown（）</code></strong> :关闭线程池，线程池的状态变为 <code>SHUTDOWN</code>。线程池不再接受新任务了，但是<strong>队列里的任务得执行完毕。</strong></li>
+<li><strong><code>shutdownNow（）</code></strong> :关闭线程池，线程池的状态变为 <code>STOP</code>。线程池会终止当前正在运行的任务，并停止处理排队的任务并返回正在等待执行的 List。</li>
+</ul>
+<h3 id="isTerminated-VS-isShutdown"><a href="#isTerminated-VS-isShutdown" class="headerlink" title="isTerminated()  VS  isShutdown()"></a>isTerminated()  VS  isShutdown()</h3><ul>
+<li><strong><code>isShutDown</code></strong> 当调用 <code>shutdown()</code> 方法后返回为 true。</li>
+<li><strong><code>isTerminated</code></strong> 当调用 <code>shutdown()</code> 方法后，并且所有提交的任务完成后返回为 true</li>
+</ul>
+<h3 id="设定线程池大小"><a href="#设定线程池大小" class="headerlink" title="设定线程池大小"></a>设定线程池大小</h3><ul>
+<li>如果我们设置的线程池数量太小的话，如果同一时间有大量任务/请求需要处理，可能会导致大量的请求/任务在任务队列中排队等待执行，甚至会出现<strong>任务队列满了之后任务/请求无法处理</strong>的情况，或者<strong>大量任务堆积在任务队列导致 OOM</strong>。这样很明显是有问题的，CPU 根本没有得到充分利用。</li>
+<li>如果我们设置线程数量太大，<strong>大量线程可能会同时在争取 CPU 资源</strong>，这样会导致大量的上下文切换，从而增加线程的执行时间，影响了整体执行效率。</li>
+</ul>
+<p>有一个简单并且适用面比较广的公式：</p>
+<ul>
+<li><strong>CPU 密集型任务(N+1)：</strong> 这种任务消耗的主要是 CPU 资源，可以将线程数设置为 N（CPU 核心数）+1。<strong>过多的线程会导致频繁的上下文切换，反而降低性能。</strong>比 CPU 核心数多出来的一个线程是为了防止线程偶发的缺页中断，或者其它原因导致的任务暂停而带来的影响。一旦任务暂停，CPU 就会处于空闲状态，而在这种情况下多出来的一个线程就可以充分利用 CPU 的空闲时间。<ul>
+<li><strong>最大线程数（maximumPoolSize）</strong>：与核心线程数相同，避免创建过多线程。</li>
+<li><strong>队列容量（workQueue）</strong>：使用有界队列（如 <code>ArrayBlockingQueue</code>），防止任务堆积。</li>
+<li><strong>拒绝策略（RejectedExecutionHandler）</strong>：根据业务需求选择。</li>
+</ul>
+</li>
+<li><strong>I/O 密集型任务(2N)：</strong> 这种任务应用起来，系统会用大部分的时间来处理 I/O 交互，而线程在处理 I/O 的时间段内不会占用 CPU 来处理，这时就可以将 CPU 交出给其它线程使用。<strong>由于任务会频繁等待 IO，可以创建更多线程以充分利用 CPU。</strong><ul>
+<li><strong>最大线程数（maximumPoolSize）</strong>：根据任务的平均等待时间和 CPU 负载动态调整。<ul>
+<li>可以设置为较大的值（如 <code>2 * CPU 核心数 + 1</code> 或更高）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>CPU 密集型简单理解就是利用 CPU 计算能力的任务比如你在内存中对大量数据进行排序。但凡涉及到网络读取，文件读取这类都是 IO 密集型，这类任务的特点是 CPU 计算耗费时间相比于等待 IO 操作完成的时间来说很少，大部分时间都花在了等待 IO 操作完成上。</p>
+<img src="/2024/06/15/java/image-20250313151853353.png" alt="image-20250313151853353" style="zoom: 67%;">
+
+<img src="/2024/06/15/java/image-20250313152029216.png" alt="image-20250313152029216" style="zoom:67%;">
+
 <h3 id="线程池实践规范"><a href="#线程池实践规范" class="headerlink" title="线程池实践规范"></a>线程池实践规范</h3><p>线程池必须手动通过 <code>ThreadPoolExecutor</code> 的构造函数来声明，避免使用<code>Executors</code>类创建线程池，会有 OOM 风险。<strong>使用有界队列，控制线程创建数量。</strong></p>
 <p>除了避免 OOM 的原因之外，不推荐使用 <code>Executors</code>提供的两种快捷的线程池的原因还有：</p>
 <ul>
 <li>实际使用中需要根据自己机器的性能、业务场景来手动配置线程池的参数比如核心线程数、使用的任务队列、饱和策略等等。</li>
 <li>我们应该<strong>显示地给我们的线程池命名</strong>，这样有助于我们定位问题。</li>
 </ul>
-<p>不同的业务使用不同的线程池，配置线程池的时候根据当前业务的情况对当前线程池进行配置，因为不同的业务的并发以及对资源的使用情况都不同，重心优化系统性能瓶颈相关的业务。如果<strong>父业务和子业务调用同一个线程池，可能产生死锁；</strong></p>
+<p><strong>不同的业务使用不同的线程池</strong>，配置线程池的时候根据当前业务的情况对当前线程池进行配置，因为不同的业务的并发以及对资源的使用情况都不同，重心优化系统性能瓶颈相关的业务。如果<strong>父业务和子业务调用同一个线程池，可能产生死锁；</strong></p>
 <p>当线程池不再需要使用时，应该<strong>显式地关闭线程池</strong>，释放线程资源。</p>
-<p>调用完 <code>shutdownNow</code> 和 <code>shuwdown</code> 方法后，并不代表线程池已经完成关闭操作，它只是异步的通知线程池进行关闭处理。如果要同步等待线程池彻底关闭后才继续往下执行，需要调用<code>awaitTermination</code>方法进行同步等待。</p>
+<p>调用完 <code>shutdownNow</code> 和 <code>shuwdown</code> 方法后，并不代表线程池已经完成关闭操作，它只是<strong>异步的通知线程池进行关闭处理</strong>。如果要同步等待线程池彻底关闭后才继续往下执行，需要调用<code>awaitTermination</code>方法进行同步等待。</p>
 <p>在调用 <code>awaitTermination()</code> 方法时，应该设置合理的超时时间，以避免程序长时间阻塞而导致性能问题。另外。由于线程池中的任务可能会被取消或抛出异常，因此在使用 <code>awaitTermination()</code> 方法时还需要进行异常处理。<code>awaitTermination()</code> 方法会抛出 <code>InterruptedException</code> 异常，需要捕获并处理该异常，以避免程序崩溃或者无法正常退出。</p>
-<p>线程池本身的目的是为了<strong>提高任务执行效率，避免因频繁创建和销毁线程而带来的性能开销</strong>。如果将耗时任务提交到线程池中执行，可能会导致线程池中的线程被长时间占用，无法及时响应其他任务，甚至会导致线程池崩溃或者程序假死。</p>
+<p>线程池本身的目的是为了提高任务执行效率，避免因频繁创建和销毁线程而带来的性能开销。如果将耗时任务提交到线程池中执行，可能会导致线程池中的线程被长时间占用，无法及时响应其他任务，甚至会导致线程池崩溃或者程序假死。</p>
 <p>因此，在使用线程池时，我们应该<strong>尽量避免将耗时任务提交到线程池中执行</strong>。对于一些比较耗时的操作，如网络请求、文件读写等，可以采用<strong>异步操作</strong>的方式来处理，以避免阻塞线程池中的线程</p>
-<p>线程池和 <code>ThreadLocal</code>共用，可能会导致线程从<code>ThreadLocal</code>获取到的是旧值/脏数据。这是因为线程池会复用线程对象，与线程对象绑定的类的静态属性 <code>ThreadLocal</code> 变量也会被重用，这就导致一个线程可能获取到其他线程的<code>ThreadLocal</code> 值。</p>
-<h2 id="Future类"><a href="#Future类" class="headerlink" title="Future类"></a>Future类</h2><p><code>Future</code> 类是<strong>异步</strong>思想的典型运用，主要用在一些需要执行耗时任务的场景，<strong>避免程序一直原地等待耗时任务执行完成</strong>，执行效率太低。具体来说是这样的：当我们执行某一耗时的任务时，可以<strong>将这个耗时任务交给一个子线程去异步执行</strong>，同时我们可以干点其他事情，不用傻傻等待耗时任务执行完成。等我们的事情干完后，我们再<strong>通过 <code>Future</code> 类获取到耗时任务的执行结果</strong>。这样一来，程序的执行效率就明显提高了。这其实就是<strong>多线程中</strong>经典的 <strong>Future 模式</strong>，你可以将其看作是<strong>一种设计模式，核心思想是异步调用，主要用在多线程领域</strong>，并非 Java 语言独有。</p>
+<p>线程池和 <code>ThreadLocal</code>共用，可能会导致线程从<code>ThreadLocal</code>获取到的是旧值/脏数据。这是因为<strong>线程池会复用线程对象</strong>，与线程对象绑定的类的静态属性 <code>ThreadLocal</code> 变量也会被重用，这就导致一个线程可能获取到其他线程的<code>ThreadLocal</code> 值。</p>
+<h2 id="Future类"><a href="#Future类" class="headerlink" title="Future类"></a>Future类</h2><p><code>Future</code> 是 Java 提供的一个接口，用于表示异步计算的结果。它允许我们在一个线程中提交一个任务，然后在另一个线程中获取任务的执行结果。虽然 <code>Future</code> 提供了一种简单的方式来进行异步编程，但它的功能有限，不能很好地处理复杂的并发场景。这其实就是<strong>多线程中</strong>经典的 <strong>Future 模式</strong>，你可以将其看作是<strong>一种设计模式，核心思想是异步调用，主要用在多线程领域</strong>，并非 Java 语言独有。</p>
 <p>在 Java 中，<code>Future</code> 类只是一个泛型接口，位于 <code>java.util.concurrent</code> 包下，其中定义了 5 个方法，主要包括下面这 4 个功能：</p>
 <ul>
-<li>取消任务；</li>
+<li>取消任务；mayInterruptIfRunning参数表示是否允许中断已经</li>
 <li>判断任务是否被取消;</li>
 <li>判断任务是否已经执行完成;</li>
 <li>获取任务执行结果。</li>
 </ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// V 代表了Future执行的任务返回值的类型</span>
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">Future</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">V</span><span class="token punctuation">&gt;</span></span> <span class="token punctuation">{</span>
+    <span class="token comment">// 取消任务执行</span>
+    <span class="token comment">// 成功取消返回 true，否则返回 false</span>
+    <span class="token keyword">boolean</span> <span class="token function">cancel</span><span class="token punctuation">(</span><span class="token keyword">boolean</span> mayInterruptIfRunning<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 判断任务是否被取消</span>
+    <span class="token keyword">boolean</span> <span class="token function">isCancelled</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 判断任务是否已经执行完成</span>
+    <span class="token keyword">boolean</span> <span class="token function">isDone</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 获取任务执行结果</span>
+    <span class="token class-name">V</span> <span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">InterruptedException</span><span class="token punctuation">,</span> <span class="token class-name">ExecutionException</span><span class="token punctuation">;</span>
+    <span class="token comment">// 指定时间内没有返回计算结果就抛出 TimeOutException 异常</span>
+    <span class="token class-name">V</span> <span class="token function">get</span><span class="token punctuation">(</span><span class="token keyword">long</span> timeout<span class="token punctuation">,</span> <span class="token class-name">TimeUnit</span> unit<span class="token punctuation">)</span>
+
+        <span class="token keyword">throws</span> <span class="token class-name">InterruptedException</span><span class="token punctuation">,</span> <span class="token class-name">ExecutionException</span><span class="token punctuation">,</span> <span class="token class-name">TimeoutException</span>
+
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><strong>FutureTask 提供了 Future 接口的基本实现</strong>，常用来封装 Callable 和 Runnable。<code>ExecutorService.submit()</code> 方法返回的其实就是 <code>Future</code> 的实现类 <code>FutureTask</code> 。FutureTask 实现了<code>Runnable</code> 接口，因此可以作为任务直接被线程执行。</p>
 <p><code>FutureTask</code> 有两个构造函数，可传入 <code>Callable</code> 或者 <code>Runnable</code> 对象。实际上，传入 <code>Runnable</code> 对象也会在方法内部转换为<code>Callable</code> 对象。</p>
 <p><strong><code>FutureTask</code>相当于对<code>Callable</code> 进行了封装，管理着任务执行的情况，存储了 <code>Callable</code> 的 <code>call</code> 方法的任务执行结果。</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>concurrent<span class="token punctuation">.</span></span><span class="token operator">*</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">FutureExample</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 创建线程池</span>
+        <span class="token class-name">ExecutorService</span> executor <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newSingleThreadExecutor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// 提交任务并获取 Future 对象</span>
+        <span class="token class-name">Future</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">&gt;</span></span> future <span class="token operator">=</span> executor<span class="token punctuation">.</span><span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-&gt;</span> <span class="token punctuation">{</span>
+            <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment">// 模拟耗时操作</span>
+            <span class="token keyword">return</span> <span class="token string">"Task completed"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Task submitted"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 获取任务结果（阻塞直到任务完成）</span>
+            <span class="token class-name">String</span> result <span class="token operator">=</span> future<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Task result: "</span> <span class="token operator">+</span> result<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">InterruptedException</span> <span class="token operator">|</span> <span class="token class-name">ExecutionException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// 关闭线程池</span>
+        executor<span class="token punctuation">.</span><span class="token function">shutdown</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a>CompletableFuture</h3><p><code>Future</code> 在实际使用过程中存在一些局限性比如不支持异步任务的编排组合、获取计算结果的 <code>get()</code> 方法为阻塞调用。</p>
 <p>Java 8 才被引入<code>CompletableFuture</code> 类可以解决<code>Future</code> 的这些缺陷。<code>CompletableFuture</code> 除了提供了更为好用和强大的 <code>Future</code> 特性之外，还提供了<strong>函数式编程、异步任务编排组合</strong>（可以将多个异步任务串联起来，组成一个完整的链式调用）等能力。</p>
 <p><code>CompletableFuture</code> 同时实现了 <code>Future</code> 和 <code>CompletionStage</code> 接口。</p>
 <img src="/2024/06/15/java/completablefuture-class-diagram.jpg" alt="img" style="zoom:80%;">
 
 <p><code>CompletionStage</code> 接口描述了一个异步计算的阶段。很多计算可以分成多个阶段或步骤，此时可以通过它将所有步骤组合起来，形成异步计算的流水线。</p>
-<h2 id="AQS"><a href="#AQS" class="headerlink" title="AQS"></a>AQS</h2><p>AQS 的全称为 <code>AbstractQueuedSynchronizer</code> ，翻译过来的意思就是抽象队列同步器。这个类在 <code>java.util.concurrent.locks</code> 包下面。<strong>AQS 就是一个抽象类，主要用来构建锁和同步器。</strong>使用 AQS 能简单且高效地构造出应用广泛的大量的同步器，比如我们提到的 <code>ReentrantLock</code>，<code>Semaphore</code>，其他的诸如 <code>ReentrantReadWriteLock</code>，<code>SynchronousQueue</code>等等皆是基于 AQS 的。</p>
-<h3 id="原理-3"><a href="#原理-3" class="headerlink" title="原理"></a>原理</h3><p>AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求资源的线程设置为<strong>有效的工作线程</strong>，并且将共享资源设置为<strong>锁定状态</strong>。如果被请求的共享资源被占用，那么就需要一套<strong>线程阻塞等待以及被唤醒时锁分配</strong>的机制，这个机制 AQS 是用 <strong>CLH 队列锁</strong> 实现的，即将暂时<strong>获取不到锁的线程加入到队列</strong>中。</p>
-<p>CLH(Craig,Landin,and Hagersten) 队列是一个<strong>虚拟的双向队列</strong>（虚拟的双向队列即不存在队列实例，仅存在结点之间的关联关系）。AQS 是将每条请求共享资源的线程封装成一个 <strong>CLH 锁队列的一个结点</strong>（Node）来实现锁的分配。在 CLH 同步队列中，<strong>一个节点表示一个线程</strong>，它保存着线程的引用（thread）、 当前节点在队列中的状态（waitStatus）、前驱节点（prev）、后继节点（next）。</p>
-<img src="/2024/06/15/java/40cb932a64694262993907ebda6a0bfe~tplv-k3u1fbpfcp-zoom-1.png" alt="img" style="zoom: 80%;">
-
-<img src="/2024/06/15/java/CLH.png" alt="img" style="zoom:80%;">
-
-<p>AQS 使用 <strong>int 成员变量 <code>state</code> 表示同步状态</strong>，通过内置的 <strong>线程等待队列</strong> 来完成获取资源线程的排队工作。</p>
-<p><code>state</code> 变量由 <code>volatile</code> 修饰，用于展示当前临界资源的获锁情况。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 共享变量，使用volatile修饰保证线程可见性</span>
-<span class="token keyword">private</span> <span class="token keyword">volatile</span> <span class="token keyword">int</span> state<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<p>另外，状态信息 <code>state</code> 可以通过 <code>protected</code> 类型的<code>getState()</code>、<code>setState()</code>和<code>compareAndSetState()</code> 进行操作。并且，这几个方法都是 <code>final</code> 修饰的，在子类中无法被重写。</p>
-<h3 id="Semaphore"><a href="#Semaphore" class="headerlink" title="Semaphore"></a>Semaphore</h3><p><code>synchronized</code> 和 <code>ReentrantLock</code> 都是一次只允许一个线程访问某个资源，而<code>Semaphore</code>(信号量)可以用来<strong>控制同时访问特定资源的线程数量。</strong></p>
-<p>Semaphore 的使用简单，我们这里假设有 N(N&gt;5) 个线程来获取 <code>Semaphore</code> 中的共享资源，下面的代码表示同一时刻 N 个线程中只有 5 个线程能获取到共享资源，其他线程都会阻塞，只有获取到共享资源的线程才能执行。等到有线程释放了共享资源，其他阻塞的线程才能获取到。</p>
-<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// 初始共享资源数量</span>
-<span class="token keyword">final</span> <span class="token class-name">Semaphore</span> semaphore <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Semaphore</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">// 获取1个许可</span>
-semaphore<span class="token punctuation">.</span><span class="token function">acquire</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment">// 释放1个许可</span>
-semaphore<span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>当初始的资源个数为 1 的时候，<code>Semaphore</code> 退化为排他锁。</p>
-<p><code>Semaphore</code> 有两种模式：。</p>
-<ul>
-<li><strong>公平模式：</strong> 调用 <code>acquire()</code> 方法的顺序就是获取许可证的顺序，遵循 FIFO；</li>
-<li><strong>非公平模式：</strong> 抢占式的。</li>
-</ul>
-<p><code>Semaphore</code> 通常用于那些资源有明确访问数量限制的场景比如限流（仅限于单机模式，实际项目中推荐使用 Redis +Lua 来做限流）</p>
-<p><code>Semaphore</code> 是共享锁的一种实现，它默认构造 AQS 的 <code>state</code> 值为 <code>permits</code>，你可以将 <code>permits</code> 的值理解为<strong>许可证的数量</strong>，只有拿到许可证的线程才能执行。</p>
-<h3 id="CountDownLatch"><a href="#CountDownLatch" class="headerlink" title="CountDownLatch"></a>CountDownLatch</h3><p><code>CountDownLatch</code> 允许 <code>count</code> 个线程阻塞在一个地方，直至所有线程的任务都执行完毕。</p>
-<p><code>CountDownLatch</code> 是一次性的，计数器的值只能在构造方法中初始化一次，之后没有任何机制再次对其设置值，当 <code>CountDownLatch</code> 使用完毕后，它不能再次被使用。</p>
-<p><strong>原理</strong></p>
-<p><code>CountDownLatch</code> 是共享锁的一种实现,它默认构造 AQS 的 <code>state</code> 值为 <code>count</code>。当线程使用 <code>countDown()</code> 方法时,其实使用了<code>tryReleaseShared</code>方法以 CAS 的操作来减少 <code>state</code>,直至 <code>state</code> 为 0 。当调用 <code>await()</code> 方法的时候，如果 <code>state</code> 不为 0，那就证明任务还没有执行完毕，<code>await()</code> 方法就会一直阻塞，也就是说 <code>await()</code> 方法之后的语句不会被执行。<strong>直到<code>count</code> 个线程调用了<code>countDown()</code>使 state 值被减为 0，或者调用<code>await()</code>的线程被中断，该线程才会从阻塞中被唤醒，<code>await()</code> 方法之后的语句得到执行。</strong></p>
-<p>详解：<a target="_blank" rel="noopener" href="https://blog.csdn.net/hbtj_1216/article/details/109655995">https://blog.csdn.net/hbtj_1216/article/details/109655995</a></p>
 <h2 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h2><p>todo</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/">https://javaguide.cn/</a></p>
 <p><a target="_blank" rel="noopener" href="https://javabetter.cn/string/constant-pool.html">深入理解Java字符串常量池 | 二哥的Java进阶之路</a></p>
@@ -3970,6 +4264,7 @@ semaphore<span class="token punctuation">.</span><span class="token function">re
 <p>线程创建：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/NspUsyhEmKnJ-4OprRFp9g">大家都说Java有三种创建线程的方式！并发编程中的惊天骗局！</a></p>
 <p>多线程：<a target="_blank" rel="noopener" href="https://nan-ying.github.io/2023/03/25/Java%E7%9F%A5%E8%AF%86%E6%95%B4%E7%90%86%E5%92%8C%E6%80%BB%E7%BB%9310-%E5%A4%9A%E7%BA%BF%E7%A8%8B/#8-JDK5-0%E6%96%B0%E5%A2%9E%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA%E6%96%B9%E5%BC%8F">Java知识整理和总结10-多线程 | Nan-ying’s Blog</a></p>
 <p>volatile：<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_49183244/article/details/125493673">Java中的volatile_java volatile-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.xiaolincoding.com/interview/juc.html#syncronized%E9%94%81%E5%8D%87%E7%BA%A7%E7%9A%84%E8%BF%87%E7%A8%8B%E8%AE%B2%E4%B8%80%E4%B8%8B">Java并发编程面试题 | 小林coding</a></p>
 
                 
             </div>
@@ -4512,7 +4807,7 @@ semaphore<span class="token punctuation">.</span><span class="token function">re
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">271.9k</span>&nbsp;字
+                class="white-color">275.4k</span>&nbsp;字
             
             
             
