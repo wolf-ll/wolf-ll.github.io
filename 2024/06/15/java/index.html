@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
-
+ </script><meta name="generator" content="Hexo 7.2.0">
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -595,14 +595,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    66.4k
+                    66.8k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    246 分
+                    248 分
                 </div>
                 
 
@@ -4522,6 +4522,27 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
 </ul>
 </li>
 </ul>
+<p><strong>堆的工作流程示例</strong></p>
+<ol>
+<li><strong>对象分配</strong>：新对象进入Eden区。</li>
+<li><strong>Minor GC</strong>：Eden满时触发，存活对象复制到Survivor区（To）。</li>
+<li><strong>Survivor区轮换</strong>：From和To区角色交换，清空旧的From区。</li>
+<li><strong>晋升老年代</strong>：对象年龄达标或Survivor区不足时晋升。</li>
+<li><strong>Full GC</strong>：老年代不足时触发，回收整个堆，可能导致应用暂停。</li>
+</ol>
+<p><strong>堆分代的优势：</strong></p>
+<ul>
+<li><strong>降低GC开销</strong>：高频Minor GC仅处理新生代（小区域），减少停顿时间。</li>
+<li><strong>适应对象生命周期</strong>：区分短命和长命对象，针对性优化回收策略。</li>
+<li><strong>提升内存利用率</strong>：避免频繁扫描老年代对象。</li>
+</ul>
+<h4 id="方法执行过程"><a href="#方法执行过程" class="headerlink" title="方法执行过程"></a>方法执行过程</h4><p>当程序中通过对象或类直接调用某个方法时，主要包括以下几个步骤：</p>
+<ul>
+<li><strong>解析方法调用：</strong>JVM会根据方法的符号引用找到实际的方法地址(如果之前没有解析过的话）。</li>
+<li><strong>栈帧创建：</strong>在调用一个方法前，JVM会在当前线程的Java虚拟机栈中为该方法分配一个新的<strong>栈帧</strong>，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。</li>
+<li><strong>执行方法：</strong>执行方法内的字节码指令，涉及的操作可能包括局部变量的读写、操作数栈的操作、跳转控制、对象创建、方法调用等</li>
+<li><strong>返回处理：</strong>方法执行完毕后，可能会返回一个结果给调用者，并清理当前栈帧，<strong>恢复调用者的执行环境。</strong></li>
+</ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/">https://javaguide.cn/</a></p>
 <p><a target="_blank" rel="noopener" href="https://javabetter.cn/string/constant-pool.html">深入理解Java字符串常量池 | 二哥的Java进阶之路</a></p>
 <p>泛型：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45395059/article/details/126006369">Java 中的泛型（两万字超全详解）_java 泛型-CSDN博客</a></p>
@@ -5076,7 +5097,7 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">279k</span>&nbsp;字
+                class="white-color">279.4k</span>&nbsp;字
             
             
             
