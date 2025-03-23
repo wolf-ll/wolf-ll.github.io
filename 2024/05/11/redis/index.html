@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -592,21 +592,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2025-02-26
+                    2025-03-19
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    19k
+                    21k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    72 分
+                    80 分
                 </div>
                 
 
@@ -1830,6 +1830,43 @@ SET key2 value2
 EXEC<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>Redis 事务实际开发中<strong>使用的非常少</strong>。除了不满足原子性和持久性之外，<strong>事务中的每条命令都会与 Redis 服务器进行网络交互</strong>（性能较差），这是比较浪费资源的行为。<strong>Redis 事务是不建议在日常开发中使用的。</strong></p>
+<h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><p>Redis的读写操作都是在内存中，所以Redis性能才会高，但是当Redis重启后，内存中的数据就会丢失，那为了保证内存中的数据不会丢失，Redis实现了数据持久化的机制，这个机制会把数据存储到磁盘，这样在Redis重启就能够从磁盘中恢复原有的数据。Redis共有三种数据持久化的方式：</p>
+<ul>
+<li><strong>AOF日志：</strong>每执行一条写操作命令，就把该命令以追加的方式写入到一个文件里;</li>
+<li><strong>RDB快照：</strong>将某一时刻的内存数据，以二进制的方式写入磁盘；</li>
+</ul>
+<h4 id="AOF日志"><a href="#AOF日志" class="headerlink" title="AOF日志"></a>AOF日志</h4><p><strong>AOF（Append-Only File）</strong>：Redis在执行完一条写操作命令后，就会把该命令以追加的方式写入到一个文件里，然后Redis重启时，会读取该文件记录的命令，然后逐一执行命令的方式来进行数据恢复。</p>
+<img src="https://cdn.xiaolincoding.com//picgo/1719110103188-58f6e37a-6bf9-41a5-9209-7683b21b6b04.webp" alt="img" style="zoom:50%;">
+
+<p>AOF 提供了三种同步策略（通过 <code>appendfsync</code> 配置）：</p>
+<ul>
+<li><strong>always</strong>：每次写操作都同步到磁盘，数据安全性最高，但性能最差。</li>
+<li><strong>everysec</strong>：每秒同步一次，性能和安全性平衡（默认配置）。</li>
+<li><strong>no</strong>：由操作系统决定何时同步，性能最好，但数据丢失风险最高。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li><strong>数据安全性高</strong>：AOF 可以做到秒级数据持久化，数据丢失风险低。即使文件损坏，还提供了redis-check-aof工具修复。</li>
+<li><strong>可读性强</strong>：AOF 文件是文本文件，记录了所有写操作，便于分析和修复。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>文件体积大</strong>：AOF 文件通常比 RDB 文件大（记录了每一个写操作）。</li>
+<li><strong>性能影响</strong>：频繁的磁盘IO操作（特别是always同步策略）影响Redis的写入性能。</li>
+<li><strong>恢复速度慢</strong>：AOF 文件需要逐条执行命令来恢复数据，速度较慢。</li>
+</ul>
+<h4 id="RDB快照"><a href="#RDB快照" class="headerlink" title="RDB快照"></a>RDB快照</h4><p><strong>RDB（Redis Database）</strong>：RDB 是 Redis 默认的持久化方式，它通过生成数据快照（Snapshot）将内存中的数据保存到磁盘上的二进制文件（<code>.rdb</code> 文件）中。</p>
+<p>优点：</p>
+<ul>
+<li><strong>性能高</strong>：RDB 文件是紧凑的二进制文件，恢复速度快。</li>
+<li><strong>适合备份</strong>：可以定期生成 RDB 文件，用于数据备份和灾难恢复。</li>
+<li><strong>文件体积小</strong>：相比 AOF，RDB 文件占用的磁盘空间更小。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li><strong>数据丢失风险、数据不一致</strong>：如果 Redis 崩溃，最后一次快照之后的数据会丢失。</li>
+<li><strong>不适合实时持久化</strong>：RDB 是定时快照，无法做到秒级数据持久化。</li>
+</ul>
 <h3 id="Redis性能优化"><a href="#Redis性能优化" class="headerlink" title="Redis性能优化"></a>Redis性能优化</h3><h4 id="批量操作"><a href="#批量操作" class="headerlink" title="批量操作"></a>批量操作</h4><p>使用批量操作可以减少网络传输次数，进而有效减小网络开销，大幅减少 RTT。</p>
 <p><strong>原生批量操作</strong>：mget，mset，hmget，sadd……单条批量命令本身是原子的。<strong>分片集群方案下，存在问题</strong>–<code>MGET</code> 无法保证所有的 key 都在同一个 <strong>hash slot</strong>（哈希槽）上，<code>MGET</code>可能<strong>还是需要多次网络传输</strong>，原子操作也无法保证。</p>
 <p>整个步骤的简化版如下（通常由 Redis 客户端实现，无需我们自己再手动实现）：</p>
@@ -2052,6 +2089,92 @@ SLOWLOG GET <span class="token number">10</span>  <span class="token comment"># 
 <p>使用工具对数据进行同步方案如下：</p>
 <p>1、使用任务表加任务调度的方案进行同步。</p>
 <p>2、使用Canal基于MySQL的binlog进行同步。</p>
+<h3 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h3><h4 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h4><p>主从同步是 Redis 实现 <strong>数据冗余</strong> 和 <strong>高可用性</strong> 的核心机制。通过将一台 Redis 服务器（主节点，Master）的数据复制到其他服务器（从节点，Replica），实现以下目标：</p>
+<ul>
+<li><strong>数据备份</strong>：从节点作为主节点的数据副本，防止数据丢失。</li>
+<li><strong>读写分离</strong>：主节点处理写请求，从节点处理读请求，提升吞吐量。</li>
+<li><strong>故障恢复</strong>：当主节点宕机时，从节点可提升为新的主节点，保障服务可用性。</li>
+</ul>
+<p>主从同步分为 <strong>全量同步（Full Sync）</strong> 和 <strong>增量同步（Partial Sync）</strong> 两种模式：</p>
+<ul>
+<li><p><strong>全量同步</strong>：发生在 初次同步/从服务器数据丢失/主服务器数据发生变化 这些情况下。流程如下：</p>
+<img src="https://cdn.xiaolincoding.com//picgo/1720157699223-d4aa2235-35e2-42ec-84a8-522600f531c2.png" alt="img" style="zoom:50%;">
+
+<ol>
+<li><strong>初次连接</strong>：从节点向主节点发送 <code>PSYNC</code> 命令请求同步。</li>
+<li><strong>生成 RDB 快照</strong>：主节点执行 <code>BGSAVE</code> 生成当前数据的 RDB 文件。</li>
+<li><strong>传输 RDB</strong>：主节点将 RDB 文件发送给从节点，从节点加载到内存。</li>
+<li><strong>主节点缓存写命令</strong>：主节点在生成 RDB 期间，将新的写命令缓存到 <code>replication buffer</code>。</li>
+<li><strong>同步增量数据</strong>：RDB 传输完成后，主节点将缓冲的写命令发送给从节点，确保数据一致性。</li>
+</ol>
+</li>
+<li><p><strong>增量同步</strong><br>当从节点与主节点短暂断开后重新连接时，主节点仅发送<strong>断开期间缺失的写命令</strong>，依赖以下机制：</p>
+<img src="https://cdn.xiaolincoding.com//picgo/1720157758362-f61b89b5-5194-4d63-8cbd-f00ca524a417.png" alt="img" style="zoom:67%;">
+
+<ul>
+<li><strong>Replication ID</strong>：主节点的唯一标识，重启或切换主节点时会改变。</li>
+<li><strong>Offset</strong>：记录主从节点的数据同步偏移量。若从节点的 Offset 仍在主节点的复制积压缓冲区（<code>repl_backlog</code>）范围内，则触发增量同步。</li>
+</ul>
+</li>
+</ul>
+<p>主要有三个步骤：</p>
+<ul>
+<li>从服务器在恢复网络后，会发送psync命令给主服务器，此时的psync命令里的offset参数不是-1;</li>
+<li>主服务器收到该命令后，然后用CONTINUE响应命令告诉从服务器接下来采用增量复制的方式同步数据；</li>
+<li>然后主服务将主从服务器断线期间，所执行的写命令发送给从服务器，然后从服务器执行这些命令。</li>
+</ul>
+<h5 id="增量数据"><a href="#增量数据" class="headerlink" title="增量数据"></a>增量数据</h5><p>在 Redis 的主从同步中，<strong>增量同步（Partial Sync）</strong> 是通过 <strong>复制偏移量（Replication Offset）</strong> 和 <strong>复制积压缓冲区（Replication Backlog）</strong> 来实现的。</p>
+<p><strong>复制偏移量（Replication Offset）</strong></p>
+<ul>
+<li><strong>主节点</strong>：每次执行写操作后，会记录一个全局的复制偏移量（<code>master_repl_offset</code>），表示当前写操作的字节位置。</li>
+<li><strong>从节点</strong>：从节点也会记录自己已经复制的偏移量（<code>slave_repl_offset</code>），表示从节点已经同步到主节点的哪个位置。</li>
+</ul>
+<p><strong>复制积压缓冲区（Replication Backlog）</strong></p>
+<ul>
+<li><strong>作用</strong>：主节点会将最近的写操作命令存储在一个固定大小的环形缓冲区（<code>repl_backlog</code>）中，用于支持增量同步。</li>
+<li><strong>大小</strong>：通过 <code>repl-backlog-size</code> 参数配置，默认大小为 1MB。</li>
+<li><strong>内容</strong>：缓冲区中存储的是写操作的字节流，而不是具体的命令。</li>
+</ul>
+<p><strong>复制 ID（Replication ID）</strong></p>
+<ul>
+<li><strong>作用</strong>：每个主节点都有一个唯一的复制 ID，用于标识主节点的复制流。</li>
+<li><strong>变化</strong>：当主节点重启或发生主从切换时，复制 ID 会改变。</li>
+</ul>
+<p>增量同步的触发条件是：</p>
+<ol>
+<li><strong>从节点与主节点的复制 ID 一致</strong>：表示从节点之前是从该主节点同步的。</li>
+<li><strong>从节点的复制偏移量仍在主节点的复制积压缓冲区范围内</strong>：即 <code>slave_repl_offset</code> 在 <code>master_repl_offset - repl_backlog_size</code> 到 <code>master_repl_offset</code> 之间。</li>
+</ol>
+<p>如果满足以上条件，主节点会从复制积压缓冲区中提取从节点缺失的数据，并发送给从节点。</p>
+<ol>
+<li><p><strong>从节点连接主节点</strong>：<br>从节点向主节点发送 <code>PSYNC</code> 命令，携带自己的复制 ID 和复制偏移量。</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token constant">PSYNC</span> <span class="token operator">&lt;</span>replication<span class="token operator">-</span>id<span class="token operator">&gt;</span> <span class="token generics"><span class="token punctuation">&lt;</span>offset<span class="token punctuation">&gt;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p><strong>主节点检查复制 ID 和偏移量</strong>：</p>
+<ul>
+<li>如果复制 ID 匹配且偏移量在复制积压缓冲区范围内，主节点回复 <code>+CONTINUE</code>，表示可以执行增量同步。</li>
+<li>否则，主节点回复 <code>+FULLRESYNC</code>，表示需要执行全量同步。</li>
+</ul>
+</li>
+<li><p><strong>主节点发送增量数据</strong>：</p>
+<ul>
+<li>主节点从复制积压缓冲区中提取从节点缺失的数据（从 <code>slave_repl_offset</code> 到 <code>master_repl_offset</code> 之间的数据）。</li>
+<li>将这些数据以字节流的形式发送给从节点。</li>
+</ul>
+</li>
+<li><p><strong>从节点应用增量数据</strong>：</p>
+<ul>
+<li>从节点接收到增量数据后，将其应用到自己的数据库中。</li>
+<li>更新自己的复制偏移量（<code>slave_repl_offset</code>）。</li>
+</ul>
+</li>
+</ol>
+<h4 id="哨兵机制"><a href="#哨兵机制" class="headerlink" title="哨兵机制"></a>哨兵机制</h4><p>Redis 哨兵（Sentinel）是 Redis 官方提供的 <strong>高可用性（HA）解决方案</strong>，用于管理主从架构中的故障自动检测与恢复。通过哨兵机制，Redis 可以实现<strong>主节点的自动故障转移（Failover）</strong>、配置中心化和客户端服务发现。</p>
+<img src="https://cdn.xiaolincoding.com//picgo/1720094217984-6192d46c-16ba-47d2-a58d-ee8ddb1d49de.png" alt="img" style="zoom: 33%;">
+
+<p>Redis在2.8版本以后提供的哨兵（Sentinel）机制，它的作用是实现主从节点故障转移。它会<strong>监测主节点是否存活，如果发现主节点挂了，它就会选举一个从节点切换为主节点，并且把新主节点的相关信息通知给从节点和客户端。</strong></p>
+<p>哨兵其实是一个运行在特殊模式下的Redis进程，所以它也是一个<strong>节点</strong>。从“哨兵”这个名字也可以看得出来，它相当于是“观察者节点”，观察的对象是主从节点。当然，它不仅仅是观察那么简单，在它观察到有异常的状况下，会做出一些”动作”，来修复异常状态。</p>
+<p>哨兵节点主要负责三件事情：<strong>监控、选主、通知。</strong></p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>黑马程序员redis：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1cr4y1671t/?p=16&amp;spm_id_from=pageDriver&amp;vd_source=bf952648bf410c0b9b23bf213e3d24ba">https://www.bilibili.com/video/BV1cr4y1671t/?p=16&amp;spm_id_from=pageDriver&amp;vd_source=bf952648bf410c0b9b23bf213e3d24ba</a></p>
 <p>redis常用命令：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_49851451/article/details/134311296">https://blog.csdn.net/weixin_49851451/article/details/134311296</a></p>
 <p><a target="_blank" rel="noopener" href="https://javaguide.cn/database/redis/redis-questions-01.html#%E8%AF%B4%E4%B8%80%E4%B8%8B-redis-%E5%92%8C-memcached-%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E5%85%B1%E5%90%8C%E7%82%B9">Redis常见面试题总结(上) | JavaGuide</a></p>
@@ -2612,7 +2735,7 @@ SLOWLOG GET <span class="token number">10</span>  <span class="token comment"># 
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">279.4k</span>&nbsp;字
+                class="white-color">289.1k</span>&nbsp;字
             
             
             

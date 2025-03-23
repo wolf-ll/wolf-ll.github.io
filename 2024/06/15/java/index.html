@@ -163,9 +163,9 @@
     };
     loaded();
 })()
- </script><meta name="generator" content="Hexo 7.2.0">
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
 <style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
-<link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
 </head>
 
 
@@ -588,21 +588,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2025-03-16
+                    2025-03-19
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    66.8k
+                    74.5k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    248 分
+                    275 分
                 </div>
                 
 
@@ -4454,6 +4454,7 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
 <ul>
 <li><strong>元空间：</strong>元空间的本质和永久代类似，都是对JVM规范中方法区的实现。不过元空间与永久代之间最大的区别在于：<strong>元空间并不在虚拟机中，而是使用本地内存。</strong><ul>
 <li>从Java 8开始，永久代(Permanent Generation)被元空间取代，用于存储类的元数据信息，如类的结构信息(如字段、方法信息等）。元空间并不在Java堆中，而是使用本地内存，这<strong>解决了永久代容易出现的内存溢出问题。</strong></li>
+<li><strong>方法区存储内容：类信息（结构信息、访问修饰符、父类与接口信息）、类中常量、类和方法的符号引用及运行时常量池、常量池缓存、静态变量、方法字节码</strong></li>
 </ul>
 </li>
 <li><strong>Java虚拟机栈：</strong>每个线程有一个私有的栈，随着线程的创建而创建。栈里面存着的是一种叫“栈帧”的东西，每个方法会创建一个栈帧，栈帧中存放了<strong>局部变量表（基本数据类型和对象引用）、操作数栈、方法出口</strong>等信息。栈的大小可以固定也可以动态扩展。</li>
@@ -4471,7 +4472,7 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
 
 <h4 id="堆和栈"><a href="#堆和栈" class="headerlink" title="堆和栈"></a>堆和栈</h4><p>JVM内存模型里堆vs栈：</p>
 <ul>
-<li><strong>用途：</strong>栈存储<strong>局部变量、方法调用参数、方法返回地址和临时数据</strong>，每个线程有独立的栈，用于支持方法执行。每当一个方法被调用，一个栈帧就会在栈中创建，用于存储该方法的信息，方法执行完毕栈帧就被移除。堆存储所有<strong>对象实例</strong>和<strong>数组</strong>，是JVM中最大的一块内存区域。所有线程共享堆内存。</li>
+<li><strong>用途：</strong>栈存储<strong>局部变量、方法调用参数、方法返回地址和临时数据</strong>，每个线程有独立的栈，用于支持方法执行。每当一个方法被调用，一个<strong>栈帧</strong>就会在栈中创建，用于存储该方法的信息，方法执行完毕栈帧就被移除。堆存储所有<strong>对象实例</strong>和<strong>数组</strong>，是JVM中最大的一块内存区域。所有线程共享堆内存。</li>
 <li><strong>可见性：</strong>堆-所有线程共享，需处理并发安全问题（如通过锁或CAS）。栈-线程私有，生命周期与线程一致，无需考虑多线程同步。</li>
 <li><strong>生命周期：</strong>堆-<strong>对象的生命周期由垃圾回收</strong>器（GC）管理，对象不再被引用时会被回收。<strong>栈-内存自动分配和释放。</strong>方法执行时创建栈帧，方法结束后<strong>栈帧弹出，内存立即回收。</strong></li>
 <li><strong>存储内容：</strong>堆-存储对象实例（如 new Object()）和静态变量（在方法区，Java 8后移至元空间）。栈-存储基本数据类型（如 int、boolean）和对象引用（如 Object obj = new MyObject（）中的 obj）。</li>
@@ -4522,26 +4523,538 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
 </ul>
 </li>
 </ul>
-<p><strong>堆的工作流程示例</strong></p>
-<ol>
+<h5 id="堆的工作流程示例"><a href="#堆的工作流程示例" class="headerlink" title="堆的工作流程示例"></a><strong>堆的工作流程示例</strong></h5><ol>
 <li><strong>对象分配</strong>：新对象进入Eden区。</li>
 <li><strong>Minor GC</strong>：Eden满时触发，存活对象复制到Survivor区（To）。</li>
 <li><strong>Survivor区轮换</strong>：From和To区角色交换，清空旧的From区。</li>
 <li><strong>晋升老年代</strong>：对象年龄达标或Survivor区不足时晋升。</li>
 <li><strong>Full GC</strong>：老年代不足时触发，回收整个堆，可能导致应用暂停。</li>
 </ol>
-<p><strong>堆分代的优势：</strong></p>
-<ul>
+<h5 id="堆分代的优势"><a href="#堆分代的优势" class="headerlink" title="堆分代的优势"></a>堆分代的优势</h5><ul>
 <li><strong>降低GC开销</strong>：高频Minor GC仅处理新生代（小区域），减少停顿时间。</li>
 <li><strong>适应对象生命周期</strong>：区分短命和长命对象，针对性优化回收策略。</li>
 <li><strong>提升内存利用率</strong>：避免频繁扫描老年代对象。</li>
 </ul>
 <h4 id="方法执行过程"><a href="#方法执行过程" class="headerlink" title="方法执行过程"></a>方法执行过程</h4><p>当程序中通过对象或类直接调用某个方法时，主要包括以下几个步骤：</p>
 <ul>
-<li><strong>解析方法调用：</strong>JVM会根据方法的符号引用找到实际的方法地址(如果之前没有解析过的话）。</li>
-<li><strong>栈帧创建：</strong>在调用一个方法前，JVM会在当前线程的Java虚拟机栈中为该方法分配一个新的<strong>栈帧</strong>，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。</li>
+<li><strong>解析方法调用：</strong>JVM会根据方法的符号引用找到实际的<strong>方法地址</strong>(如果之前没有解析过的话）。</li>
+<li><strong>栈帧创建：</strong>在调用一个方法前，JVM会在当前线程的Java虚拟机栈中为该方法分配一个新的<strong>栈帧</strong>，用于存储局部变量表、操作数栈、动态链接、方法出口等信息。<ul>
+<li>局部变量表（用于存储局部变量和参数）。</li>
+<li>操作数栈（用于存储计算过程中的<strong>临时数据</strong>）。</li>
+<li>动态链接（指向方法所属类的运行时常量池的引用）。</li>
+<li>方法返回地址（记录方法执行完毕后返回的位置）。</li>
+</ul>
+</li>
 <li><strong>执行方法：</strong>执行方法内的字节码指令，涉及的操作可能包括局部变量的读写、操作数栈的操作、跳转控制、对象创建、方法调用等</li>
 <li><strong>返回处理：</strong>方法执行完毕后，可能会返回一个结果给调用者，并清理当前栈帧，<strong>恢复调用者的执行环境。</strong></li>
+</ul>
+<h4 id="引用类型"><a href="#引用类型" class="headerlink" title="引用类型"></a>引用类型</h4><p>从JDK 1.2版本开始，对象的引用被划分为4种级别，从而使程序能更加灵活地控制对象的生命周期，这4种级别由高到低依次为：强引用、软引用、弱引用和虚引用。</p>
+<ul>
+<li><strong>强引用</strong>指的就是代码中普遍存在的赋值方式，比如<code>A a=new A()</code>这种。强引用关联的对象，<strong>永远不会被GC回收。</strong>当内存空间不足时，JVM 宁愿抛出 OutOfMemoryError异常。如果强引用对象不使用时，需要弱化从而使GC能够回收（如对象赋值null）<ul>
+<li>显式地设置强引用对象为null，或让其超出对象的生命周期范围，则GC认为该对象不存在引用，这时就可以回收这个对象，具体什么时候收集这要取决于GC算法。</li>
+</ul>
+</li>
+<li><strong>软引用</strong>可以用SoftReference来描述，指的是那些<strong>有用但是不是必须要的对象</strong>。系统在发生内存<strong>溢出前</strong>会对这类引用的对象进行回收（在OOM前触发）。<ul>
+<li>软引用通常用在对内存敏感的程序中，比如<strong>高速缓存</strong>就有用到软引用，内存够用的时候就保留，不够用就回收。</li>
+</ul>
+</li>
+<li><strong>弱引用</strong>可以用WeakReference来描述，他的强度比软引用更低一点，弱引I用的对象<strong>下一次GC的时候一定会被回收</strong>，而不管内存是否足够。</li>
+<li><strong>虚引用</strong>也被称作幻影引用，是最弱的引用关系，可以用PhantomReference来描述，他必须和ReferenceQueue一起使用，同样的当发生GC的时候，虚引用也会被回收。可以用虚引用来管理堆外内存。<ul>
+<li>如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。</li>
+<li><strong>无法通过虚引用获取对象</strong>（<code>get()</code>始终返回<code>null</code>）。</li>
+<li>虚引用仅用于跟踪对象被回收的状态。</li>
+<li>对象被回收时，虚引用会被加入关联的<code>ReferenceQueue</code>。</li>
+</ul>
+</li>
+</ul>
+<h5 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h5><p>我们看下 Mybatis 缓存类 SoftCache 用到的软引用：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">getObject</span><span class="token punctuation">(</span><span class="token class-name">Object</span> key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Object</span> result <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token class-name">SoftReference</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Object</span><span class="token punctuation">&gt;</span></span> softReference <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">SoftReference</span><span class="token punctuation">)</span><span class="token keyword">this</span><span class="token punctuation">.</span>delegate<span class="token punctuation">.</span><span class="token function">getObject</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>softReference <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        result <span class="token operator">=</span> softReference<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>result <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span>delegate<span class="token punctuation">.</span><span class="token function">removeObject</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token keyword">synchronized</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>hardLinksToAvoidGarbageCollection<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span>hardLinksToAvoidGarbageCollection<span class="token punctuation">.</span><span class="token function">addFirst</span><span class="token punctuation">(</span>result<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>hardLinksToAvoidGarbageCollection<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&gt;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>numberOfHardLinks<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">this</span><span class="token punctuation">.</span>hardLinksToAvoidGarbageCollection<span class="token punctuation">.</span><span class="token function">removeLast</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> result<span class="token punctuation">;</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>注意：软引用对象是在jvm内存不够的时候才会被回收，我们调用System.gc()方法只是起通知作用，JVM什么时候扫描回收对象是JVM自己的状态决定的，就算扫描到软引用对象也不一定会回收它，只有内存不够的时候才会回收。</p>
+<h5 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h5><p><strong>WeakHashMap</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">WeakHashMapDemo</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">InterruptedException</span> <span class="token punctuation">{</span>
+        <span class="token function">myHashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">myWeakHashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">myHashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">HashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span></span> map <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> key <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">(</span><span class="token string">"k1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> value <span class="token operator">=</span> <span class="token string">"v1"</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> value<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>map<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        key <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span><span class="token function">gc</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>map<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">myWeakHashMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">InterruptedException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WeakHashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span></span> map <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WeakHashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//String key = "weak";</span>
+        <span class="token comment">// 刚开始写成了上边的代码</span>
+        <span class="token comment">//思考一下，写成上边那样会怎么样？ 那可不是引用了</span>
+        <span class="token class-name">String</span> key <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">(</span><span class="token string">"weak"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> value <span class="token operator">=</span> <span class="token string">"map"</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> value<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>map<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//去掉强引用</span>
+        key <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span><span class="token function">gc</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">sleep</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>map<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>当key只有弱引用时，GC发现后会自动清理键和值，作为简单的缓存表解决方案。</p>
+<p><strong>ThreadLocal</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">ThreadLocalMap</span> <span class="token punctuation">{</span>
+
+    <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">Entry</span> <span class="token keyword">extends</span> <span class="token class-name">WeakReference</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ThreadLocal</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> <span class="token punctuation">{</span>
+        <span class="token class-name">Object</span> value<span class="token punctuation">;</span>
+
+        <span class="token class-name">Entry</span><span class="token punctuation">(</span><span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span> k<span class="token punctuation">,</span> <span class="token class-name">Object</span> v<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">super</span><span class="token punctuation">(</span>k<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            value <span class="token operator">=</span> v<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">//......}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>ThreadLocal.ThreadLocalMap.Entry 继承了<strong>弱引用</strong>，key为当前线程实例，和WeakHashMap基本相同。</p>
+<h4 id="内存泄漏和内存溢出"><a href="#内存泄漏和内存溢出" class="headerlink" title="内存泄漏和内存溢出"></a>内存泄漏和内存溢出</h4><table>
+<thead>
+<tr>
+<th align="left"><strong>特性</strong></th>
+<th align="left"><strong>内存泄漏（Memory Leak）</strong></th>
+<th align="left"><strong>内存溢出（Out of Memory）</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>定义</strong></td>
+<td align="left">对象不再使用，但无法被回收，导致内存占用增加。</td>
+<td align="left">内存不足，无法分配新对象，导致程序崩溃。</td>
+</tr>
+<tr>
+<td align="left"><strong>原因</strong></td>
+<td align="left">长生命周期对象持有短生命周期对象的引用：如静态数据结构存储对象，事件监听，未停止的线程、数据库连接</td>
+<td align="left">内存泄漏、内存设置过小、大对象或频繁创建对象（深度递归导致栈溢出）。</td>
+</tr>
+<tr>
+<td align="left"><strong>表现</strong></td>
+<td align="left">内存逐渐耗尽，程序性能下降。</td>
+<td align="left">直接抛出 <code>OutOfMemoryError</code>，程序崩溃。</td>
+</tr>
+<tr>
+<td align="left"><strong>解决方法</strong></td>
+<td align="left">清理无用对象、使用弱引用、分析内存泄漏。</td>
+<td align="left">增加内存、优化代码、分析内存泄漏。</td>
+</tr>
+<tr>
+<td align="left"><strong>关系</strong></td>
+<td align="left">内存泄漏可能导致内存溢出。</td>
+<td align="left">内存溢出可能是内存泄漏的结果。</td>
+</tr>
+</tbody></table>
+<p>内存溢出：</p>
+<img src="/2024/06/15/java/my-hexo-blog\blogs\source\_posts\Java\image-20250318134026910.png" alt="image-20250318134026910" style="zoom:67%;">
+
+<h5 id="ThreadLocal内存泄漏问题"><a href="#ThreadLocal内存泄漏问题" class="headerlink" title="ThreadLocal内存泄漏问题"></a>ThreadLocal内存泄漏问题</h5><img src="https://cdn.xiaolincoding.com//picgo/image-20240820112835783.png" alt="image-20240820112835783" style="zoom: 50%;">
+
+<p><code>ThreadLocal</code> 为每个线程维护一个独立的变量副本。</p>
+<p>每个线程内部有一个 <code>ThreadLocalMap</code>，用于存储该线程的 <code>ThreadLocal</code> 变量。</p>
+<p><code>ThreadLocalMap</code> 的键是 <code>ThreadLocal</code> 对象，值是该线程的变量副本。</p>
+<p><strong>键的弱引用</strong></p>
+<ul>
+<li><code>ThreadLocalMap</code> 的键（即 <code>ThreadLocal</code> 对象）是 <strong>弱引用（WeakReference）</strong>。</li>
+<li>弱引用的特点是：如果只有弱引用指向某个对象，则下一次GC时该对象会被垃圾回收器回收。</li>
+<li>当 <code>ThreadLocal</code> 对象没有强引用时（例如设置为 <code>null</code>），它会被垃圾回收，导致 <code>ThreadLocalMap</code> 中的键为 <code>null</code>。</li>
+</ul>
+<p><strong>值的强引用</strong></p>
+<ul>
+<li><code>ThreadLocalMap</code> 的值（即线程的变量副本）是 <strong>强引用</strong>。</li>
+<li>即使 <code>ThreadLocal</code> 对象被回收，**<code>ThreadLocalMap</code> 中的值仍然存在，**因为值是被强引用的。</li>
+</ul>
+<p><strong>线程的生命周期</strong></p>
+<ul>
+<li>如果线程是线程池中的线程（如 <code>ThreadPoolExecutor</code>），线程不会被销毁，而是会被复用。</li>
+<li>如果 <code>ThreadLocal</code> 对象被回收，但 <code>ThreadLocalMap</code> 中的值没有被清理，<strong>这些值会一直占用内存</strong>，导致内存泄漏。</li>
+</ul>
+<p><strong>ThreadLocal内存泄漏示例：</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ThreadLocalLeakExample</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ThreadLocal</span><span class="token operator">&lt;</span><span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">&gt;</span> threadLocal <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ExecutorService</span> executor <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newFixedThreadPool</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        executor<span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-&gt;</span> <span class="token punctuation">{</span>
+            threadLocal<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token number">1024</span> <span class="token operator">*</span> <span class="token number">1024</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 设置一个大对象</span>
+            <span class="token comment">// 使用完后未清理</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// 模拟长时间运行</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// ...</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在上述代码中：</p>
+<ol>
+<li>线程池中的线程执行任务时，<code>threadLocal</code> 设置了一个大对象。</li>
+<li>任务执行完后，<code>threadLocal</code> 没有被清理。</li>
+<li>由于线程池中的线程不会被销毁，<code>ThreadLocalMap</code> 中的值会一直存在，导致内存泄漏。</li>
+</ol>
+<p>如何解决此问题？</p>
+<ul>
+<li>第一，使用ThreadLocal提供的remove方法，可对当前线程中的value值进行移除;</li>
+<li>第二，<strong>不要使用ThreadLocal.set(null)<strong>的方式清除value，它实际上并没有清除值，而是</strong>查找与当前线程关联的Map并将键值对分别设置为当前线程和null。</strong></li>
+<li>第三，最好将ThreadLocal视为需要在finally块中关闭的资源，以确保即使在发生异常的情况下也始终关闭该资源。</li>
+</ul>
+<h3 id="类初始化和加载"><a href="#类初始化和加载" class="headerlink" title="类初始化和加载"></a>类初始化和加载</h3><h4 id="对象创建过程"><a href="#对象创建过程" class="headerlink" title="对象创建过程"></a>对象创建过程</h4><img src="https://cdn.xiaolincoding.com//picgo/1713516384566-e820b967-73ce-49a4-a6e6-36af9a38ebc4.webp" alt="img" style="zoom: 50%;">
+
+<p><strong>Step1:类加载检查</strong></p>
+<p>虚拟机遇到一条 new 指令时，首先将去检查这个指令的参数是否能在<strong>常量池</strong>中定位到这个类的<strong>符号引用</strong>，并且检查这个符号引用代表的类<strong>是否已被加载过、解析和初始化过</strong>。如果没有，那必须先执行相应的<strong>类加载过程</strong>。</p>
+<p><strong>Step2:分配内存</strong></p>
+<p>在类加载检查通过后，接下来虚拟机将为新生对象<strong>分配内存</strong>。对象所需的<strong>内存大小</strong>在类加载完成后便可确定，为对象分配空间的任务等同于<strong>把一块确定大小的内存从 Java 堆中划分出来</strong>。分配方式有 <strong>“指针碰撞”</strong> 和 <strong>“空闲列表”</strong> 两种，选择哪种分配方式由 Java 堆是否规整决定，而 Java 堆是否规整又由所采用的垃圾收集器是否带有压缩整理功能决定。</p>
+<p><strong>内存分配的两种方式</strong> ：</p>
+<ul>
+<li>指针碰撞： <ul>
+<li>适用场合：堆<strong>内存规整</strong>（即没有内存碎片）的情况下。</li>
+<li>原理：用过的内存全部整合到一边，没有用过的内存放在另一边，中间有一个分界指针，<strong>只需要向着没用过的内存方向将该指针移动对象内存大小位置即可。</strong></li>
+<li>使用该分配方式的 GC 收集器：Serial, ParNew</li>
+</ul>
+</li>
+<li>空闲列表： <ul>
+<li>适用场合：<strong>堆内存不规整</strong>的情况下。</li>
+<li>原理：虚拟机会维护一个列表，<strong>该列表中会记录哪些内存块是可用的</strong>，在分配的时候，<strong>找一块儿足够大的内存块</strong>儿来划分给对象实例，最后更新列表记录。</li>
+<li>使用该分配方式的 GC 收集器：CMS</li>
+</ul>
+</li>
+</ul>
+<p><strong>Step3:初始化零值</strong></p>
+<p>内存分配完成后，虚拟机需要将<strong>分配到的内存空间都初始化为零值</strong>（不包括对象头），这一步操作保证了对象的实例字段在 Java 代码中可以<strong>不赋初始值就直接使用</strong>，程序能访问到这些字段的数据类型所对应的零值。</p>
+<p><strong>Step4:进行必要设置如对象头</strong></p>
+<p>初始化零值完成之后，<strong>虚拟机要对对象进行必要的设置</strong>，例如这个对象是哪个类的实例、如何才能找到类的元数据信息、对象的哈希码、对象的 GC 分代年龄等信息。 <strong>这些信息存放在对象头中。</strong> 另外，根据虚拟机当前运行状态的不同，如是否启用偏向锁等，对象头会有不同的设置方式。</p>
+<p><strong>Step5:执行 init 方法</strong></p>
+<p>在上面工作都完成之后，从虚拟机的视角来看，一个新的对象已经产生了，但从 Java 程序的视角来看，对象创建才刚开始，构造函数，即class文件中的方法还没有执行（<code>&lt;init&gt;</code> 方法还没有执行），所有的字段都还为零，<strong>对象需要的其他资源和状态信息</strong>还没有按照预定的意图构造好。所以一般来说，<strong>执行 new 指令之后会接着执行 <code>&lt;init&gt;</code> 方法</strong>，把对象按照程序员的意愿进行初始化，这样一个真正可用的对象才算完全产生出来。</p>
+<h4 id="对象内存布局"><a href="#对象内存布局" class="headerlink" title="对象内存布局"></a>对象内存布局</h4><p>在 Hotspot 虚拟机中，对象在内存中的布局可以分为 3 块区域：<strong>对象头（Header）、实例数据（Instance Data）和对齐填充（Padding）</strong>。</p>
+<p><strong>对象头：</strong>对象头是对象内存布局的第一部分，主要用于存储对象的<strong>元数据和运行时信息</strong>。它包括以下两部分：</p>
+<ul>
+<li><strong>标记字段（Mark Word）</strong>：用于存储对象自身的运行时数据， 如<strong>哈希码</strong>（HashCode）、GC 分代年龄、<strong>锁状态</strong>标志、线程持有的锁、偏向线程 ID、偏向时间戳等等。</li>
+<li><strong>类型指针（Klass pointer）</strong>：指向对象的类元数据（即类的 Class 对象），用于确定对象属于哪个类的实例。</li>
+</ul>
+<p><strong>实例数据：</strong>实例数据部分是对象真正存储的有效信息，包括程序中定义的<strong>各种类型的字段内容</strong>。</p>
+<p><strong>对齐填充（Padding）</strong>：对齐填充是对象内存布局的最后一部分，用于确保对象的大小是 8 字节的整数倍。</p>
+<ul>
+<li>对象填充不是必然存在，只是用于占位。</li>
+<li>HotSpot 虚拟机要求对象的起始地址必须是 8 字节的整数倍。</li>
+<li>对象头部分正好是 8 字节的倍数（1 倍或 2 倍）。如果实例数据部分未对齐，则通过对齐填充来补全。</li>
+</ul>
+<h4 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h4><img src="https://cdn.xiaolincoding.com//picgo/1719491354969-a7c861d7-531e-45d3-a4aa-4696710ec297.webp" alt="img" style="zoom: 50%;">
+
+<p>在 Java 中，类的生命周期是指<strong>从类被加载到虚拟机内存中，到类被卸载出内存</strong>的整个过程。类的生命周期包括以下几个阶段。其中验证、准备和解析可以统称为<strong>连接</strong>。</p>
+<ol>
+<li><p><strong>加载：将字节码文件加载到内存。</strong>触发条件：创建类的实例。访问类的静态字段或静态方法。使用反射加载类。初始化类的子类时，父类会被加载。</p>
+<ul>
+<li>通过<strong>全类名</strong>获取定义此类的<strong>二进制字节流</strong>。</li>
+<li>将字节流所代表的<strong>静态存储结构</strong>转换为方法区的<strong>运行时数据结构</strong>。</li>
+<li>在<strong>内存</strong>中生成一个代表该类的 <code>Class</code> 对象，作为方法区这些数据的访问入口。</li>
+</ul>
+</li>
+<li><p><strong>验证：确保字节码文件合法</strong>。确保 Class 文件的字节流中包含的信息符合《Java 虚拟机规范》的全部约束要求，保证这些信息被当作代码运行后不会危害虚拟机自身的安全。</p>
+<ul>
+<li>文件格式验证（如魔数、版本号）。</li>
+<li>元数据验证（如类是否有父类、字段和方法是否合法）。</li>
+<li>字节码验证（如操作数栈类型是否匹配）。</li>
+<li>符号引用验证（如引用的类、字段和方法是否存在）。</li>
+</ul>
+<img src="https://oss.javaguide.cn/github/javaguide/java/jvm/class-loading-process-verification.png" alt="验证阶段示意图" style="zoom:67%;">
+</li>
+<li><p><strong>准备</strong>：为类中的<strong>静态字段</strong>分配内存并设置默认的初始值。final修饰的static字段不设置，因为编译时候已经分配过了。</p>
+</li>
+<li><p><strong>解析</strong>：将常量池的<strong>符号引用替换为直接引用</strong>。</p>
+<ul>
+<li><strong>符号引用</strong>：一组符号描述所引用的目标（如类、字段、方法）。</li>
+<li><strong>直接引用</strong>：指向目标的指针、偏移量或句柄。</li>
+<li><strong>目的</strong>：将符号引用转换为可以直接使用的内存地址或偏移量。</li>
+</ul>
+<img src="https://oss.javaguide.cn/github/javaguide/java/jvm/symbol-reference-and-direct-reference.png" alt="符号引用和直接引用" style="zoom:80%;">
+</li>
+<li><p><strong>初始化</strong>：类加载过程的最后一个阶段，执行类的<strong>静态初始化代码</strong>（如静态代码块和静态变量赋值）。</p>
+<ul>
+<li>静态代码块和静态变量赋值按代码顺序执行。</li>
+<li>初始化是线程安全的，JVM 会加锁确保只有一个线程执行初始化。</li>
+</ul>
+</li>
+<li><p><strong>使用</strong>：类的实例化和方法调用。</p>
+</li>
+<li><p><strong>卸载</strong>：当类不再被使用时，从内存中移除。</p>
+</li>
+</ol>
+<h4 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h4><p>在 JVM 中，类加载器（ClassLoader）负责<strong>将类的字节码文件（<code>.class</code> 文件）加载到内存中，</strong>并生成对应的 <code>java.lang.Class</code> 对象。JVM 提供了以下几种类加载器，它们按照层次结构组织，共同完成类的加载任务。</p>
+<ul>
+<li>类加载器是一个负责加载类的对象，用于实现类加载过程中的加载这一步。</li>
+<li>每个 Java 类都有一个引用指向加载它的 <code>ClassLoader</code>。</li>
+<li><strong>数组类</strong>不是通过 <code>ClassLoader</code> 创建的（数组类没有对应的二进制字节流），<strong>是由 JVM 直接生成的</strong>。</li>
+<li>除了加载类之外，类加载器还可以加载 Java 应用所需的资源如文本、图像、配置文件、视频等等文件资源。</li>
+</ul>
+<p>JVM 启动的时候，<strong>并不会一次性加载所有的类，而是根据需要去动态加载</strong>。也就是说，大部分类在具体用到的时候才会去加载，这样对内存更加友好。<strong>对于已经加载的类会被放在 <code>ClassLoader</code> 中。</strong>在类加载的时候，系统会首先判断当前类是否被加载过。<strong>已经被加载的类会直接返回，否则才会尝试加载。</strong></p>
+<p>JVM 中内置了三个重要的 <code>ClassLoader</code>：</p>
+<ol>
+<li><p><strong><code>BootstrapClassLoader</code>(启动类加载器)<strong>：最顶层的加载类，由 C++实现，通常表示为 null，并且没有父级，</strong>主要用来加载 JDK 内部的核心类库如 <code>java.lang.*</code>、<code>java.util.*</code> 等（</strong> <code>%JAVA_HOME%/lib</code>目录下的 <code>rt.jar</code>、<code>resources.jar</code>、<code>charsets.jar</code>等 jar 包和类）以及被 <code>-Xbootclasspath</code>参数指定的路径下的所有类。</p>
+<ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>由 C/C++ 实现，是 JVM 的一部分。</li>
+<li><strong>是最高层次的类加载器，没有父类加载器。</strong></li>
+<li>加载的类在 <code>java.lang.ClassLoader</code> 中返回 <code>null</code>。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 输出 null</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+</li>
+<li><p>**<code>ExtensionClassLoader</code>(扩展类加载器)**：加载 JVM <strong>扩展类库</strong>（如 <code>javax.*</code> 等），这些类库位于 <code>JAVA_HOME/lib/ext</code> 目录下，或者通过 <code>java.ext.dirs</code> 系统属性指定的路径。</p>
+<ul>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>由 Java 实现，是 <code>sun.misc.Launcher$ExtClassLoader</code> 的实例。</li>
+<li>父类加载器是启动类加载器。</li>
+</ul>
+</li>
+<li><p><strong>示例</strong>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name"><span class="token namespace">javax<span class="token punctuation">.</span>xml<span class="token punctuation">.</span>parsers<span class="token punctuation">.</span></span>DocumentBuilderFactory</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 输出 sun.misc.Launcher$ExtClassLoader</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+</li>
+<li><p>**<code>AppClassLoader</code>(应用程序类加载器)**：面向我们用户的加载器，负责加载当前应用 classpath（用户类路径） 下的所有 jar 包和类。通常是程序的入口类（如包含 <code>main()</code> 方法的类）。</p>
+<ul>
+<li><strong>特点</strong>：<ul>
+<li>由 Java 实现，是 <code>sun.misc.Launcher$AppClassLoader</code> 的实例。</li>
+<li>父类加载器是扩展类加载器。</li>
+<li><strong>是默认的类加载器</strong>，如果没有自定义类加载器，JVM 会使用它来加载类。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>示例</strong>：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token class-name">ClassLoader</span><span class="token punctuation">.</span><span class="token function">getSystemClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 输出 sun.misc.Launcher$AppClassLoader</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+</li>
+</ol>
+<hr>
+<p><strong>4. 自定义类加载器（Custom ClassLoader）</strong></p>
+<ul>
+<li><p><strong>作用</strong>：用户可以通过继承 <code>java.lang.ClassLoader</code> 类，实现自定义的类加载器，用于加载特定路径或来源的类。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>可以打破双亲委派模型，实现类的动态加载。</li>
+<li>常用于热部署、模块化加载、加密类加载等场景。</li>
+</ul>
+</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">MyClassLoader</span> <span class="token keyword">extends</span> <span class="token class-name">ClassLoader</span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span> <span class="token function">findClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ClassNotFoundException</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 自定义加载逻辑</span>
+        <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> data <span class="token operator">=</span> <span class="token function">loadClassData</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token function">defineClass</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> data<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> data<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">byte</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">loadClassData</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 从文件或网络加载字节码</span>
+        <span class="token keyword">return</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h4><p><strong>双亲委派模型（Parent Delegation Model）</strong> 是 Java 类加载器（ClassLoader）的一种工作机制，它定义了类加载器在加载类时的协作方式。双亲委派模型是 Java 类加载机制的核心设计原则之一，确保了类的<strong>唯一性、安全性和一致性</strong>。</p>
+<img src="https://oss.javaguide.cn/github/javaguide/java/jvm/class-loader-parents-delegation-model.png" alt="类加载器层次关系图" style="zoom: 67%;">
+
+<p>这些类加载器之间的关系形成了双亲委派模型，其核心思想是当一个类加载器收到类加载的请求时，首先不会自己去尝试加载这个类，而是<strong>把这个请求委派给父类加载器去完成</strong>，每一层次的类加载器都是如此，因此<strong>所有的加载请求最终都应该传送到顶层的启动类加载器中</strong>。只有当父加载器反馈自己无法完成这个加载请求（它的搜索范围中没有找到所需的类）时，子加载器才会尝试自己去加载。</p>
+<ul>
+<li><code>ClassLoader</code> 类使用<strong>委托模型</strong>来搜索类和资源。</li>
+<li>双亲委派模型要求除了顶层的启动类加载器外，其余的类加载器都应有自己的父类加载器。</li>
+<li><code>ClassLoader</code> 实例会在试图亲自查找类或资源之前，<strong>将搜索类或资源的任务委托给其父类加载器。</strong></li>
+</ul>
+<p>流程：</p>
+<ol>
+<li>当前类加载器检查是否已加载过该类。</li>
+<li>如果没有，将加载请求委派给父类加载器。</li>
+<li>如果父类加载器无法加载，当前类加载器尝试加载。</li>
+</ol>
+<p>双亲委派模型是 Java 类加载机制的重要组成部分，它通过委派父加载器优先加载类的方式，实现了两个关键的安全目标：<strong>避免类的重复加载和防止核心 API 被篡改。</strong></p>
+<ul>
+<li><strong>保证类的唯一性：</strong>通过委托机制，确保了所有加载请求<strong>都会传递到启动类加载器</strong>，<strong>避免</strong>了不同类加载器<strong>重复加载</strong>相同类的情况，保证了Java核心类库的统一性，也防止了用户自定义类覆盖核心类库的可能。</li>
+<li><strong>保证安全性：</strong>由于Java<strong>核心库被启动类加载器</strong>加载，而<strong>启动类加载器只加载信任的类路径中的类</strong>，这样可以防止不可信的类假冒核心类，增强了系统的安全性。例如，恶意代码无法自定义一个Java.lang.System类并加载到JVM中，因为这个请求会被委托给启动类加载器，而启动类加载器只会加载标准的Java库中的类。</li>
+<li><strong>支持隔离和层次划分：</strong>双亲委派模型支持<strong>不同层次的类加载器服务于不同的类加载需求</strong>，如应用程序类加载器加载用户代码，扩展类加载器加载扩展框架，启动类加载器加载核心库。这种层次化的划分有助于实现沙箱安全机制，保证了各个层级类加载器的职责清晰，也便于维护和扩展。</li>
+<li><strong>简化了加载流程：</strong>通过委派，大部分类能够被正确的类加载器加载，<strong>减少了每个加载器需要处理的类的数量</strong>，简化了类的加载过程，提高了加载效率。</li>
+</ul>
+<p><strong>打破双亲委派模型</strong></p>
+<p>在某些场景下，可能需要打破双亲委派模型。例如：</p>
+<ul>
+<li><strong>热部署</strong>：动态加载类而不受父类加载器的限制。</li>
+<li><strong>模块化加载</strong>：如 OSGi 框架，每个模块有自己的类加载器。</li>
+</ul>
+<p>如何打破双亲委派模型：自定义类加载器时，<strong>重写 <code>loadClass()</code> 方法，直接加载类而不委派给父类加载器。</strong></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">MyClassLoader</span> <span class="token keyword">extends</span> <span class="token class-name">ClassLoader</span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span> <span class="token function">loadClass</span><span class="token punctuation">(</span><span class="token class-name">String</span> name<span class="token punctuation">,</span> <span class="token keyword">boolean</span> resolve<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ClassNotFoundException</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 直接加载类，不委派给父类加载器</span>
+        <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span> c <span class="token operator">=</span> <span class="token function">findClass</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>resolve<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">resolveClass</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> c<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>Java 的自动内存管理主要是针对<strong>对象内存的回收和对象内存的分配</strong>。同时，Java 自动内存管理最核心的功能是 <strong>堆</strong> 内存中对象的分配与回收。Java 堆是垃圾收集器管理的主要区域，因此也被称作 <strong>GC 堆（Garbage Collected Heap）</strong>。</p>
+<p>Java 的垃圾回收（Garbage Collection, GC）是 JVM <strong>自动管理内存</strong>的机制，<strong>用于回收不再使用的对象，释放内存空间</strong>。Java 开发者不需要手动释放内存，垃圾回收器会<strong>自动检测并回收</strong>无用的对象。用于避免内存泄漏和内存管理错误，减少手动管理内存的复杂性。</p>
+<p><strong>回收对象：</strong>堆内存–垃圾回收主要针对堆内存中的对象。方法区–方法区（元空间）中的类元数据和常量池也可能被回收。</p>
+<p>垃圾回收的触发：</p>
+<ul>
+<li><strong>内存不足时</strong>：当JVM检测到堆内存不足，无法为新的对象分配内存时，会自动触发垃圾回收。</li>
+<li><strong>手动请求</strong>：虽然垃圾回收是自动的，开发者可以通过调用System.gc(或Runtime.getRuntime().gc()建议JVM进行垃圾回收。不过这只是一个建议，并不能保证立即执行。</li>
+<li><strong>JVM参数</strong>：启动Java应用时可以通过JVM参数来调整垃圾回收的行为，比如：-Xmx（最大堆大小)、-Xms（初始堆大小）等。</li>
+<li><strong>对象数量或内存使用达到阈值</strong>：垃圾收集器内部实现了一些策略，以监控对象的创建和内存使用，达到某个阀值时触发垃圾回收。</li>
+</ul>
+<h4 id="判断垃圾"><a href="#判断垃圾" class="headerlink" title="判断垃圾"></a>判断垃圾</h4><p>垃圾回收器通过以下算法判断对象是否可回收：</p>
+<p><strong>引用计数法</strong></p>
+<ul>
+<li><strong>原理</strong>：每个对象维护一个引用计数器，记录有多少引用指向它。当引用计数为 0 时，对象可被回收。</li>
+<li><strong>缺点</strong>：无法解决循环引用问题（如两个对象互相引用，但无外部引用）。</li>
+</ul>
+<p><strong>可达性分析法</strong></p>
+<ul>
+<li><strong>原理</strong>：从根对象（如栈中的局部变量、静态变量等）出发，遍历所有可达对象。不可达的对象可被回收。</li>
+<li><strong>根对象（GC Roots）</strong>：栈中的局部变量。静态变量。JNI 引用（Native 方法引用的对象）。活跃线程。</li>
+<li><strong>优点</strong>：解决了循环引用问题。</li>
+</ul>
+<img src="https://cdn.xiaolincoding.com//picgo/1719111821599-650b1691-2737-453b-ba4b-26b065a96e88.png" alt="img" style="zoom:67%;">
+
+<p>运行时常量池主要回收的是废弃的常量。那么，我们如何判断一个常量是<strong>废弃常量</strong>呢？</p>
+<p>假如在字符串常量池中存在字符串 “abc”，如果当前没有任何 String 对象引用该字符串常量的话，就说明常量 “abc” 就是废弃常量，如果这时发生内存回收的话而且有必要的话，”abc” 就会被系统清理出常量池了。</p>
+<p>方法区主要回收的是无用的类，那么如何判断一个类是无用的类的呢？</p>
+<p>判定一个常量是否是“废弃常量”比较简单，而要判定一个类是否是“无用的类”的条件则相对苛刻许多。类需要同时满足下面 3 个条件才能算是 <strong>“无用的类”</strong>：</p>
+<ul>
+<li>该类<strong>所有的实例都已经被回收</strong>，也就是 Java 堆中不存在该类的任何实例。</li>
+<li>加载该类的 <code>ClassLoader</code> 已经被回收。</li>
+<li>该类对应的 <code>java.lang.Class</code> 对象<strong>没有在任何地方被引用</strong>，无法在任何地方通过反射访问该类的方法。</li>
+</ul>
+<p>虚拟机可以对满足上述 3 个条件的无用类进行回收，这里说的仅仅是“可以”，而并不是和对象一样不使用了就会必然被回收。</p>
+<h4 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h4><p><strong>标记-清除算法（Mark-Sweep）</strong>：分为“标记（Mark）”和“清除（Sweep）”阶段：首先标记出所有不需要回收的对象，在<strong>标记完成后统一回收</strong>掉所有没有被标记的对象。它是最基础的收集算法，后续的算法都是对其不足进行改进得到。</p>
+<p>缺点：<strong>产生内存碎片。效率较低。</strong>在申请大块内存的时候可能因为没有足够的内连续空间导致再次GC。</p>
+<p><strong>复制算法（Copying）</strong>：将内存分为两块，<strong>每次申请内存时只使用一块</strong>。当内存不够时，将这一块内存中所有存活的对象复制到另一块内存。然后再把已使用的内存整个清理掉。<strong>优点</strong>：无内存碎片。<strong>缺点</strong>：内存利用率低（只能使用一半内存）。<strong>不适合老年代</strong>–如果存活对象数量比较大，复制性能会变得很差。</p>
+<p><strong>标记-整理算法（Mark-Compact）</strong>：标记过程仍然与“标记-清除”算法一样，但后续步骤不是直接对可回收对象回收，而是<strong>让所有存活的对象向一端移动</strong>，然后直接清理掉端边界以外的内存。<strong>优点</strong>：无内存碎片。内存利用率高。<strong>缺点</strong>：效率较低。</p>
+<p><strong>分代收集算法（Generational Collection）</strong>：根据对象的生命周期将堆内存分为新生代（Young Generation）和老年代（Old Generation），对不同代采用不同的回收算法。</p>
+<ul>
+<li><strong>新生代</strong>：使用复制算法。分为 Eden 区和两个 Survivor 区（From 和 To）。</li>
+<li><strong>老年代</strong>：使用标记-清除或标记-整理算法。</li>
+</ul>
+<h4 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h4><p><strong>如果说收集算法是内存回收的方法论，那么垃圾收集器就是内存回收的具体实现。</strong></p>
+<p>JDK 默认垃圾收集器（使用 <code>java -XX:+PrintCommandLineFlags -version</code> 命令查看）：</p>
+<ul>
+<li>JDK 8: Parallel Scavenge（新生代）+ Parallel Old（老年代）</li>
+<li>JDK 9 ~ JDK22: G1</li>
+</ul>
+<p><strong>1. Serial 收集器</strong></p>
+<ul>
+<li><p><strong>特点</strong>：单线程收集（只使用一条垃圾收集线程，<strong>在进行垃圾收集时必须暂停其他所有工作线程</strong>，直到它收集结束）。适用于单核 CPU 或小型应用。新生代使用复制算法，老年代使用标记-整理算法。</p>
+</li>
+<li><p><strong>适用场景</strong>：客户端应用或单核服务器。  没有线程交互的开销，自然可以获得很高的单线程收集效率。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseSerialGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p><strong>2. Parallel 收集器（吞吐量优先收集器）</strong></p>
+<ul>
+<li><p><strong>特点</strong>：多线程收集。新生代使用复制算法，老年代使用标记-整理算法。<strong>注重吞吐量</strong>（Throughput）（高效率地利用cpu）。</p>
+</li>
+<li><p><strong>适用场景</strong>：多核 CPU 和<strong>吞吐量优先</strong>的应用（如批处理任务）。所谓吞吐量就是 CPU 中用于运行用户代码的时间与 CPU 总消耗时间的比值。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseParallelGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p><strong>3. Parallel Old 收集器</strong></p>
+<ul>
+<li><p><strong>特点</strong>：Parallel 收集器的老年代版本。多线程收集。使用标记-整理算法。</p>
+</li>
+<li><p><strong>适用场景</strong>：需要高吞吐量的多核服务器。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseParallelOldGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p><strong>4. CMS 收集器（Concurrent Mark-Sweep）</strong></p>
+<ul>
+<li><p><strong>特点：并发收集，减少停顿时间。</strong>新生代使用复制算法，老年代使用标记-清除算法。注重低延迟。</p>
+</li>
+<li><p>CMS（Concurrent Mark Sweep）收集器是一种以<strong>获取最短回收停顿时间</strong>为目标的收集器。它非常符合在<strong>注重用户体验</strong>的应用上使用。CMS（Concurrent Mark Sweep）收集器是 HotSpot 虚拟机第一款真正意义上的并发收集器，它第一次实现了<strong>让垃圾收集线程与用户线程（基本上）同时工作。</strong></p>
+</li>
+<li><p><strong>缺点</strong>：产生内存碎片。对 CPU 资源敏感。</p>
+</li>
+<li><p><strong>适用场景</strong>：响应时间优先的应用（如 Web 服务）。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseConcMarkSweepGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p><strong>5. G1 收集器（Garbage-First）</strong></p>
+<ul>
+<li><p><strong>特点</strong>：将堆内存划分为多个区域（Region）。并发收集，兼顾吞吐量和响应时间。使用标记-整理算法。可预测的停顿时间（通过设置最大停顿时间）。另外，G1回收的范围是整个java堆，而之前的仅限于新生代或老年代。</p>
+</li>
+<li><p><strong>适用场景</strong>：大内存和多核 CPU 的应用。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseG1GC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<h4 id="6-ZGC-收集器（Z-Garbage-Collector）"><a href="#6-ZGC-收集器（Z-Garbage-Collector）" class="headerlink" title="6. ZGC 收集器（Z Garbage Collector）"></a><strong>6. ZGC 收集器（Z Garbage Collector）</strong></h4><ul>
+<li><p><strong>特点</strong>：低延迟（停顿时间不超过 10ms）。支持超大堆内存（TB 级别）。并发收集，使用染色指针（Colored Pointers）和读屏障（Load Barrier）。</p>
+</li>
+<li><p>ZGC 可以将暂停时间控制在几毫秒以内，且暂停时间不受堆内存大小的影响，出现 Stop The World 的情况会更少，但代价是牺牲了一些吞吐量。</p>
+</li>
+<li><p><strong>适用场景</strong>：大内存和低延迟场景（如实时系统）。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseZGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p><strong>7. Shenandoah 收集器</strong></p>
+<ul>
+<li><p><strong>特点</strong>：低延迟（停顿时间与堆大小无关）。并发收集，使用 Brooks 指针和读屏障。支持大内存。</p>
+</li>
+<li><p><strong>适用场景</strong>：大内存和低延迟场景。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseShenandoahGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p><strong>8. Epsilon 收集器</strong></p>
+<ul>
+<li><p><strong>特点</strong>：不进行垃圾回收，仅分配内存。适用于性能测试或极短生命周期的应用。</p>
+</li>
+<li><p><strong>适用场景</strong>：测试环境或不需要垃圾回收的场景。</p>
+</li>
+<li><p><strong>启用参数</strong>：</p>
+<pre class="line-numbers language-none"><code class="language-none">-XX:+UseEpsilonGC<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></li>
 </ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/">https://javaguide.cn/</a></p>
 <p><a target="_blank" rel="noopener" href="https://javabetter.cn/string/constant-pool.html">深入理解Java字符串常量池 | 二哥的Java进阶之路</a></p>
@@ -4555,7 +5068,8 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
 <p>volatile：<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_49183244/article/details/125493673">Java中的volatile_java volatile-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.xiaolincoding.com/interview/juc.html#syncronized%E9%94%81%E5%8D%87%E7%BA%A7%E7%9A%84%E8%BF%87%E7%A8%8B%E8%AE%B2%E4%B8%80%E4%B8%8B">Java并发编程面试题 | 小林coding</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/2301_78320637/article/details/142900288">【JVM】内存模型_jvm内存模型-CSDN博客</a></p>
-
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000042313862">Java四大引用详解：强引用、软引用、弱引用、虚引用 - BAT架构技术与大厂面试 - SegmentFault 思否</a></p>
+  <pre class="line-numbers language-none"><code class="language-none"><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -5097,7 +5611,7 @@ allFutures<span class="token punctuation">.</span><span class="token function">j
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">279.4k</span>&nbsp;字
+                class="white-color">289.1k</span>&nbsp;字
             
             
             
