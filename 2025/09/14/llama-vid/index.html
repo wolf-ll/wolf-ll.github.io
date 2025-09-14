@@ -1,0 +1,1916 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+ <!--自定义看板娘-->
+  <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+  <script src="/live2d-widget/autoload.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="LLAMA-VID, 后端开发">
+    <meta name="description" content="Java | LeetCode | Algorithm">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>LLAMA-VID | wolf-ll&#39;s blog</title>
+    <link rel="icon" type="image/png" href="/medias/logo.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<style type="text/css" lang="css">
+    #loading-container{
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-height: 100vh;
+        width: 100vw;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #FFF;
+        text-align: center;
+        /* loaderҳ����ʧ���ý����ķ�ʽ*/
+        -webkit-transition: opacity 1s ease;
+        -moz-transition: opacity 1s ease;
+        -o-transition: opacity 1s ease;
+        transition: opacity 1s ease;
+    }
+    .loading-image{
+        width: 120px;
+        height: 50px;
+        transform: translate(-50%);
+    }
+
+    .loading-image div:nth-child(2) {
+        -webkit-animation: pacman-balls 1s linear 0s infinite;
+        animation: pacman-balls 1s linear 0s infinite
+    }
+
+    .loading-image div:nth-child(3) {
+        -webkit-animation: pacman-balls 1s linear .33s infinite;
+        animation: pacman-balls 1s linear .33s infinite
+    }
+
+    .loading-image div:nth-child(4) {
+        -webkit-animation: pacman-balls 1s linear .66s infinite;
+        animation: pacman-balls 1s linear .66s infinite
+    }
+
+    .loading-image div:nth-child(5) {
+        -webkit-animation: pacman-balls 1s linear .99s infinite;
+        animation: pacman-balls 1s linear .99s infinite
+    }
+
+   .loading-image div:first-of-type {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_up .5s 0s infinite;
+        animation: rotate_pacman_half_up .5s 0s infinite;
+    }
+    .loading-image div:nth-child(2) {
+        width: 0;
+        height: 0;
+        border: 25px solid #49b1f5;
+        border-right-color: transparent;
+        border-radius: 25px;
+        -webkit-animation: rotate_pacman_half_down .5s 0s infinite;
+        animation: rotate_pacman_half_down .5s 0s infinite;
+        margin-top: -50px;
+    }
+    @-webkit-keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @keyframes rotate_pacman_half_up {0% {transform: rotate(270deg)}50% {transform: rotate(1turn)}to {transform: rotate(270deg)}}
+
+    @-webkit-keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @keyframes rotate_pacman_half_down {0% {transform: rotate(90deg)}50% {transform: rotate(0deg)}to {transform: rotate(90deg)}}
+
+    @-webkit-keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+    @keyframes pacman-balls {75% {opacity: .7}to {transform: translate(-100px, -6.25px)}}
+
+
+    .loading-image div:nth-child(3),
+    .loading-image div:nth-child(4),
+    .loading-image div:nth-child(5),
+    .loading-image div:nth-child(6){
+        background-color: #49b1f5;
+        width: 15px;
+        height: 15px;
+        border-radius: 100%;
+        margin: 2px;
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        transform: translateY(-6.25px);
+        top: 25px;
+        left: 100px;
+    }
+    .loading-text{
+        margin-bottom: 20vh;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2rem;
+        box-sizing: border-box;
+        padding: 0 10px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    @media only screen and (max-width: 500px) {
+         .loading-text{
+            font-size: 1.5rem;
+         }
+    }
+    .fadeout {
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    /* logo���ֶ��� */
+    @-webkit-keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);transform:translate3d(0,-100%,0)}100%{opacity:1;-webkit-transform:none;transform:none}}
+    @keyframes fadeInDown{0%{opacity:0;-webkit-transform:translate3d(0,-100%,0);}}
+ </style>
+ <script>
+(function () {
+    const loaded = function(){
+       setTimeout(function(){
+            const loader = document.getElementById("loading-container");
+            loader.className="fadeout" ;//ʹ�ý����ķ�������loading page
+            // document.getElementById("body-wrap").style.display="flex";
+            setTimeout(function(){
+                loader.style.display="none";
+            },1000); 
+        },1000);//ǿ����ʾloading page 1s  
+    };
+    loaded();
+})()
+ </script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="wolf-ll's blog" type="application/atom+xml">
+
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+
+
+
+ <div id="loading-container">
+     <p class="loading-text"></p> 
+     <div class="loading-image">
+         <div></div>
+         <div></div>
+         <div></div>
+         <div></div> 
+         <div></div>
+     </div>
+ </div><body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">wolf-ll&#39;s blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">wolf-ll&#39;s blog</div>
+        <div class="logo-desc">
+            
+            Java | LeetCode | Algorithm
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/wolf-ll/wolf-ll.github.io" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/wolf-ll/wolf-ll.github.io" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/10.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">LLAMA-VID</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/MLLM/">
+                                <span class="chip bg-color">MLLM</span>
+                            </a>
+                        
+                            <a href="/tags/%E8%A7%86%E9%A2%91%E7%90%86%E8%A7%A3/">
+                                <span class="chip bg-color">视频理解</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E8%AE%BA%E6%96%87/" class="post-category">
+                                论文
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2025-09-14
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2025-09-14
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    5k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    18 分
+                </div>
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="LLAMA-VID"><a href="#LLAMA-VID" class="headerlink" title="LLAMA-VID"></a>LLAMA-VID</h1><h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><ul>
+<li>在这项工作中，我们提出了一种新颖的方法LLaMA-VID来解决视觉语言模型（VLMs）在视频和图像理解中的token生成挑战。</li>
+<li>当前的VLMs虽然在图像描述和视觉问答等任务上表现出色，但在处理长视频时由于视觉token过多而面临计算负担。</li>
+<li>LLaMA-VID通过用两个不同的token来表示每一帧，即上下文token和内容token，来解决这个问题。</li>
+<li>上下文token<strong>根据用户输入编码整体图像上下文</strong>，而内容token封装了每一帧中的视觉线索。</li>
+<li>这种双token策略显著减少了长视频的负载，同时保留了关键信息。</li>
+<li>通常，LLaMA-VID使现有框架能够支持长达一小时的视频，并通过额外的上下文token提高了其上限。</li>
+</ul>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><ul>
+<li><p>背景：视觉语言模型（VLM）已经将大模型（LLM）的生成能力扩展到了视觉数据，在图像描述、视觉问答等任务展现出先进性。然而，长视频背景下，需要过多的token来表示连续的帧。计算需求随着视频长度的增加而增加，从而限制了VLM在广泛视频中的实际应用。</p>
+</li>
+<li><p><strong>问题​</strong>​：现有视觉语言模型（VLMs）在处理长视频时面临​<strong>​视觉Token爆炸​</strong>​问题。例如：</p>
+<ul>
+<li><p>单帧图像需32-256个Token（如BLIP-2需32，LLaVA需256）</p>
+</li>
+<li><p>10,000帧视频需超32万Token，超出当前VLMs处理极限（通常上限2-4K Token）</p>
+</li>
+</ul>
+</li>
+<li><p><strong>​后果​</strong>​：计算负担过重，无法支持小时级长视频理解，且传统时间压缩方法（temporal compression）会丢失关键信息。</p>
+</li>
+<li><p><strong>现有方法：</strong>代表性查询（Representative Queries）：通过​<strong>​少量高层语义向量​</strong>​表示整个视频帧，替代原始像素级特征，显著减少Token数量。</p>
+<ul>
+<li><p><strong>​​Video-LLaMA [62]​</strong>​</p>
+<ul>
+<li><p>使用预训练视觉编码器（如BLIP-2）提取帧特征。</p>
+</li>
+<li><p>引入​<strong>​可学习的Query向量​</strong>​（通常32个）与帧特征交互，通过交叉注意力聚合关键信息。</p>
+</li>
+<li><p>仅将Query向量输入LLM（而非所有空间特征），压缩率超​<strong>​90%​</strong>​（如256 Token → 32 Token）。</p>
+</li>
+<li><p><strong>​局限​</strong>​：Query数量固定，无法自适应指令；长视频中语义信息可能丢失。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>​VideoChat [30]​</strong>​</p>
+<ul>
+<li><p><strong>​</strong>设计​<strong>​时空记忆模块​</strong>​，缓存关键帧的Query向量；</p>
+</li>
+<li><p>通过注意力机制检索与当前问题相关的记忆片段。</p>
+</li>
+<li><p><strong>​优势​</strong>​：减少冗余计算，但需预定义查询数量。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>现有方法：时序压缩（Temporal Compression），===下面的代表工作原理待确认是否准确===</p>
+<ul>
+<li><p><strong>Video-ChatGPT [39]​</strong>​</p>
+<ul>
+<li><p><strong>​</strong>​<strong>​空间压缩​</strong>​：每帧用ViT提取特征（如16×16网格）；</p>
+</li>
+<li><p><strong>时间压缩​</strong>​：对连续帧特征做​<strong>​3D平均池化​</strong>​（如每4帧合并为1帧）；</p>
+</li>
+<li><p>将压缩后的时空特征输入LLM。</p>
+</li>
+<li><p><strong>​压缩率​</strong>​：若按4:1合并帧，Token数减少​<strong>​75%​</strong>​。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>​Valley [38]​</strong>​</p>
+<ul>
+<li><p><strong>​</strong>使用​<strong>​时间卷积网络（TCN）​</strong>​ 学习帧间依赖；</p>
+</li>
+<li><p>输出关键时间步的特征作为代表（类似视频摘要）。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>本文方法：用两个不同的token来表示每一视频帧：上下文标记（context token）和内容标记（content token）。​</p>
+<ul>
+<li><p><strong>​Context Token​</strong>​：基于用户指令动态生成，聚焦与问题相关的全局上下文。</p>
+</li>
+<li><p><strong>​Content Token​</strong>​：编码帧内视觉细节，可根据计算资源调整粒度（视频：1 Token/帧；图像：最高576 Token/帧）。</p>
+</li>
+</ul>
+</li>
+<li><p>首先使用vit提取图像特征，随后利用跨模态设计进行指令引导查询（Bert、Blip2），这些查询承载了用户的交互式意图。</p>
+<ul>
+<li><p>这些查询与设计的上下文注意力模块中先前生成的图像特征交互，得到上下文token。</p>
+</li>
+<li><p>对图像特征进行平均池化，以制定适应不同设置的token，形成内容token。</p>
+</li>
+</ul>
+</li>
+<li><p>例如，采用全局池来保持视频输入的效率，同时通过单个图像输入的更多令牌来保留细节。随后，上下文和内容标记被投影到具有简单线性层的LLM空间中，以进行最终预测。此外，为了更好地支持VLM中长达一小时的视频，我们构建了一个基于指令的数据集，其中包含9K个电影级对话，用于情节推理和细节理解。</p>
+</li>
+<li><p>优势：使用双令牌范式，每个帧只需两个令牌即可有效编码，这使现有的LLM能够支持长视频。另一方面，上下文标记聚合了每个图像的最具信息量的特征，这进一步通过额外的标记扩展了VLM的上限。</p>
+</li>
+</ul>
+<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><h3 id="LLM"><a href="#LLM" class="headerlink" title="LLM"></a>LLM</h3><p>随着大型语言模型 (LLM) 的发展，自然语言处理 (NLP) 领域取得了巨大的进步。 Transformer [55] 成为一个重要的里程碑，随后的语言模型 [15, 35, 64] 展现出非凡的能力。 GPT [6] 通过利用生成式预训练 Transformer 进行自回归预测，彻底改变了该领域，这被证明是一种强大的语言建模范式。 最近的突破性工作，如 ChatGPT [43]、GPT-4 [44] 和 LLaMA [53]，将界限推向了更远。 这些模型在海量文本数据上进行训练，在复杂的语言任务中展现出非凡的能力。 为了利用预训练 LLM 的潜力，指令调优[56, 45] 是获得高质量输出的关键组成部分。 这种策略广泛应用于开源模型，如 Alpaca [52] 和 Vicuna [13]，它们使用专门设计的指令对改进了 LLaMA [53]。 还有一些研究 [57, 60] 利用 LLM 的推理能力并调用预定义工具来进行视觉应用。 与它们不同，我们在这项工作中收集了包含文本、图像和视频的多模态指令数据，用于增强 LLM 进行长视频处理的能力。</p>
+<h3 id="VLM"><a href="#VLM" class="headerlink" title="VLM"></a>VLM</h3><p>计算机视觉和 NLP 的进步导致了视觉语言模型 (VLM) 的出现，这些模型将视觉模型与语言模型相结合，以进行跨模态理解 [11, 58] 和推理 [19, 37, 27]。 CLIP [46] 和 ALIGN [24] 等开创性的大型视觉语言模型 (VLMs) 将语言模型扩展到了视觉语言任务。 近期的进展表明，人们越来越重视利用大型语言模型 (LLMs) 的能力。 值得注意的是，Flamingo [2] 和 BLIP-2 [29] 利用网络规模的图像-文本对进行跨模态对齐，从而提高了学习性能。 为了进一步挖掘此类预训练模型的潜力，InstructBLIP [14] 和 MiniGPT-4 [65] 基于 BLIP-2 构建了高质量的指令对，并取得了优异的结果。 与此同时，LLaVA [33] 采用了一个简单的线性投影器，该投影器具有少量可学习参数，以对齐 LLaMA 的图像和文本空间。 鉴于定制的指令数据，这种简单的方法展示了强大的能力。 为了支持大型语言模型 (LLMs) 中的视频理解，Video-LLaMA [62] 和 VideoChat [30] 尝试利用 BLIP-2 进行视频嵌入提取，而 Video-ChatGPT [39] 则提出了用于视频特征的时空池化。 但是，鉴于每帧所需的大量符元数量，大型语言模型 (LLMs) 在处理大量的视频序列时遇到了巨大的挑战。 这使得以前的工作无法在大型语言模型 (LLMs) 中表示超过一小时的长时间视频序列。 为了解决这个问题，我们建议用只有 2 个符元来有效地编码每一帧，这支持在现有的大型语言模型 (LLMs) 中进行长时间视频理解。</p>
+<h2 id="LLaMA-VID"><a href="#LLaMA-VID" class="headerlink" title="LLaMA-VID"></a>LLaMA-VID</h2><ul>
+<li><p>架构：通过编码器和解码器生成视觉嵌入和文本引导的特征；上下文标记和内容标记通过定制的标记生成策略进行转换；指令调优旨在释放大型语言模型在图像和视频处理方面的潜力。</p>
+<img src="/2025/09/14/llama-vid/image-20250914223440418.png" alt="image-20250914223440418" style="zoom:67%;">
+</li>
+<li><p><strong>输入类型</strong>：支持<strong>单张图像</strong>或<strong>视频帧序列</strong>。</p>
+</li>
+<li><p><strong>核心流程</strong>：</p>
+<ol>
+<li><p>视觉编码器（Encoder）：使用预训练ViT（如EVA-G）提取帧特征 <em>Xt</em>∈R^<em>N</em>×<em>C</em>（<em>N</em>=H/p*W/p为图像块的数量，<em>p</em>=14为patch大小，C为嵌入通道数量）。</p>
+</li>
+<li><p>文本解码器（Decoder）：</p>
+<ul>
+<li>基于用户指令生成文本查询向量 <em>Qt</em>∈R^<em>M</em>×<em>C</em>（<em>M</em>为查询数）。</li>
+<li>实现方式：QFormer（默认）或BERT。通过这种方式，文本查询 t 包含与用户指令最相关的突出显示的视觉提示。</li>
+</ul>
+</li>
+<li><p>双Token生成：使用文本查询Qt和视觉嵌入Xt，生成LLM的表示token。</p>
+<ul>
+<li><p><strong>Context Token</strong>：上下文注意力旨在聚合文本指令相关的视觉特征，并将其压缩为一个单一的上下文标记。</p>
+<img src="/2025/09/14/llama-vid/image-20250914223527136.png" alt="image-20250914223527136" style="zoom:80%;">
+
+<p>Softmax 函数和 Mean 操作分别沿 N 和 M 维度进行。 与采用 32 个视觉查询作为 LLM 符元 的 QFormer不同，本文仅使用文本查询 t 来聚合对输入指令具有高响应分数的视觉特征。</p>
+</li>
+<li><p><strong>Content Token</strong>：帧内视觉细节。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>投影层</strong>：使用线性投影对齐Et到上下文token。对视觉嵌入采用了<strong>自适应池化策略</strong>来生成内容token。</p>
+<ul>
+<li>当输入单张图像时，我们保持视觉嵌入 t 的原始分辨率，而对于长视频，我们对 t 进行下采样到 1 个符元。 此方法显着减少了 LLM 对每一帧的过载，从而有效地支持长达数小时的视频。</li>
+</ul>
+</li>
+<li><p><strong>LLM预测</strong>：将上下文token和内容token连接标识时间t处的帧，和其他帧一起形成视频序列，送入LLM生成自然语言响应。</p>
+</li>
+</ol>
+</li>
+</ul>
+<img src="/2025/09/14/llama-vid/image-20250914223612362.png" alt="image-20250914223612362" style="zoom:80%;">
+
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># 输入: text_q (文本查询), vis_embed (视觉特征)</span>
+<span class="token comment"># 输出: final_token (双Token拼接)</span>
+
+<span class="token comment"># 1. Context Token生成</span>
+ctx_embed <span class="token operator">=</span> softmax<span class="token punctuation">(</span>text_q @ vis_embed<span class="token punctuation">.</span>T <span class="token operator">/</span> sqrt<span class="token punctuation">(</span>D<span class="token punctuation">)</span><span class="token punctuation">)</span> @ vis_embed  <span class="token comment"># 交叉注意力</span>
+ctx_embed <span class="token operator">=</span> mean<span class="token punctuation">(</span>ctx_embed<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>                              <span class="token comment"># 压缩为1向量</span>
+ctx_embed <span class="token operator">=</span> linear_projection<span class="token punctuation">(</span>ctx_embed<span class="token punctuation">)</span>                        <span class="token comment"># 投影到LLM空间</span>
+
+<span class="token comment"># 2. Content Token生成</span>
+cur_shape <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>sqrt<span class="token punctuation">(</span>vis_embed<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>          <span class="token comment"># 特征图尺寸 (e.g., 16x16)</span>
+vis_embed <span class="token operator">=</span> reshape<span class="token punctuation">(</span>vis_embed<span class="token punctuation">,</span> <span class="token punctuation">(</span>B<span class="token punctuation">,</span> cur_shape<span class="token punctuation">,</span> cur_shape<span class="token punctuation">,</span> C<span class="token punctuation">)</span><span class="token punctuation">)</span>
+vis_embed <span class="token operator">=</span> avg_pool2d<span class="token punctuation">(</span>vis_embed<span class="token punctuation">,</span> kernel<span class="token operator">=</span>cur_shape<span class="token operator">//</span>n<span class="token punctuation">)</span>  <span class="token comment"># 自适应池化 (n=1 for视频)</span>
+vis_embed <span class="token operator">=</span> linear_projection<span class="token punctuation">(</span>vis_embed<span class="token punctuation">)</span>                <span class="token comment"># 投影到LLM空间</span>
+
+<span class="token comment"># 3. Token拼接</span>
+final_token <span class="token operator">=</span> concat<span class="token punctuation">(</span><span class="token punctuation">[</span>ctx_embed<span class="token punctuation">,</span> vis_embed<span class="token punctuation">]</span><span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>  <span class="token comment"># [ctx; content]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="训练策略"><a href="#训练策略" class="headerlink" title="训练策略"></a>训练策略</h3><p>考虑到训练效率，在这项工作中，我们将训练过程分为三个阶段，即模态对齐、指令调优和长视频调优。</p>
+<p><strong>(1) 阶段1：模态对齐（Modality Alignment）​</strong>​</p>
+<ul>
+<li><p><strong>​目标​</strong>​：对齐视觉特征与语言空间。</p>
+</li>
+<li><p><strong>​数据集​</strong>​：79万高质量多模态对：</p>
+<ul>
+<li><p>55.8万图像-文本对（LLaVA-filtered CC3M）</p>
+</li>
+<li><p>23.2万视频-文本对（WebVid 2.5M采样）</p>
+</li>
+</ul>
+</li>
+<li><p><strong>​训练配置​</strong>​：</p>
+<ul>
+<li><p>冻结：视觉编码器、文本解码器、LLM。</p>
+</li>
+<li><p>优化：Context Attention模块 + 线性投影层。</p>
+</li>
+<li><p>最大Token数：2048。</p>
+</li>
+</ul>
+</li>
+</ul>
+<img src="/2025/09/14/llama-vid/image-20250914223639810.png" alt="image-20250914223639810" style="zoom:80%;">
+
+<p><strong>(2) 阶段2：指令微调（Instruction Tuning）​</strong>​</p>
+<ul>
+<li><p><strong>​目标​</strong>​：增强多模态理解与响应能力。</p>
+</li>
+<li><p><strong>​数据集​</strong>​：76.3万指令对：</p>
+<ul>
+<li><p>4万文本对话（ShareGPT）</p>
+</li>
+<li><p>62.5万图像/视频QA（VQA-v2, ScienceQA等）</p>
+</li>
+<li><p>9.8万视频QA（ActivityNet等）</p>
+</li>
+</ul>
+</li>
+<li><p><strong>​训练配置​</strong>​：</p>
+<ul>
+<li><p>解冻文本解码器。</p>
+</li>
+<li><p>优化所有可训练参数（视觉编码器仍冻结）。</p>
+</li>
+<li><p>最大Token数：2048。</p>
+</li>
+</ul>
+</li>
+</ul>
+<img src="/2025/09/14/llama-vid/image-20250914223656486.png" alt="image-20250914223656486" style="zoom:80%;">
+
+<p><strong>(3) 阶段3：长视频微调（Long Video Tuning）​</strong>​</p>
+<ul>
+<li><p><strong>​目标​</strong>​：支持小时级视频理解。</p>
+</li>
+<li><p>构建了 15K 个长问答对，包括 9K 个电影场景中的对话和 6K 个从 LongLoRA 中采样的数据用于token扩展。</p>
+</li>
+<li><p><strong>​关键创新​</strong>​：</p>
+<ul>
+<li><p><strong>​上下文扩展​</strong>​：位置插值（Position Interpolation）将LLM上下文窗口从4K → ​<strong>​64K Token​</strong>​。</p>
+</li>
+<li><p><strong>​数据集Long-VideoQA​</strong>​：</p>
+<ul>
+<li><p>来源：400+电影（MovieNet）的剧情梗概（movie synopsis）和剧本（Scripts）。</p>
+</li>
+<li><p>GPT-4/Claude-2生成三类QA</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>类型​</strong>​</th>
+<th align="center"><strong>​数量​</strong>​</th>
+<th align="center"><strong>​示例问题​</strong>​</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">视频摘要</td>
+<td align="center">1K</td>
+<td align="center">“生成《泰坦尼克号》的详细剧情摘要”</td>
+</tr>
+<tr>
+<td align="center">剧情级理解（角色/情节）</td>
+<td align="center">4K</td>
+<td align="center">“为何Rose拒绝登救生艇？”</td>
+</tr>
+<tr>
+<td align="center">细节推理</td>
+<td align="center">4K</td>
+<td align="center">“描述Rose返回船舱救Jack的具体动作”</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+<li><p>对于情节级别数据，我们将整个电影梗概作为输入，并利用 GPT-4 [44] 生成与情节和角色相关的 QA 对。 这些包括情节理解、描述、分析、角色关系、个性和行为。 特别地，我们为每部电影生成 5 个与情节相关的对和 5 个与角色相关的对，共计 4K 个情节级别的 QA 数据。 至于细节级别数据，我们将长电影剧本输入 Claude-2 [3]，并为每部电影生成 5 个与情节相关的推理对和 5 个与细节相关的描述，共计 4K 个对。</p>
+</li>
+<li><p><strong>​训练配置​</strong>​：</p>
+<ul>
+<li><p>冻结文本解码器（节省显存）。</p>
+</li>
+<li><p>最大Token数：65536（支持3小时视频）。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<img src="/2025/09/14/llama-vid/image-20250914223716500.png" alt="image-20250914223716500" style="zoom:80%;">
+
+<img src="/2025/09/14/llama-vid/image-20250914223831782.png" alt="image-20250914223831782" style="zoom:80%;">
+
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><h3 id="实验设置"><a href="#实验设置" class="headerlink" title="实验设置"></a>实验设置</h3><p>在这项工作中，我们默认情况下使用预<strong>训练的 EVA-G [17] 作为视觉编码器，使用 QFormer [14] 作为文本解码器</strong>来实例化模型。 在训练过程中，我们将视觉编码器固定在所有阶段，并将文本解码器以及 LLM 固定在模态对齐阶段，除了表6中没有预训练的 BERT 模块。 遵循 [32] 中的策略，我们使用图3中设计的数据和指令优化可训练参数，在每个阶段运行 1 个 epoch。 对于视频输入，我们以每秒 1 帧的速度提取帧。 所有模型均使用 8×NVIDIA A100 GPU 进行训练。</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>组件​</strong>​</th>
+<th align="center"><strong>​配置​</strong>​</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>​视觉编码器​</strong>​</td>
+<td align="center">EVA-G（ViT-large）预训练模型，输入分辨率224×224 / 336×336，冻结参数</td>
+</tr>
+<tr>
+<td align="center"><strong>​文本解码器​</strong>​</td>
+<td align="center">QFormer（BLIP-2），32个查询向量，阶段2微调时解冻参数</td>
+</tr>
+<tr>
+<td align="center"><strong>​LLM骨干​</strong>​</td>
+<td align="center">Vicuna-7B/13B，阶段1冻结，阶段2/3微调</td>
+</tr>
+<tr>
+<td align="center"><strong>​训练硬件​</strong>​</td>
+<td align="center">8×NVIDIA A100 (80GB)，DeepSpeed Stage 2优化</td>
+</tr>
+<tr>
+<td align="center"><strong>​帧采样策略​</strong>​</td>
+<td align="center">视频统一1 FPS采样，小时级视频最长支持64K Token（≈3小时）</td>
+</tr>
+<tr>
+<td align="center"><strong>​训练时间​</strong>​</td>
+<td align="center">每阶段1 epoch，总训练时间≤2天</td>
+</tr>
+<tr>
+<td align="center"><strong>​Token配置​</strong>​</td>
+<td align="center">视频：2 Tokens/帧（1 Context + 1 Content）；图像：577 Tokens（1+576）</td>
+</tr>
+</tbody></table>
+<p><strong>训练数据集​</strong>​</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>​阶段​</strong>​</th>
+<th align="center"><strong>​数据构成​</strong>​</th>
+<th align="center"><strong>​规模​</strong>​</th>
+<th align="center"><strong>​来源​</strong>​</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>​模态对齐​</strong>​</td>
+<td align="center">图像-文本对</td>
+<td align="center">558K</td>
+<td align="center">LLaVA-filtered CC3M [48]</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">视频-文本对</td>
+<td align="center">232K</td>
+<td align="center">WebVid 2.5M [5] 采样</td>
+</tr>
+<tr>
+<td align="center"><strong>​指令微调​</strong>​</td>
+<td align="center">文本对话</td>
+<td align="center">40K</td>
+<td align="center">ShareGPT [1]</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">图像/视频QA</td>
+<td align="center">625K</td>
+<td align="center">VQA-v2 [19], ScienceQA [37], VizWiz [20] 等12个数据集</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">视频专属QA</td>
+<td align="center">98K</td>
+<td align="center">ActivityNet-QA [7]</td>
+</tr>
+<tr>
+<td align="center"><strong>​长视频微调​</strong>​</td>
+<td align="center"><strong>​Long-VideoQA​</strong>​（自建）</td>
+<td align="center">15K</td>
+<td align="center"><strong>MovieNet [21] 400+电影生成</strong></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">- 视频摘要（GPT-4生成）</td>
+<td align="center">1K</td>
+<td align="center">每电影1简洁摘要+1详细摘要</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">- 剧情级QA（角色/情节理解）</td>
+<td align="center">4K</td>
+<td align="center">每电影5情节推理+5角色分析</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">- 细节级QA（场景/动作描述）</td>
+<td align="center">4K</td>
+<td align="center">Claude-2生成细粒度问题</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">- 上下文扩展数据</td>
+<td align="center">6K</td>
+<td align="center">LongAlpaca [12]</td>
+</tr>
+</tbody></table>
+<p><strong>评估基准</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>​任务类型​</strong>​</th>
+<th align="center"><strong>​数据集​</strong>​</th>
+<th align="center"><strong>​评估指标​</strong>​</th>
+<th align="center"><strong>​挑战点​</strong>​</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>​视频理解​</strong>​</td>
+<td align="center">MSVD-QA [8]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">开放域问答，1970视频片段</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">MSRVTT-QA [58]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">10K网络视频，多事件推理</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">ActivityNet-QA [7]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">长视频时序理解（平均180秒/视频）</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">Video-ChatGPT [39]</td>
+<td align="center">5维人工评分（Correctness等）</td>
+<td align="center">生成质量评估</td>
+</tr>
+<tr>
+<td align="center"><strong>​图像理解​</strong>​</td>
+<td align="center">GQA [22]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">场景图推理</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">MMBench [36]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">多模态综合能力评测</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">POPE [31]</td>
+<td align="center">F1分数</td>
+<td align="center">对象幻觉检测</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">VQAv2 [19]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">自然图像问答</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">VizWiz [20]</td>
+<td align="center">准确率（Acc）</td>
+<td align="center">盲人拍摄图像问答</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="​实验结果​"><a href="#​实验结果​" class="headerlink" title="​实验结果​"></a><strong>​实验结果​</strong></h3><p>基于视频的基准测试结果：未进行第三阶段长视频微调，仅用​<strong>​2 Tokens/帧​</strong>​即超越所有SOTA，MSVD-QA提升​<strong>​+2.2%​</strong>​。Vicuna-13B进一步改善长视频时序理解（MSRVTT-QA +1.2%）</p>
+<img src="/2025/09/14/llama-vid/image-20250914223952535.png" alt="image-20250914223952535" style="zoom:80%;">
+
+<p>视频生成质量评测：在新提出的基于视频的生成性能基准 [39] 上进行了实验。Res.表示图像分辨率。Context Token显著提升​<strong>​指令相关性​</strong>​（Correctness +0.28）和​<strong>​时序一致性​</strong>​（Temporal +0.12）</p>
+<img src="/2025/09/14/llama-vid/image-20250914224021951.png" alt="image-20250914224021951" style="zoom:80%;">
+
+<p>基于图像的基准测试结果。LLaMA-VID 不仅可以有效地表示长视频，还可以通过一个额外的上下文token来扩展 VLM 的上限。 在表3中，我们对 8 个广泛采用的基准测试进行了与先进 VLM 的比较。</p>
+<p>所提出的 LLaMA-VID 的通用性，它可以与更强大的基础模型进行扩展。 LLaMA-VID 被证明可以提高 VLM 的上限，尤其是在高效设置中。</p>
+<p><strong>VizWiz​</strong>​（盲人问答）提升​<strong>​+4.2%​</strong>​ → Context Token增强指令适配能力。<strong>VQAv2​</strong>​达到80.0% SOTA → Content Token保留细节提升细粒度理解</p>
+<img src="/2025/09/14/llama-vid/image-20250914224050530.png" alt="image-20250914224050530" style="zoom:80%;">
+
+<p>定性结果。在图5中，将 LLaMA-VID 应用于不同类型的数据，包括单张图像、短视频和长电影。 我们用 577 个符元来表示单张图片，用 2 个符元来表示视频。 LLaMA-VID 展示了在不同输入下各种能力。 具体来说，对于单张图片，它专注于细节，并在没有任何文本线索的情况下准确识别人物。 此外，它还能将图像内容与多轮对话中的游戏剧情联系起来。 给定一个简短的预告片视频，LLaMA-VID 会总结整个剧情，并推断出电影名称、制作人和电影类型。 对于一部 3 小时的电影，该模型熟练地描述了故事情节，并展示了与剧情相关的推理和详细理解。</p>
+<img src="/2025/09/14/llama-vid/image-20250914224117173.png" alt="image-20250914224117173" style="zoom:80%;">
+
+<h3 id="组件分析"><a href="#组件分析" class="headerlink" title="组件分析"></a>组件分析</h3><p>在本小节中，我们默认情况下使用输入分辨率 224 和每张图片 2 个符元进行消融研究。 在这里，我们主要在基于图像的设置上进行实验，以调查每个组件的有效性。</p>
+<p>生成token类型比较： 没有上下文token，压缩的内容token，无法适应输入指令，导致性能低下。 <strong>与单个内容token相比，指令引导的上下文token在所有数据集上都取得了显著的收益</strong>。 对每张图像使用两个符元，该模型在所有基准测试中取得了最佳性能。</p>
+<img src="/2025/09/14/llama-vid/image-20250914224141334.png" alt="image-20250914224141334" style="zoom:80%;">
+
+<p>生成token数量比较：视频场景：压缩至​<strong>​1 Token仅损失2-6%​</strong>​精度，计算开销降至​<strong>​0.8%​</strong>​。图像场景：保持576 Tokens，精度超越LLaVA-1.5</p>
+<img src="/2025/09/14/llama-vid/image-20250914224157860.png" alt="image-20250914224157860" style="zoom:80%;">
+
+<p>不同文本解码器的比较：对于 BERT，我们将其随机初始化为一个跨模态解码器，只保留前两层。 对于 QFormer，我们使用预训练的模块并将其固定以进行模态对齐。</p>
+<img src="/2025/09/14/llama-vid/image-20250914224215637.png" alt="image-20250914224215637" style="zoom:80%;">
+
+<p>上下文注意力中的响应。探索上下文注意力，在图6中可视化了20个得分最高的区域。具体来说，我们在应用 Softmax 函数之前在 Qt 中绘制前两个查询的归一化热图，该函数用于制定公式 1中的上下文token。 如图6所示，文本引导的查询 t 有效地将注意力集中在与输入问题相关的关键区域。 例如，在第二行，当询问图像是否描绘了一个渔村时，查询 t 更集中于河流沿岸的建筑物和一只海鸥。 这些都是常识中区分渔村的典型特征。 其他例子也证实，设计的上下文注意成功地实现了其在指令引导下构建上下文符元的目标。</p>
+<img src="/2025/09/14/llama-vid/image-20250914224236599.png" alt="image-20250914224236599" style="zoom:80%;">
+
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>我们介绍了 LLaMA-VID，这是一种简单而有效的用于 VLM 的token生成方法。 LLaMA-VID 背后的核心概念是用上下文token和内容token来表示图像。 特别地，上下文token是根据输入指令生成的，而内容token是根据图像内容生成的。 根据预算，内容token可以压缩成一个符元，或者不压缩地表示。 它使我们能够表示保留细节的单个图像，并仅使用两个标记有效地对每个视频帧进行编码。 此外，我们构建了一个用于长达一小时的视频理解的指令数据集。 我们在几个基于视频和图像的基准测试上的实验证明了我们方法的优越性。 我们希望 LLaMA-VID 可以作为高效视觉表示的一个强大基准。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">wolf-ll</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://wolf-ll.github.io/2025/09/14/llama-vid/">http://wolf-ll.github.io/2025/09/14/llama-vid/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">wolf-ll</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/MLLM/">
+                                    <span class="chip bg-color">MLLM</span>
+                                </a>
+                            
+                                <a href="/tags/%E8%A7%86%E9%A2%91%E7%90%86%E8%A7%A3/">
+                                    <span class="chip bg-color">视频理解</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.jpg" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="card" data-aos="fade-up">
+    <div id="utteranc-container" class="card-content">
+        <script src="https://utteranc.es/client.js"
+                repo="wolf-ll/comments"
+                issue-term="pathname"
+                theme="github-light"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
+</div>
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2025/09/14/llama-vid/">
+                    <div class="card-image">
+                        
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="LLAMA-VID">
+                        
+                        <span class="card-title">LLAMA-VID</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            基于视频滑窗Q-Former的时序感知的视频大模型
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-09-14
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E8%AE%BA%E6%96%87/" class="post-category">
+                                    论文
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/MLLM/">
+                        <span class="chip bg-color">MLLM</span>
+                    </a>
+                    
+                    <a href="/tags/%E8%A7%86%E9%A2%91%E7%90%86%E8%A7%A3/">
+                        <span class="chip bg-color">视频理解</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2025/09/14/shi-xi-ji-lu/">
+                    <div class="card-image">
+                        
+                        <img src="/medias/featureimages/26.jpg" class="responsive-img" alt="实习记录">
+                        
+                        <span class="card-title">实习记录</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            实习内容简要整理
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-09-14
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E7%AC%94%E8%AE%B0/" class="post-category">
+                                    笔记
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/LLM/">
+                        <span class="chip bg-color">LLM</span>
+                    </a>
+                    
+                    <a href="/tags/%E9%A1%B9%E7%9B%AE/">
+                        <span class="chip bg-color">项目</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 15px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2024-2025</span>
+            
+            <span id="year">2024</span>
+            <a href="/about" target="_blank">wolf-ll</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">305k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2024";
+                    var startMonth = "4";
+                    var startDate = "21";
+                    var startHour = "16";
+                    var startMinute = "35";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/wolf-ll" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:837691088@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=837691088" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 837691088" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+    <a href="https://www.zhihu.com/people/zhi-qi-wei-tuo" class="tooltipped" target="_blank" data-tooltip="关注我的知乎: https://www.zhihu.com/people/zhi-qi-wei-tuo" data-position="top" data-delay="50">
+        <i class="fab fa-zhihu1">知</i>
+    </a>
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+	
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
